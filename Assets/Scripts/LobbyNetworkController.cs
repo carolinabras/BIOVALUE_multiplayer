@@ -33,14 +33,14 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
     // ===== API =====
     public void CreateLobby()
     {
-        // 1) Só cria no Master
+        // cria no master
         if (PhotonNetwork.NetworkClientState != ClientState.ConnectedToMasterServer)
         {
             Debug.LogWarning($"CreateLobby: ainda não estou no Master (state={PhotonNetwork.NetworkClientState}).");
             return;
         }
 
-        // 2) Garante que não estás numa sala
+        // roomcheck
         if (PhotonNetwork.InRoom)
         {
             Debug.Log("CreateLobby: estou numa sala; vou sair e criar a seguir.");
@@ -49,7 +49,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
             return;
         }
 
-        // 3) Criar
+        // create room 
         CurrentRoomCode = GenerateRoomCode(6);
         var opts = new RoomOptions { MaxPlayers = (byte)maxPlayers, IsOpen = true, IsVisible = false };
         PhotonNetwork.CreateRoom(CurrentRoomCode, opts, TypedLobby.Default);
@@ -84,7 +84,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
         joinPanel.SetActive(true);
     }
 
-    // ===== Callbacks essenciais =====
+    // ===== Callbacks =====
     public override void OnConnectedToMaster()
     {
         Debug.Log("[Photon] Connected.");
@@ -95,7 +95,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         Debug.Log($"[Photon] Sala criada: {PhotonNetwork.CurrentRoom.Name}");
-        // O papel é atribuído em OnJoinedRoom para garantir LocalPlayer disponível.
+        
     }
 
     public void GoToNextPhase()
@@ -108,7 +108,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
         Debug.LogWarning($"[Photon] CreateRoom falhou ({returnCode}): {message}");
         if (returnCode == ErrorCode.GameIdAlreadyExists)
         {
-            // colisão de código → tenta outro automaticamente
+           
             CreateLobby();
         }
     }
@@ -119,7 +119,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
         if (_createAfterLeaving)
         {
             _createAfterLeaving = false;
-            // Chama de novo: agora já não estás na sala e (após OnConnectedToMaster) voltaste ao Master.
+            
             CreateLobby();
         }
     }
@@ -130,7 +130,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
                   $"({PhotonNetwork.CurrentRoom.PlayerCount}/{PhotonNetwork.CurrentRoom.MaxPlayers})");
         
 
-        // Regra simples: quem criou (MasterClient e 1º na sala) é GM. Os restantes são Player.
+        
         string role = (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 1)
                         ? "GM" : "Player";
 
@@ -164,9 +164,9 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
     {
         if (string.IsNullOrWhiteSpace(raw)) return null;
         var s = raw.Trim().ToUpperInvariant();
-        // remove tudo o que não for A–Z ou 0–9 (tira “Código: ”, espaços, quebras de linha, etc.)
+        
         s = Regex.Replace(s, @"[^A-Z0-9]", "");
-        // os teus códigos têm 6 chars; ajusta se usares outro tamanho
+        
         return s.Length >= 6 ? s : null;
     }
     

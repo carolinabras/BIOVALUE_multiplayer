@@ -22,7 +22,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     
     private void Start()
     {
-        PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.AutomaticallySyncScene = true; //important 
         if (!PhotonNetwork.IsConnected)
             PhotonNetwork.ConnectUsingSettings();
     }

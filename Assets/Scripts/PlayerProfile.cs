@@ -5,7 +5,7 @@ public class PlayerProfile : MonoBehaviour
     
     public static PlayerProfile Instance { get; private set; }
     public string PlayerName { get; set; } = "Player";
-    public string Role { get; set; } = "Player"; // "GM" ou "Player"
+    public string Role { get; set; } = "Player"; 
 
     private void Awake()
     {

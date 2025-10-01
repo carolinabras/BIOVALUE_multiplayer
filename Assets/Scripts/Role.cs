@@ -38,18 +38,18 @@ public class Role : MonoBehaviour
     {
         var me = PhotonNetwork.LocalPlayer;
 
-        // Verifica se sou GM (tens que já ter guardado isso antes!)
+        
         bool isGM = me.CustomProperties.TryGetValue("role", out var role) && (string)role == "GM";
 
         if (isGM)
         {
-            // Sou GM
+            // is gm 
             if (gmOverviewPanel != null)
                 gmOverviewPanel.SetActive(true);
         }
         else
         {
-            // Sou Player
+            // is player 
             if (gmOverviewPanel!= null)
                 gmOverviewPanel.SetActive(false);
         }
@@ -112,7 +112,7 @@ public class Role : MonoBehaviour
         Debug.Log($"[Role] -> Nome: {nameText}");
         Debug.Log($"[Role] -> Objetivo: {objectiveText}");
         
-        // Mostrar painel de espera
+        
         waitingForGMPanel.SetActive(true);
         waitingName.text = "Name: " + nameText;
         waitingCompany.text = "Company: " + companyText;
