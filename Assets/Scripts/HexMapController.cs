@@ -6,19 +6,21 @@ public class HexMapController : MonoBehaviour
 {
     public static HexMapController Instance;
 
-    [Header("Setup")]
+   
     [SerializeField] private GameObject hexCellPrefab;
     [SerializeField] private RectTransform gridParent;
+    public RectTransform GridParent => gridParent;
+
     [SerializeField] private int radius = 3;
+    
+    [SerializeField] private float hexSize = 47f; 
 
-    [Header("Sizing (pointy-top)")]
-    [Tooltip("Raio do hex (centro -> vértice). Recomendo metade da altura visual pretendida.")]
-    [SerializeField] private float hexSize = 47f; // se width≈81.4 e height≈94, então hexSize=47
-
-    [Header("Anti-overlap (px)")]
-    [Tooltip("Correção horizontal/vertical para evitar sobreposição visual (borda do sprite, antialias, etc.).")]
+  
+   // fix spacing
     [SerializeField] private float xSpacingFix = 0f;
-    [SerializeField] private float ySpacingFix = 1f; // 1 px resolve o 'empilhado' do Y
+    [SerializeField] private float ySpacingFix = 1f; 
+
+  
 
     private readonly Dictionary<Vector2Int, GameObject> cells = new();
 
@@ -33,18 +35,23 @@ public class HexMapController : MonoBehaviour
         var key = new Vector2Int(q, r);
         return cells.TryGetValue(key, out var go) ? go : null;
     }
+    
+    public IEnumerable<GameObject> GetAllCells()
+    {
+        return cells.Values;
+    }
 
     private void GenerateHexGrid()
     {
         cells.Clear();
 
-        // Dimensões teóricas (Red Blob, pointy-top):
-        float width  = SQRT3 * hexSize; // flat-to-flat
-        float height = 2f * hexSize;    // point-to-point
+       
+        float width  = SQRT3 * hexSize; 
+        float height = 2f * hexSize;   
 
-        // Passos entre centros:
-        float stepX = width + xSpacingFix;           // largura por coluna “skewed”
-        float stepY = height * 0.75f + ySpacingFix;  // 0.75 * altura entre linhas + micro-espaço
+    
+        float stepX = width + xSpacingFix;          
+        float stepY = height * 0.75f + ySpacingFix;  
 
         for (int q = -radius; q <= radius; q++)
         {
@@ -55,7 +62,7 @@ public class HexMapController : MonoBehaviour
             {
                 var axial = new Vector2Int(q, r);
 
-                // Axial -> pixel (pointy-top), com os passos ajustados
+                
                 float x = stepX * (q + r * 0.5f);
                 float y = stepY * r;
                 var pos = new Vector2(x, y);
@@ -63,11 +70,11 @@ public class HexMapController : MonoBehaviour
                 var cell = Instantiate(hexCellPrefab, gridParent);
                 var rect = cell.GetComponent<RectTransform>();
 
-                // Garante que o Rect bate com a teoria
+           
                 rect.sizeDelta = new Vector2(width, height);
                 rect.anchoredPosition = pos;
 
-                // Meta opcional
+         
                 var drop = cell.GetComponent<HexCellDrop>();
                 if (drop != null) drop.axialCoords = axial;
 
