@@ -2440,8 +2440,8 @@ GameObject:
   - component: {fileID: 1964121790}
   - component: {fileID: 1964121793}
   - component: {fileID: 1964121792}
-  - component: {fileID: 1964121794}
   - component: {fileID: 1964121791}
+  - component: {fileID: 1964121794}
   m_Layer: 0
   m_Name: Join
   m_TagString: Untagged
@@ -2514,7 +2514,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1964121794}
-        m_TargetAssemblyTypeName: JoinLobbyButton, Assembly-CSharp
+        m_TargetAssemblyTypeName: LobbyUI, Assembly-CSharp
         m_MethodName: OnClickJoin
         m_Mode: 1
         m_Arguments:
@@ -2572,7 +2572,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1964121789}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ca59750ab6437449bdddc7537ba9bb5, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f3304ff8a199e6459eec8884772560c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   joinCodeInput: {fileID: 1248046800}

@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using UnityEngine.tvOS;
+using Photon.Pun;
 
 
 public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -14,6 +14,8 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public RectTransform rectTransform;
     public Canvas canvas;
     
+    private PhotonView photonView;
+    
     private HexCell currentCell; // the cell where the piece is currently placed
   
     [SerializeField] RectTransform gridParent;
@@ -22,7 +24,7 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
-        
+        photonView = GetComponent<PhotonView>();
         
     }
    
@@ -30,6 +32,11 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     // Transform parentAfterDrag;
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!photonView.IsMine) 
+        {
+            return;
+        }
+        
         //remember the original parent to return to if not dropped on a valid target
         originalPosition = rectTransform.anchoredPosition;
         originalParent = rectTransform.parent;
@@ -197,15 +204,43 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
        if (closestCell != null && closestCellComponent != null && closestCellComponent.IsFree())
        {
            
+           
            rectTransform.anchoredPosition = closestCell.anchoredPosition;
            closestCellComponent.SetOccupied(true);
-           currentCell = closestCellComponent;  // memoriza onde ficou
+           currentCell = closestCellComponent;  
+           
+           if (photonView != null && photonView.IsMine)
+           {
+               int index = closestCell.GetSiblingIndex();
+               photonView.RPC(nameof(RPC_SnapToCellByIndex), RpcTarget.Others, index);
+           }
        }
        else
        {
            rectTransform.SetParent(originalParent, worldPositionStays:false);
            rectTransform.anchoredPosition = originalPosition;
        }
+   }
+   
+   [PunRPC]
+   void RPC_SnapToCellByIndex(int index)
+   {
+       if (!gridParent) return;
+       if (index < 0 || index >= gridParent.childCount) return;
+
+       var child = gridParent.GetChild(index);
+       var targetRT = child as RectTransform;
+       var targetCell = child.GetComponent<HexCell>();
+       if (!targetRT || targetCell == null) return;
+
+       // Se por acaso já estiver ocupada neste cliente, aborta (proteção)
+       if (!targetCell.IsFree()) return;
+
+       rectTransform.SetParent(gridParent, worldPositionStays:false);
+       rectTransform.anchoredPosition = targetRT.anchoredPosition;
+
+       targetCell.SetOccupied(true);
+       currentCell = targetCell;
    }
    
 }
