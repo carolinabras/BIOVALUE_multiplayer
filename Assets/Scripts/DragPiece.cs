@@ -53,7 +53,7 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnDrag(PointerEventData eventData)
     {
-       rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor; // move the object with the mouse considering the canvas scale and frames
+       rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor; 
 
     }
 
@@ -233,7 +233,7 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
        var targetCell = child.GetComponent<HexCell>();
        if (!targetRT || targetCell == null) return;
 
-       // Se por acaso já estiver ocupada neste cliente, aborta (proteção)
+       
        if (!targetCell.IsFree()) return;
 
        rectTransform.SetParent(gridParent, worldPositionStays:false);
