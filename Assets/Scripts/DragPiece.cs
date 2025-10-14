@@ -34,6 +34,7 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         if (!photonView.IsMine) 
         {
+            photonView.RequestOwnership();
             return;
         }
         
