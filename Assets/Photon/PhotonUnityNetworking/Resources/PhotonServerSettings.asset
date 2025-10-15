@@ -42,6 +42,7 @@ MonoBehaviour:
   - ReceiveMessage
   - PlaceInCell
   - RPC_SnapToCellByIndex
+  - Populate
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

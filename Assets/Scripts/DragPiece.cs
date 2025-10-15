@@ -18,14 +18,18 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     
     private HexCell currentCell; // the cell where the piece is currently placed
   
-    [SerializeField] RectTransform gridParent;
+    public RectTransform gridParent;
 
     private void Awake()
+    {
+        Initialize();
+    }
+
+    public void Initialize()
     {
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         photonView = GetComponent<PhotonView>();
-        
     }
    
 
@@ -36,6 +40,11 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         {
             photonView.RequestOwnership();
             return;
+        }
+
+        if (!rectTransform || !canvas || !photonView)
+        {
+            Initialize();
         }
         
         //remember the original parent to return to if not dropped on a valid target
@@ -243,5 +252,4 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
        targetCell.SetOccupied(true);
        currentCell = targetCell;
    }
-   
 }
