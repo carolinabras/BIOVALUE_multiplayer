@@ -6,7 +6,6 @@ public class InstrumentSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject instrumentPrefab;
     [SerializeField] private InstrumentsDatabase instrumentsDatabase;
-    [SerializeField] private RectTransform mapGrid;
 
     public GameObject parentOfInstruments;
     [HideInInspector] public List<InstrumentHook> injectionStepHooks = new List<InstrumentHook>();
@@ -16,16 +15,9 @@ public class InstrumentSpawner : MonoBehaviour
 
     private void Start()
     {
-        Invoke(nameof(PopulateRemote), 2.0f);
-    }
-    
-    private void PopulateRemote()
-    {
-        if (!photonView) return;
-        photonView.RPC(nameof(Populate), RpcTarget.AllBuffered);
+        Invoke(nameof(Populate), 2.0f);
     }
 
-    [PunRPC]
     public void Populate()
     {
         if (!photonView) return;
@@ -61,7 +53,7 @@ public class InstrumentSpawner : MonoBehaviour
 
                     var instrument = instrumentsDatabase.instruments[i];
 
-                    hook.SetInstrument(instrument, mapGrid);
+                    hook.SetInstrument(instrument);
                     RectTransform hookRect = hook.GetComponent<RectTransform>();
                     if (hookRect)
                     {
@@ -69,6 +61,6 @@ public class InstrumentSpawner : MonoBehaviour
                     }
 
                     return true;
-                }, true);
+                }, false, true);
     }
 }

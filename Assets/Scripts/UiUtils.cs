@@ -82,7 +82,7 @@ public class UiUtils : MonoBehaviour
     public delegate bool ContainerFillDelegate<T>(T hook, int index) where T : MonoBehaviour;
 
     public static List<T> FillContainerWithPrefab<T>(GameObject container, GameObject prefab, int amount,
-        ContainerFillDelegate<T> fillDelegate = null, bool usePhotonInstancing = false)
+        ContainerFillDelegate<T> fillDelegate = null, bool cleanContainer = true, bool usePhotonInstancing = false)
         where T : MonoBehaviour
     {
         if (!container || !prefab)
@@ -97,10 +97,12 @@ public class UiUtils : MonoBehaviour
             return new List<T>();
         }
 
-        ClearChildren(container);
+        if (cleanContainer)
+        {
+            ClearChildren(container);
+        }
 
         List<T> instances = new List<T>(amount);
-        UiUtils.ClearChildren(container);
         for (int i = 0; i < amount; i++)
         {
             GameObject entryObject;
@@ -110,8 +112,23 @@ public class UiUtils : MonoBehaviour
             }
             else
             {
-                entryObject = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", prefab.name), container.transform.position, Quaternion.identity);
-                entryObject.transform.SetParent(container.transform, false);
+                PhotonView containerPhotonView = container.GetComponent<PhotonView>();
+                if (!containerPhotonView)
+                {
+                    Debug.LogError("Container does not have a PhotonView component.");
+                    break;
+                }
+                
+                int parentViewID = containerPhotonView.ViewID;
+                object[] initData = new object[1];
+                initData[0] = parentViewID;
+
+                entryObject = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", prefab.name),
+                    container.transform.position, Quaternion.identity, 0, initData);
+                if (!entryObject.GetComponent<SetPhotonParentOnInstantiation>())
+                {
+                    Debug.LogWarning("Prefab does not have SetPhotonParentOnInstantiation component. Setting the parent is not possible.");
+                }
             }
 
             if (!entryObject)

@@ -20,7 +20,7 @@ public class InstrumentHook : MonoBehaviour
         }
     }
 
-    public void SetInstrument(Instrument instr, RectTransform mapGrid)
+    public void SetInstrument(Instrument instr)
     {
         this.instrument = instr;
         if (instr == null)
@@ -30,10 +30,5 @@ public class InstrumentHook : MonoBehaviour
         }
 
         Name = instr.name;
-
-        if (dragPiece)
-        {
-            dragPiece.gridParent = mapGrid;
-        }
     }
 }

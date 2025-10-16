@@ -153,6 +153,7 @@ GameObject:
   - component: {fileID: 1141037753761246500}
   - component: {fileID: 2701346178887825838}
   - component: {fileID: 4591776669159816083}
+  - component: {fileID: 5497158224760302012}
   m_Layer: 5
   m_Name: Instrument_Enforcement (YELLOW)
   m_TagString: Untagged
@@ -261,7 +262,7 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 1
-  observableSearch: 0
+  observableSearch: 2
   ObservedComponents:
   - {fileID: 1141037753761246500}
   sceneViewId: 0
@@ -317,6 +318,18 @@ MonoBehaviour:
     icon: {fileID: 0}
   nameText: {fileID: 107451540073569995}
   dragPiece: {fileID: 2701346178887825838}
+--- !u!114 &5497158224760302012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5782586414337912752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 253a3c4bc654417789d82eed06b5c142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6643966830514618017
 GameObject:
   m_ObjectHideFlags: 0
