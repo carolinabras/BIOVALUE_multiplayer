@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class InstrumentHook : MonoBehaviour
@@ -30,5 +31,18 @@ public class InstrumentHook : MonoBehaviour
         }
 
         Name = instr.name;
+    }
+
+    [PunRPC]
+    public void SetInstrumentRPC(string instrumentName)
+    {
+        // this.instrument = instr;
+        // if (instr == null)
+        // {
+        //     Debug.LogError("Instrument is null");
+        //     return;
+        // }
+
+        Name = instrumentName;
     }
 }

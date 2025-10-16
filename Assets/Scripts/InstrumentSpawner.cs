@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
@@ -53,7 +54,22 @@ public class InstrumentSpawner : MonoBehaviour
 
                     var instrument = instrumentsDatabase.instruments[i];
 
-                    hook.SetInstrument(instrument);
+                    PhotonView hookPhotonView = hook.GetComponent<PhotonView>();
+                    if (hookPhotonView)
+                    {
+                        if (hookPhotonView.ViewID != 0)
+                        {
+                            hookPhotonView.RPC("SetInstrumentRPC", RpcTarget.All, instrument.name);
+                        }
+                        else
+                        {
+                            StartCoroutine(SetInstrumentWhenValidViewId(hookPhotonView, instrument));
+                        }
+                    }
+                    else
+                    {
+                        hook.SetInstrument(instrument);
+                    }
                     RectTransform hookRect = hook.GetComponent<RectTransform>();
                     if (hookRect)
                     {
@@ -62,5 +78,15 @@ public class InstrumentSpawner : MonoBehaviour
 
                     return true;
                 }, false, true);
+    }
+    
+    IEnumerator SetInstrumentWhenValidViewId(PhotonView hookPhotonView, Instrument instrument)
+    {
+        while (hookPhotonView.ViewID == 0)
+        {
+            yield return null; // Wait for the next frame
+        }
+        
+        hookPhotonView.RPC("SetInstrumentRPC", RpcTarget.All, instrument.name);
     }
 }
