@@ -1,0 +1,80 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Photon.Pun;
+using UnityEngine;
+
+public class ActionCardsSpawner : MonoBehaviour
+{
+    [SerializeField] private GameObject actionCardPrefab;
+    [SerializeField] private ActionCardsDatabase actionCardsDatabase;
+    [SerializeField] private GameObject parentOfInstruments;
+
+    [HideInInspector] public List<ActionCardsHook> injectionStepHooks = new List<ActionCardsHook>();
+
+    private void Start()
+    {
+        Invoke(nameof(SpawnActionCards), 2.0f);
+    }
+
+   /* public void Populate()
+    {
+
+        if (!actionCardsDatabase)
+        {
+            Debug.LogError("ActionCards Database is not assigned.");
+            return;
+        }
+
+        if (!actionCardPrefab)
+        {
+            Debug.LogError("Protocol category or entry prefab is not assigned.");
+            return;
+        }
+
+        if (!parentOfInstruments)
+        {
+            parentOfInstruments = this.gameObject;
+        }
+
+        injectionStepHooks =
+            UiUtils.FillContainerWithPrefab<ActionCardsHook>(parentOfInstruments, actionCardPrefab,
+                actionCardsDatabase.actionCards.Length, (hook, i) =>
+                {
+                    if (i >= actionCardsDatabase.actionCards.Length)
+                    {
+                        Debug.LogError(
+                            $"Expected {actionCardsDatabase.actionCards.Length} actionCards, but more {i} were provided.");
+                        return false;
+                    }
+
+                    var card = actionCardsDatabase.actionCards[i];
+
+                    hook.SetActionCard(card);
+                    
+                    RectTransform hookRect = hook.GetComponent<RectTransform>();
+                    if (hookRect)
+                    {
+                        hookRect.localPosition = new Vector3(50, 50);
+                    }
+
+                    return true;
+                }, false, false);
+    }
+    
+   */ public void SpawnActionCards()
+    {
+        foreach (var actionCard in actionCardsDatabase.actionCards)
+        {
+            GameObject cardObject = Instantiate(actionCardPrefab, transform);
+            ActionCardsHook hook = cardObject.GetComponent<ActionCardsHook>();
+            if (hook != null)
+            {
+                hook.actionCard = actionCard;
+                hook.Description = actionCard.descriptionGeneral;
+                hook.DescriptionHow = actionCard.descriptionHow;
+            }
+        }
+    }
+    
+}

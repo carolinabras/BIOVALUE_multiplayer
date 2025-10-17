@@ -12,4 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee2b54e55627b4fbd7f4236342729b, type: 3}
   m_Name: ActionCardsDatabase
   m_EditorClassIdentifier: 
-  actionCards: []
+  actionCards:
+  - cardName: Card 1
+    descriptionGeneral: Use this thing to plan better
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 0
+  - cardName: Card 2
+    descriptionGeneral: Use bills
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 1
+  - cardName: Card 3
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 2
