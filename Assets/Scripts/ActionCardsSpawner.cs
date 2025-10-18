@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ActionCardsSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject actionCardPrefab;
     [SerializeField] private ActionCardsDatabase actionCardsDatabase;
     [SerializeField] private GameObject parentOfInstruments;
+    
+    [SerializeField] private Transform panelParent;
 
     [HideInInspector] public List<ActionCardsHook> injectionStepHooks = new List<ActionCardsHook>();
 
@@ -62,11 +65,12 @@ public class ActionCardsSpawner : MonoBehaviour
                 }, false, false);
     }
     
-   */ public void SpawnActionCards()
+   */ 
+   public void SpawnActionCards()
     {
         foreach (var actionCard in actionCardsDatabase.actionCards)
         {
-            GameObject cardObject = Instantiate(actionCardPrefab, transform);
+            GameObject cardObject = Instantiate(actionCardPrefab, panelParent);
             ActionCardsHook hook = cardObject.GetComponent<ActionCardsHook>();
             if (hook != null)
             {
