@@ -26,6 +26,7 @@ public class GameKnowledge : MonoBehaviour
             }
 
             _instanceGameObject = Instantiate(prefab);
+            DontDestroyOnLoad(_instanceGameObject);
             if (!_instanceGameObject)
             {
                 Debug.LogError("Failed to instantiate GameKnowledge prefab.");
