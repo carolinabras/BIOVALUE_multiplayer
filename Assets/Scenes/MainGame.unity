@@ -2568,7 +2568,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   instrumentPrefab: {fileID: 5782586414337912752, guid: d29664e28f27e0e43a7e03e37c795f92, type: 3}
-  instrumentsDatabase: {fileID: 11400000, guid: c3fadf012b0092c73b5a86274bd98b86, type: 2}
+  instrumentsDatabase: {fileID: 0}
   parentOfInstruments: {fileID: 0}
   injectionStepHooks: []
   photonView: {fileID: 2029099957}

@@ -13,15 +13,18 @@ MonoBehaviour:
   m_Name: DefaultInstrumentsDatabase
   m_EditorClassIdentifier: 
   instruments:
-  - name: The What?
+  - id: 1
+    name: The What?
     description: 
     type: 0
     icon: {fileID: 0}
-  - name: The Who
+  - id: 2
+    name: The Who
     description: 
     type: 0
     icon: {fileID: 0}
-  - name: The When
+  - id: 3
+    name: The When
     description: 
     type: 0
     icon: {fileID: 0}

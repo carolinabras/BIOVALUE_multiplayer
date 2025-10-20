@@ -26,8 +26,12 @@ public class InstrumentSpawner : MonoBehaviour
 
         if (!instrumentsDatabase)
         {
-            Debug.LogError("Instruments Database is not assigned.");
-            return;
+            instrumentsDatabase = GameKnowledge.Instance?.instrumentsDatabase;
+            if (!instrumentsDatabase)
+            {
+                Debug.LogError("Instruments Database is not assigned.");
+                return;
+            }
         }
 
         if (!instrumentPrefab)
@@ -43,23 +47,23 @@ public class InstrumentSpawner : MonoBehaviour
 
         injectionStepHooks =
             UiUtils.FillContainerWithPrefab<InstrumentHook>(parentOfInstruments, instrumentPrefab,
-                instrumentsDatabase.instruments.Length, (hook, i) =>
+                instrumentsDatabase.instruments.Count, (hook, i) =>
                 {
-                    if (i >= instrumentsDatabase.instruments.Length)
+                    if (i >= instrumentsDatabase.instruments.Count)
                     {
                         Debug.LogError(
-                            $"Expected {instrumentsDatabase.instruments.Length} instruments, but more {i} were provided.");
+                            $"Expected {instrumentsDatabase.instruments.Count} instruments, but more {i} were provided.");
                         return false;
                     }
 
                     var instrument = instrumentsDatabase.instruments[i];
-
+                    
                     PhotonView hookPhotonView = hook.GetComponent<PhotonView>();
                     if (hookPhotonView)
                     {
                         if (hookPhotonView.ViewID != 0)
                         {
-                            hookPhotonView.RPC("SetInstrumentRPC", RpcTarget.All, instrument.name);
+                            hookPhotonView.RPC("SetInstrumentRPC", RpcTarget.All, instrument.id);
                         }
                         else
                         {
@@ -87,6 +91,6 @@ public class InstrumentSpawner : MonoBehaviour
             yield return null; // Wait for the next frame
         }
         
-        hookPhotonView.RPC("SetInstrumentRPC", RpcTarget.All, instrument.name);
+        hookPhotonView.RPC("SetInstrumentRPC", RpcTarget.All, instrument.id);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -13,6 +14,7 @@ public enum InstrumentType
 [Serializable]
 public class Instrument
 {
+    public int id = -1;
     public string name = "New Instrument";
     public string description = "Instrument Description";
     public InstrumentType type = InstrumentType.None;
@@ -20,20 +22,25 @@ public class Instrument
 
     public Instrument()
     {
-        
     }
-    
-    public Instrument(string name, string description, InstrumentType type, Sprite icon = null)
+
+    public Instrument(Instrument instrument)
     {
-        this.name = name;
-        this.description = description;
-        this.type = type;
-        this.icon = icon;
+        this.id = instrument.id;
+        this.name = instrument.name;
+        this.description = instrument.description;
+        this.type = instrument.type;
+        this.icon = instrument.icon;
     }
 }
 
 [CreateAssetMenu(fileName = "InstrumentsDatabase", menuName = "Scriptable Objects/Instruments Database")]
 public class InstrumentsDatabase : ScriptableObject
 {
-    public Instrument[] instruments;
+    public List<Instrument> instruments;
+
+    public Instrument GetInstrumentById(int id)
+    {
+        return instruments.Find(instrument => instrument.id == id);
+    }
 }
