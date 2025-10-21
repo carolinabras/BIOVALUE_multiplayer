@@ -63,7 +63,7 @@ public class InstrumentSpawner : MonoBehaviour
                     {
                         if (hookPhotonView.ViewID != 0)
                         {
-                            hookPhotonView.RPC("SetInstrumentRPC", RpcTarget.All, instrument.id);
+                            hookPhotonView.RPC(nameof(InstrumentHook.SetInstrumentRPC), RpcTarget.All, instrument.id);
                         }
                         else
                         {
