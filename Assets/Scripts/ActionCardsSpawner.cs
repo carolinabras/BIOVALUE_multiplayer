@@ -12,6 +12,7 @@ public class ActionCardsSpawner : MonoBehaviour
     [SerializeField] private GameObject parentOfInstruments;
     
     [SerializeField] private Transform panelParent;
+    [SerializeField] private Transform newpanelParent;
 
     [HideInInspector] public List<ActionCardsHook> injectionStepHooks = new List<ActionCardsHook>();
 
@@ -74,11 +75,25 @@ public class ActionCardsSpawner : MonoBehaviour
             ActionCardsHook hook = cardObject.GetComponent<ActionCardsHook>();
             if (hook != null)
             {
-                hook.actionCard = actionCard;
-                hook.Description = actionCard.descriptionGeneral;
-                hook.DescriptionHow = actionCard.descriptionHow;
+                hook.SetActionCard(actionCard);
             }
         }
     }
+   
+   public void SpawnPlayedActionCards() 
+   {
+       foreach (var actionCard in actionCardsDatabase.actionCards)
+       {
+           if (actionCard.isPlayed)
+           {
+               GameObject cardObject = Instantiate(actionCardPrefab, newpanelParent);
+               ActionCardsHook hook = cardObject.GetComponent<ActionCardsHook>();
+               if (hook != null)
+               {
+                   hook.SetActionCard(actionCard);
+               }
+           }
+       }
+   }
     
 }

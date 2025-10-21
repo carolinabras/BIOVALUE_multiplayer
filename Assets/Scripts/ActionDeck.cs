@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 
 public class ActionDeck : MonoBehaviour
@@ -6,6 +7,8 @@ public class ActionDeck : MonoBehaviour
     [SerializeField] private GameObject panelMenuRT;
     [SerializeField] private Transform contentTransform;
     [SerializeField] private GameObject actionCardPrefab;
+
+    [SerializeField] private GameObject buttonPlayCards;
     
     [SerializeField] private float animationTime = 0.5f;
     
@@ -17,6 +20,7 @@ public class ActionDeck : MonoBehaviour
         {
             isOpen = true;
             panelMenuRT.SetActive(true);
+            buttonPlayCards.SetActive(true);
             LeanTween.scale(panelMenuRT.GetComponent<RectTransform>(), Vector3.one, animationTime).setEaseOutBack();
         }
     }
@@ -26,6 +30,7 @@ public class ActionDeck : MonoBehaviour
         if (isOpen)
         {
             isOpen = false;
+            buttonPlayCards.SetActive(false);
             LeanTween.scale(panelMenuRT.GetComponent<RectTransform>(), Vector3.zero, animationTime).setEaseInBack()
                 .setOnComplete(() => panelMenuRT.SetActive(false));
         }

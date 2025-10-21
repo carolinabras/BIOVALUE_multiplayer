@@ -11,9 +11,15 @@ public class ActionCardsHook : MonoBehaviour
     [SerializeField] private TMP_InputField descriptionCustom; 
     
     [SerializeField] private TMP_InputField  descriptionHow;
-
-    [SerializeField] private int id;
     
+    
+    public void OnCustomValueChanged(string text)   { DescriptionCustom = text; Debug.Log("Custom Value Changed: " + text); }
+    public void OnCustomEndEdit(string text)        { DescriptionCustom = text; Debug.Log("Description changed" + text);   }
+
+    public void OnHowValueChanged(string text)      { DescriptionHow = text;   }
+    public void OnHowEndEdit(string text)           { DescriptionHow = text;   Debug.Log("Description how changed" + text);   }
+
+   
     
     public string Description
     {
@@ -45,9 +51,11 @@ public class ActionCardsHook : MonoBehaviour
             if (descriptionHow != null)
             {
                 descriptionHow.text = value;
+                Debug.Log("DescriptionHow set to: " + value);
             }
         }
     }
+    
     
     public string DescriptionCustom
     {
@@ -65,8 +73,43 @@ public class ActionCardsHook : MonoBehaviour
 
     public int ID
     {
-        get => id;
-        set => id = value;
+        get => actionCard != null ? actionCard.id : -1;
+        set
+        {
+            if (actionCard != null)
+            {
+                actionCard.id = value;
+            }
+        }
+    }
+    
+    public bool IsSelected
+    {
+        get => actionCard != null && actionCard.isSelected;
+        set
+        {
+            if (actionCard != null)
+            {
+                actionCard.isSelected = value;
+            }
+        }
+    }
+    
+    public bool isPlayed
+    {
+        get => actionCard != null && actionCard.isPlayed;
+        set
+        {
+            if (actionCard != null)
+            {
+                actionCard.isPlayed = value;
+            }
+        }
+    }
+
+    public void OnSelectedClicked()
+    {
+        IsSelected = !IsSelected; 
     }
     
     public void SetActionCard (ActionCard card)
@@ -78,7 +121,6 @@ public class ActionCardsHook : MonoBehaviour
             return;
         }
         
-        ID = card.id;
         DescriptionHow = card.descriptionHow;
         
         if (card.type == ActionCardType.Custom)

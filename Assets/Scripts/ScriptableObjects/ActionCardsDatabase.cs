@@ -20,6 +20,10 @@ public class ActionCard
     public Sprite icon = null;
     public int id = 0;
     
+    public bool isSelected = false;
+    public bool isPlayed = false;
+    
+    
     public ActionCard()
     {
         
