@@ -23,11 +23,6 @@ public class Role : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waiting;
     
     [SerializeField] private Image readyButton;
-    
-    private const string K_COMPANY = "card_company";
-    private const string K_NAME = "card_name";
-    private const string K_OBJ = "card_objective";
-    private const string K_READY = "card_ready";  
 
     private bool isReady = false;
     
@@ -70,21 +65,21 @@ public class Role : MonoBehaviour
 
         Debug.Log($"[Role] A carregar dados para jogador ID={me.ActorNumber}...");
 
-        if (me.CustomProperties.TryGetValue(K_COMPANY, out var c))
+        if (me.CustomProperties.TryGetValue(BiovalueStatics.PlayerCompanyKey, out var c))
         {
             company.text = c as string ?? "";
             Debug.Log($"[Role] Empresa carregada: {company.text}");
         }
         else Debug.Log("[Role] Empresa não encontrada nas propriedades.");
 
-        if (me.CustomProperties.TryGetValue(K_NAME, out var n))
+        if (me.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n))
         {
             name.text = n as string ?? "";
             Debug.Log($"[Role] Nome carregado: {name.text}");
         }
         else Debug.Log("[Role] Nome não encontrado nas propriedades.");
 
-        if (me.CustomProperties.TryGetValue(K_OBJ, out var o))
+        if (me.CustomProperties.TryGetValue(BiovalueStatics.PlayerObjectiveKey, out var o))
         {
             personalObjective.text = o as string ?? "";
             Debug.Log($"[Role] Objetivo carregado: {personalObjective.text}");
@@ -100,9 +95,9 @@ public class Role : MonoBehaviour
 
         var ht = new Hashtable
         {
-            [K_COMPANY] = companyText,
-            [K_NAME] = nameText,
-            [K_OBJ] = objectiveText,
+            [BiovalueStatics.PlayerCompanyKey] = companyText,
+            [BiovalueStatics.PlayerNameKey] = nameText,
+            [BiovalueStatics.PlayerObjectiveKey] = objectiveText,
         };
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
@@ -125,7 +120,7 @@ public class Role : MonoBehaviour
     {
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
         {
-            { K_READY, false }
+            { BiovalueStatics.PlayerReadyKey, false }
         });
         isReady = false;
         readyButton.color = Color.white;
@@ -145,7 +140,7 @@ public class Role : MonoBehaviour
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
         {
-            [K_READY] = isReady
+            [BiovalueStatics.PlayerReadyKey] = isReady
         });
 
         if (isReady)

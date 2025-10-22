@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameKnowledge : MonoBehaviour
@@ -48,4 +49,6 @@ public class GameKnowledge : MonoBehaviour
 
     public InstrumentsDatabase instrumentsDatabase;
     public ActionCardsDatabase actionCardsDatabase;
+    
+    public List<int> playedInstrumentIds = new List<int>();
 }

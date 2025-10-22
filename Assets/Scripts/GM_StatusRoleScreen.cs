@@ -13,9 +13,6 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
     [SerializeField] private Transform content;            // o content do ScrollView ou layout
     [SerializeField] private GameObject playerItemPrefab;  // o PlayerStatusItem prefab
 
-    private const string K_NAME = "card_name";
-    private const string K_READY = "card_ready";
-
     private readonly Dictionary<int, GameObject> itemsByActor = new();
 
     private void Start()
@@ -41,7 +38,7 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
         
         foreach (var key in changedProps.Keys)
         {
-            if (key is string s && (s == K_READY || s == K_NAME))
+            if (key is string s && (s == BiovalueStatics.PlayerReadyKey || s == BiovalueStatics.PlayerNameKey))
             {
                 AddOrUpdate(targetPlayer);
                 break;
@@ -63,8 +60,8 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
             itemsByActor[player.ActorNumber] = item;
         }
 
-        string name = player.CustomProperties.TryGetValue(K_NAME, out var n) ? n as string : $"Jogador {player.ActorNumber}";
-        bool isReady = player.CustomProperties.TryGetValue(K_READY, out var r) && r is bool b && b;
+        string name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) ? n as string : $"Jogador {player.ActorNumber}";
+        bool isReady = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerReadyKey, out var r) && r is bool b && b;
 
         item.GetComponent<PlayerStatus>().Setup(name, isReady);
     }

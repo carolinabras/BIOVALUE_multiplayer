@@ -45,6 +45,9 @@ MonoBehaviour:
   - Populate
   - SetInstrument
   - SetInstrumentRPC
+  - RPC_OnEndInstrumentPhase
+  - RPC_SetTurnForPlayerIndex
+  - RPC_SetGamePhase
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
