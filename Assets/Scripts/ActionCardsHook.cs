@@ -1,26 +1,42 @@
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class ActionCardsHook : MonoBehaviour
+public class ActionCardsHook : MonoBehaviourPun
 {
     [HideInInspector] public ActionCard actionCard;
 
     [SerializeField] private TMPro.TMP_Text description;
 
-    [SerializeField] private TMP_InputField descriptionCustom; 
-    
-    [SerializeField] private TMP_InputField  descriptionHow;
-    
-    
-    public void OnCustomValueChanged(string text)   { DescriptionCustom = text; Debug.Log("Custom Value Changed: " + text); }
-    public void OnCustomEndEdit(string text)        { DescriptionCustom = text; Debug.Log("Description changed" + text);   }
+    [SerializeField] private TMP_InputField descriptionCustom;
 
-    public void OnHowValueChanged(string text)      { DescriptionHow = text;   }
-    public void OnHowEndEdit(string text)           { DescriptionHow = text;   Debug.Log("Description how changed" + text);   }
+    [SerializeField] private TMP_InputField descriptionHow;
 
-   
-    
+
+    public void OnCustomValueChanged(string text)
+    {
+        DescriptionCustom = text;
+        Debug.Log("Custom Value Changed: " + text);
+    }
+
+    public void OnCustomEndEdit(string text)
+    {
+        DescriptionCustom = text;
+        Debug.Log("Description changed" + text);
+    }
+
+    public void OnHowValueChanged(string text)
+    {
+        DescriptionHow = text;
+    }
+
+    public void OnHowEndEdit(string text)
+    {
+        DescriptionHow = text;
+        Debug.Log("Description how changed" + text);
+    }
+
+
     public string Description
     {
         get => description != null ? description.text : string.Empty;
@@ -30,14 +46,14 @@ public class ActionCardsHook : MonoBehaviour
             {
                 actionCard.descriptionGeneral = value;
             }
-        
+
             if (description != null)
             {
                 description.text = value;
             }
         }
     }
-    
+
     public string DescriptionHow
     {
         get => descriptionHow != null ? descriptionHow.text : string.Empty;
@@ -46,8 +62,8 @@ public class ActionCardsHook : MonoBehaviour
             if (actionCard != null)
             {
                 actionCard.descriptionHow = value;
-            }  
-          
+            }
+
             if (descriptionHow != null)
             {
                 descriptionHow.text = value;
@@ -55,14 +71,13 @@ public class ActionCardsHook : MonoBehaviour
             }
         }
     }
-    
-    
+
+
     public string DescriptionCustom
     {
         get => descriptionCustom != null ? descriptionCustom.text : string.Empty;
         set
         {
-            
             if (actionCard != null)
                 actionCard.descriptionGeneral = value;
 
@@ -82,7 +97,7 @@ public class ActionCardsHook : MonoBehaviour
             }
         }
     }
-    
+
     public bool IsSelected
     {
         get => actionCard != null && actionCard.isSelected;
@@ -94,7 +109,7 @@ public class ActionCardsHook : MonoBehaviour
             }
         }
     }
-    
+
     public bool isPlayed
     {
         get => actionCard != null && actionCard.isPlayed;
@@ -109,10 +124,10 @@ public class ActionCardsHook : MonoBehaviour
 
     public void OnSelectedClicked()
     {
-        IsSelected = !IsSelected; 
+        IsSelected = !IsSelected;
     }
-    
-    public void SetActionCard (ActionCard card)
+
+    public void SetActionCard(ActionCard card)
     {
         this.actionCard = card;
         if (card == null)
@@ -120,9 +135,9 @@ public class ActionCardsHook : MonoBehaviour
             Debug.LogError("Action Card is null");
             return;
         }
-        
+
         DescriptionHow = card.descriptionHow;
-        
+
         if (card.type == ActionCardType.Custom)
         {
             if (descriptionCustom != null)
@@ -130,8 +145,8 @@ public class ActionCardsHook : MonoBehaviour
                 descriptionCustom.gameObject.SetActive(true);
                 DescriptionCustom = card.descriptionGeneral;
             }
-            
         }
+
         if (card.type == ActionCardType.PreDone)
         {
             if (descriptionCustom != null)
@@ -142,4 +157,32 @@ public class ActionCardsHook : MonoBehaviour
         }
     }
 
+    public void SetActionCardInNetwork(ActionCard card)
+    {
+        if (photonView)
+        {
+            photonView.RPC(nameof(RPC_SetActionCard), RpcTarget.All, card.id, card.cardName, card.descriptionGeneral,
+                card.descriptionHow, card.type);
+        }
+        else
+        {
+            Debug.LogWarning("PhotonView is not assigned, setting action card locally.");
+            SetActionCard(card);
+        }
+    }
+
+    [PunRPC]
+    public void RPC_SetActionCard(int id, string cardName, string descriptionGeneral, string descriptionHowCard,
+        ActionCardType type)
+    {
+        ActionCard card = new ActionCard
+        {
+            id = id,
+            cardName = cardName,
+            descriptionGeneral = descriptionGeneral,
+            descriptionHow = descriptionHowCard,
+            type = type
+        };
+        SetActionCard(card);
+    }
 }

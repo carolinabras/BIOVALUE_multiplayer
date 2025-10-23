@@ -24,13 +24,21 @@ public class BiovaluePlayer
     public BiovaluePlayer()
     {
     }
-    
+
     public BiovaluePlayer(Player player)
     {
         Player = player;
-        Company = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerCompanyKey, out var c) ? c as string : string.Empty;
-        Name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) ? n as string : string.Empty;
-        Objective = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerObjectiveKey, out var o) ? o as string : string.Empty;
+        if (player == null) return;
+
+        Company = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerCompanyKey, out var c)
+            ? c as string
+            : string.Empty;
+        Name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n)
+            ? n as string
+            : string.Empty;
+        Objective = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerObjectiveKey, out var o)
+            ? o as string
+            : string.Empty;
     }
 }
 
@@ -50,7 +58,7 @@ public class Instrument
     public string name = "New Instrument";
     public string description = "Instrument Description";
     public InstrumentType type = InstrumentType.None;
-    public Sprite icon = null;
+    // public Sprite icon = null;
 
     public Instrument()
     {
@@ -62,6 +70,46 @@ public class Instrument
         this.name = instrument.name;
         this.description = instrument.description;
         this.type = instrument.type;
-        this.icon = instrument.icon;
+        // this.icon = instrument.icon;
+    }
+}
+
+
+[Serializable]
+public enum ActionCardType
+{
+    none = 0,
+    PreDone = 1,
+    Custom = 2
+}
+
+[Serializable]
+public class ActionCard
+{
+    public string cardName = "New Card";
+    public string descriptionGeneral = "Action Card Description";
+    public string descriptionHow = "Detailed Description";
+    public ActionCardType type = ActionCardType.none;
+    public Sprite icon = null;
+    public int id = 0;
+
+    public bool isSelected = false;
+    public bool isPlayed = false;
+
+
+    public ActionCard()
+    {
+    }
+
+    public ActionCard(ActionCard card)
+    {
+        this.cardName = card.cardName;
+        this.descriptionGeneral = card.descriptionGeneral;
+        this.descriptionHow = card.descriptionHow;
+        this.type = card.type;
+        this.icon = card.icon;
+        this.id = card.id;
+        this.isSelected = card.isSelected;
+        this.isPlayed = card.isPlayed;
     }
 }
