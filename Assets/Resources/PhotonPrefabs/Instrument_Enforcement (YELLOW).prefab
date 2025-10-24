@@ -316,7 +316,6 @@ MonoBehaviour:
     name: New Instrument
     description: Instrument Description
     type: 0
-    icon: {fileID: 0}
   nameText: {fileID: 107451540073569995}
   dragPiece: {fileID: 2701346178887825838}
   descriptionText: {fileID: 5015630537012434235}

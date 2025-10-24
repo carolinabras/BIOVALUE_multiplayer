@@ -3,12 +3,12 @@ using Photon.Pun;
 using TMPro;
 using UnityEngine;
 
-public class InstrumentHook : MonoBehaviour
+public class InstrumentHook : MonoBehaviourPun
 {
     [HideInInspector] public Instrument instrument;
 
     [SerializeField] private TMP_Text nameText;
-    
+
     [SerializeField] private DragPiece dragPiece;
 
     public string Name
@@ -20,13 +20,14 @@ public class InstrumentHook : MonoBehaviour
             {
                 instrument.name = value;
             }
+
             if (nameText)
             {
                 nameText.text = value;
             }
         }
     }
-    
+
     [SerializeField] private TMP_Text descriptionText;
 
     public string Description
@@ -38,6 +39,7 @@ public class InstrumentHook : MonoBehaviour
             {
                 instrument.description = value;
             }
+
             if (descriptionText)
             {
                 descriptionText.text = value;
@@ -55,17 +57,33 @@ public class InstrumentHook : MonoBehaviour
         }
 
         Name = instr.name;
+        Description = instr.description;
+    }
+
+    public void SetInstrumentInNetwork(Instrument instr)
+    {
+        if (photonView)
+        {
+            photonView.RPC(nameof(RPC_SetInstrument), RpcTarget.All, instr.id, instr.name, instr.description,
+                instr.type);
+        }
+        else
+        {
+            Debug.LogWarning("PhotonView is not assigned, setting instrument locally.");
+            SetInstrument(instr);
+        }
     }
 
     [PunRPC]
-    public void SetInstrumentRPC(int instrumentId)
+    public void RPC_SetInstrument(int id, string instrumentName, string description, InstrumentType type)
     {
-        var instrumentData = GameKnowledge.Instance?.instrumentsDatabase?.GetInstrumentById(instrumentId);
-        if (instrumentData == null)
+        Instrument instr = new Instrument
         {
-            Debug.LogError($"Instrument with ID {instrumentId} not found in database.");
-            return;
-        }
-        SetInstrument(instrumentData);
+            id = id,
+            name = instrumentName,
+            description = description,
+            type = type
+        };
+        SetInstrument(instr);
     }
 }

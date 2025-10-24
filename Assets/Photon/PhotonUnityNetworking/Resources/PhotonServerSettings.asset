@@ -48,6 +48,8 @@ MonoBehaviour:
   - RPC_OnEndInstrumentPhase
   - RPC_SetTurnForPlayerIndex
   - RPC_SetGamePhase
+  - RPC_SetInstrument
+  - RPC_SetActionCard
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
