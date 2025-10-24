@@ -1,0 +1,390 @@
+fileFormatVersion: 2
+guid: bfaf5919d5f66f6489922a8dcebfb250
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1316262815908521402
+    second: BIV_logo_LOGO_HOR WHT_0
+  - first:
+      213: -6384421750188862207
+    second: BIV_logo_LOGO_HOR WHT_1
+  - first:
+      213: 1481533759901522814
+    second: BIV_logo_LOGO_HOR WHT_2
+  - first:
+      213: 1669836271939034949
+    second: BIV_logo_LOGO_HOR WHT_3
+  - first:
+      213: -1377188289465470892
+    second: BIV_logo_LOGO_HOR WHT_4
+  - first:
+      213: -2507647690314158836
+    second: BIV_logo_LOGO_HOR WHT_5
+  - first:
+      213: -6732956215625701366
+    second: BIV_logo_LOGO_HOR WHT_6
+  - first:
+      213: 1059213721476808767
+    second: BIV_logo_LOGO_HOR WHT_7
+  - first:
+      213: -5909823053393267713
+    second: BIV_logo_LOGO_HOR WHT_8
+  - first:
+      213: -2799467075168498574
+    second: BIV_logo_LOGO_HOR WHT_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1411
+        height: 1596
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab56845ae0e444210800000000000000
+      internalID: 1316262815908521402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_1
+      rect:
+        serializedVersion: 2
+        x: 1766
+        y: 464
+        width: 556
+        height: 595
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10517bb8e3af567a0800000000000000
+      internalID: -6384421750188862207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_2
+      rect:
+        serializedVersion: 2
+        x: 2390
+        y: 1003
+        width: 143
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7bdda9ea177f8410800000000000000
+      internalID: 1481533759901522814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_3
+      rect:
+        serializedVersion: 2
+        x: 3016
+        y: 464
+        width: 638
+        height: 595
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54f1dfdfd337c2710800000000000000
+      internalID: 1669836271939034949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_4
+      rect:
+        serializedVersion: 2
+        x: 4089
+        y: 464
+        width: 251
+        height: 674
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45035912c8e33ece0800000000000000
+      internalID: -1377188289465470892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_5
+      rect:
+        serializedVersion: 2
+        x: 2342
+        y: 464
+        width: 251
+        height: 491
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0deef436bb033dd0800000000000000
+      internalID: -2507647690314158836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_6
+      rect:
+        serializedVersion: 2
+        x: 2608
+        y: 453
+        width: 460
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a082f5f9efbbf82a0800000000000000
+      internalID: -6732956215625701366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_7
+      rect:
+        serializedVersion: 2
+        x: 3592
+        y: 453
+        width: 465
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3048d9844513be00800000000000000
+      internalID: 1059213721476808767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_8
+      rect:
+        serializedVersion: 2
+        x: 4339
+        y: 451
+        width: 549
+        height: 497
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff374199e371cfda0800000000000000
+      internalID: -5909823053393267713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BIV_logo_LOGO_HOR WHT_9
+      rect:
+        serializedVersion: 2
+        x: 4903
+        y: 453
+        width: 415
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27c0e20078b4629d0800000000000000
+      internalID: -2799467075168498574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      BIV_logo_LOGO_HOR WHT_0: 1316262815908521402
+      BIV_logo_LOGO_HOR WHT_1: -6384421750188862207
+      BIV_logo_LOGO_HOR WHT_2: 1481533759901522814
+      BIV_logo_LOGO_HOR WHT_3: 1669836271939034949
+      BIV_logo_LOGO_HOR WHT_4: -1377188289465470892
+      BIV_logo_LOGO_HOR WHT_5: -2507647690314158836
+      BIV_logo_LOGO_HOR WHT_6: -6732956215625701366
+      BIV_logo_LOGO_HOR WHT_7: 1059213721476808767
+      BIV_logo_LOGO_HOR WHT_8: -5909823053393267713
+      BIV_logo_LOGO_HOR WHT_9: -2799467075168498574
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
