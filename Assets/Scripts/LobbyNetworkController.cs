@@ -13,7 +13,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI codeText;
     [SerializeField] private Button createButton;
     [SerializeField] private GameObject joinPanel;
-    [SerializeField] private GameObject createPanel;
+   // [SerializeField] private GameObject createPanel;
     
     private const string ROLE_KEY = "role"; // "GM" | "Player"
     
@@ -54,7 +54,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
         var opts = new RoomOptions { MaxPlayers = (byte)maxPlayers, IsOpen = true, IsVisible = false };
         PhotonNetwork.CreateRoom(CurrentRoomCode, opts, TypedLobby.Default);
         codeText.text = CurrentRoomCode;
-        createPanel.SetActive(true);
+        //createPanel.SetActive(true);
         
     }
 
