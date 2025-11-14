@@ -1,9 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using Photon.Pun;
 using UnityEngine;
 
-public class InstrumentSpawner : MonoBehaviour
+
+
+public class InstrumentSpawnerLocal : MonoBehaviour
 {
     [SerializeField] private GameObject instrumentPrefab;
     [SerializeField] private InstrumentsDatabase instrumentsDatabase;
@@ -11,19 +11,18 @@ public class InstrumentSpawner : MonoBehaviour
     public GameObject parentOfInstruments;
     [HideInInspector] public List<InstrumentHook> injectionStepHooks = new List<InstrumentHook>();
 
-    [SerializeField] private PhotonView photonView;
+   
 
 
     private void Start()
     {
+        //disable dragging for local spawner
+        instrumentPrefab.GetComponent<DragPiece>().enabled = false;
         Invoke(nameof(Populate), 2.0f);
     }
 
     public void Populate()
     {
-        if (!photonView) return;
-        if (!photonView.IsMine) return;
-
         if (!instrumentsDatabase)
         {
             instrumentsDatabase = GameKnowledge.Instance?.instrumentsDatabase;
@@ -57,41 +56,9 @@ public class InstrumentSpawner : MonoBehaviour
                     }
 
                     var instrument = instrumentsDatabase.instruments[i];
-                    hook.SetInstrumentInNetwork(instrument);
-                    
-                    RectTransform hookRect = hook.GetComponent<RectTransform>();
-                    if (hookRect)
-                    {
-                        hookRect.localPosition = new Vector3(50, 50);
-                    }
-
+                    hook.SetInstrument(instrument);
                     return true;
-                }, false, true);
-    }
-
-    public void SpawnInstrumentById(int id)
-    {
-
-        Instrument instrument = instrumentsDatabase.GetInstrumentById(id);
-
-        if (instrument == null)
-        {
-            Debug.LogWarning($"Instrument with id {id} not found");
-            return;
-        }
-
-
-        GameObject goInstrument = Instantiate(instrumentPrefab, parentOfInstruments.transform);
-
-        // meter os dados no hook
-        InstrumentHook hook = goInstrument.GetComponent<InstrumentHook>();
-        if (hook != null)
-        {
-
-            hook.SetInstrument(instrument);
-
-
-            // hook.SetInstrumentInNetwork(instrument);
-        }
+                });
+        
     }
 }

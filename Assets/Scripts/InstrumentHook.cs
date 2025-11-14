@@ -27,6 +27,32 @@ public class InstrumentHook : MonoBehaviourPun
             }
         }
     }
+    
+    public Sprite Icon
+    {
+        get => instrument != null ? instrument.icon : null;
+        set
+        {
+            if (dragPiece != null)
+            {
+                instrument.icon = value;
+            }
+        }
+    }
+
+    
+    
+    public string GeneralDescription
+    {
+        get => instrument != null ? instrument.generalDescription : string.Empty;
+        set
+        {
+            if (instrument != null)
+            {
+                instrument.generalDescription = value;
+            }
+        }
+    }
 
     [SerializeField] private TMP_Text descriptionText;
 
@@ -46,6 +72,18 @@ public class InstrumentHook : MonoBehaviourPun
             }
         }
     }
+    
+    public bool isSelected
+    {
+        get => instrument != null && instrument.isSelected;
+        set
+        {
+            if (instrument != null)
+            {
+                instrument.isSelected = value;
+            }
+        }
+    }
 
     public void SetInstrument(Instrument instr)
     {
@@ -58,6 +96,8 @@ public class InstrumentHook : MonoBehaviourPun
 
         Name = instr.name;
         Description = instr.description;
+        Icon = instr.icon;
+        
     }
 
     public void SetInstrumentInNetwork(Instrument instr)

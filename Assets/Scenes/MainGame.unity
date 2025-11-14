@@ -750,11 +750,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: d29664e28f27e0e43a7e03e37c795f92, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 92
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: d29664e28f27e0e43a7e03e37c795f92, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: d29664e28f27e0e43a7e03e37c795f92, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1147,7 +1147,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2032168206}
   m_HandleRect: {fileID: 2032168205}
   m_Direction: 2
-  m_Value: 1.0000004
+  m_Value: 1.0000007
   m_Size: 0.41646603
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3788,11 +3788,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: d29664e28f27e0e43a7e03e37c795f92, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 92
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: d29664e28f27e0e43a7e03e37c795f92, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: d29664e28f27e0e43a7e03e37c795f92, type: 3}
       propertyPath: m_LocalPosition.x

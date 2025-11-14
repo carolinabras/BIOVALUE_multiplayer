@@ -8,6 +8,13 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] TMP_InputField joinCodeInput;
     [SerializeField] LobbyNetworkController lobby;
     [SerializeField] GameObject createPanel;
+    [SerializeField] GameObject selectedInstrumentPanel;
+    [SerializeField] GameObject selectedObjectivePanel;
+    
+    [SerializeField] GameObject toSelectInstrumentPanel;
+    [SerializeField] GameObject toSelectObjectivePanel;
+
+
     
 
     public void OnClickJoin()
@@ -51,6 +58,43 @@ public class LobbyUI : MonoBehaviour
         
         yield return new WaitForSeconds(2);
         SceneManager.LoadScene(0);
+    }
+    
+    public void SelectInstrumentPanel()
+    {
+        if (toSelectInstrumentPanel != null)
+        {
+            toSelectInstrumentPanel.SetActive(true);
+        }
+    }
+    
+    public void SelectObjectivePanel()
+    {
+        if (toSelectObjectivePanel != null)
+        {
+            toSelectObjectivePanel.SetActive(true);
+        }
+    }
+    
+    public void OnClickSelectedInstrument()
+    {
+        //if selected X number of instruments this becames available
+        //maybe add a data manager to see how many instruments are selected and this part only does the UI change
+        Debug.Log("[UI] Selected instrument clicked");
+        //close panel 
+        if (selectedInstrumentPanel != null)
+        {
+            selectedInstrumentPanel.SetActive(false);
+        }
+        
+    }
+
+    public void OnClickselectedObjective()
+    {
+        if (selectedObjectivePanel != null)
+        {
+            selectedObjectivePanel.SetActive(false);
+        }
     }
     
 }

@@ -49,6 +49,7 @@ public class GameKnowledge : MonoBehaviour
 
     public InstrumentsDatabase instrumentsDatabase;
     public ActionCardsDatabase actionCardsDatabase;
+    public ObjectivesDatabase objectivesDatabase;
     
     public List<int> playedInstrumentIds = new List<int>();
 }

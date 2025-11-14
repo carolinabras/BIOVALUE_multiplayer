@@ -1,6 +1,7 @@
 using System;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BiovalueStatics
 {
@@ -52,14 +53,38 @@ public enum InstrumentType
 }
 
 [Serializable]
+public class Objective
+{
+    public int id = -1;
+    public string name = "New Objective";
+    public string description = "Objective Description";
+    public bool isSelected = false;
+    
+    public Objective()
+    {
+    }
+    
+    public Objective(Objective objective)
+    {
+        this.id = objective.id;
+        this.name = objective.name;
+        this.description = objective.description;
+        this.isSelected = objective.isSelected;
+    }
+}
+
+[Serializable]
 public class Instrument
 {
     public int id = -1;
     public string name = "New Instrument";
     public string description = "Instrument Description";
     public InstrumentType type = InstrumentType.None;
-    // public Sprite icon = null;
-
+    public Sprite icon = null;
+    public string generalDescription = "General Description of the Instrument";
+    public bool isSelected = false;
+    
+    
     public Instrument()
     {
     }
@@ -70,7 +95,9 @@ public class Instrument
         this.name = instrument.name;
         this.description = instrument.description;
         this.type = instrument.type;
-        // this.icon = instrument.icon;
+        this.icon = instrument.icon;
+        this.isSelected = instrument.isSelected;
+        
     }
 }
 

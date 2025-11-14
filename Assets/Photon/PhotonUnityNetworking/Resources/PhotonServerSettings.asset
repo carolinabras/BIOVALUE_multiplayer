@@ -50,6 +50,7 @@ MonoBehaviour:
   - RPC_SetGamePhase
   - RPC_SetInstrument
   - RPC_SetActionCard
+  - RPC_SetObjective
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
