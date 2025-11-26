@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 public class LobbyNetworkController : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private byte maxPlayers = 10;
+    [SerializeField] private byte maxPlayers = 8;
     [SerializeField] private TextMeshProUGUI codeText;
     [SerializeField] private Button createButton;
     [SerializeField] private GameObject joinPanel;

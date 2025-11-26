@@ -13,21 +13,29 @@ public class LobbyUI : MonoBehaviour
     
     [SerializeField] GameObject toSelectInstrumentPanel;
     [SerializeField] GameObject toSelectObjectivePanel;
+    [SerializeField] GameObject lobbyPanel;
 
-
-    
 
     public void OnClickJoin()
+    {
+        if (lobbyPanel != null)
+        {
+            lobbyPanel.SetActive(true);
+        }
+       
+    }
+
+    /*public void OnClickJoin()
     {
         string raw = joinCodeInput != null ? joinCodeInput.text : null;
         Debug.Log($"[UI] Join raw='{raw}' len={(raw == null ? 0 : raw.Length)}");
         lobby.JoinLobbyByCode(raw);
         
-    }
+    }*/
 
     public void OnCreateClicked()
     {
-        lobby.CreateLobby();
+        //lobby.CreateLobby();
         SetCreateLobbyPanel(true);
         
     }
@@ -88,6 +96,7 @@ public class LobbyUI : MonoBehaviour
         }
         
     }
+    /*
 
     public void OnClickselectedObjective()
     {
@@ -96,5 +105,5 @@ public class LobbyUI : MonoBehaviour
             selectedObjectivePanel.SetActive(false);
         }
     }
-    
+     */
 }
