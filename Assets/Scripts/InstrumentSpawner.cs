@@ -19,7 +19,7 @@ public class InstrumentSpawner : MonoBehaviour
         Invoke(nameof(Populate), 2.0f);
     }
 
-    public void Populate()
+    /*public void Populate()
     {
         if (!photonView) return;
         if (!photonView.IsMine) return;
@@ -67,8 +67,74 @@ public class InstrumentSpawner : MonoBehaviour
 
                     return true;
                 }, false, true);
-    }
+    } */
+    
+    public void Populate()
+    {
+        if (!photonView) return;
+        if (!photonView.IsMine) return;
 
+        if (!instrumentsDatabase)
+        {
+            instrumentsDatabase = GameKnowledge.Instance?.instrumentsDatabase;
+            if (!instrumentsDatabase)
+            {
+                Debug.LogError("Instruments Database is not assigned.");
+                return;
+            }
+        }
+
+        if (!instrumentPrefab)
+        {
+            Debug.LogError("Protocol category or entry prefab is not assigned.");
+            return;
+        }
+
+        if (!parentOfInstruments)
+            parentOfInstruments = this.gameObject;
+
+        // ------------------------------
+        // FILTRAR INSTRUMENTOS SELECIONADOS
+        // ------------------------------
+        List<Instrument> selectedInstruments = new List<Instrument>();
+        foreach (var inst in instrumentsDatabase.instruments)
+        {
+            Debug.Log($"DB: {inst.name} isSelected={inst.isSelected} HASH={inst.GetHashCode()}");
+            if (inst.isSelected)
+                selectedInstruments.Add(inst);
+        }
+
+        // Se não houver selecionados, sair
+        if (selectedInstruments.Count == 0)
+        {
+            Debug.LogWarning("Nenhum instrumento selecionado!");
+            return;
+        }
+
+        // ------------------------------
+        // SPAWN APENAS DOS SELECIONADOS
+        // ------------------------------
+        injectionStepHooks =
+            UiUtils.FillContainerWithPrefab<InstrumentHook>(
+                parentOfInstruments,
+                instrumentPrefab,
+                selectedInstruments.Count,
+                (hook, i) =>
+                {
+                    var instrument = selectedInstruments[i];
+                    hook.SetInstrumentInNetwork(instrument);
+
+                    RectTransform hookRect = hook.GetComponent<RectTransform>();
+                    if (hookRect)
+                        hookRect.localPosition = new Vector3(50, 50);
+
+                    return true;
+                },
+                false,
+                true
+            );
+    }
+    
     public void SpawnInstrumentById(int id)
     {
 

@@ -14,10 +14,30 @@ public class SelectInstrument : MonoBehaviour
 
    public void ToggleSelection()
    {
-       if (instrumentHook == null || instrumentHook.instrument == null) return;
+       var db = GameKnowledge.Instance?.instrumentsDatabase;
+       if (db == null)
+       {
+           Debug.LogError("InstrumentsDatabase não encontrada em GameKnowledge.");
+           return;
+       }
 
-       // toggle no hook
-       instrumentHook.instrument.isSelected = !instrumentHook.instrument.isSelected;
+       
+       Instrument uiInstrument = instrumentHook.instrument;   // cópia
+       Instrument realInstrument = db.GetInstrumentById(uiInstrument.id);
+
+       if (realInstrument == null)
+       {
+           Debug.LogError($"Instrumento com id {uiInstrument.id} não encontrado na database.");
+           return;
+       }
+
+       bool newValue = !realInstrument.isSelected;
+       realInstrument.isSelected = newValue;
+
+       uiInstrument.isSelected = newValue;
+
+       Debug.Log($"[SelectInstrument] {realInstrument.name} isSelected = {realInstrument.isSelected} (DB HASH={realInstrument.GetHashCode()})");
+
        UpdateVisual();
    }
    

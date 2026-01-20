@@ -8,7 +8,7 @@ using Photon.Pun;
 
 public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private Vector2 originalPosition;
+    /* private Vector2 originalPosition;
     private Transform originalParent;
     public RectTransform rectTransform;
     public Canvas canvas;
@@ -186,7 +186,7 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             rectTransform.SetParent(originalParent, worldPositionStays:false); // move to original parent
         }
     }
-     */
+     
 
     private void SnapToClosestCell()
     {
@@ -255,5 +255,178 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
         targetCell.SetOccupied(true);
         currentCell = targetCell;
+    }
+    */ 
+      private Vector2 originalPosition;
+    private Transform originalParent;
+    public RectTransform rectTransform;
+    public Canvas canvas;
+
+    private PhotonView photonView;
+
+    // célula onde a peça está atualmente
+    private BoardCell currentCell;
+    private int currentCellIndex = -1;
+
+    // parent que contém TODAS as células do tabuleiro (RectTransform)
+    public RectTransform gridParent;
+
+    private void Awake()
+    {
+        Initialize();
+    }
+
+    public void Initialize()
+    {
+        rectTransform = GetComponent<RectTransform>();
+        canvas = GetComponentInParent<Canvas>();
+        photonView = GetComponent<PhotonView>();
+
+        if (!gridParent && transform.parent != null)
+        {
+            gridParent = transform.parent as RectTransform;
+        }
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (!photonView.IsMine)
+        {
+            // pede ownership e sai deste drag
+            photonView.RequestOwnership();
+            return;
+        }
+
+        if (!rectTransform || !canvas || !photonView || !gridParent)
+        {
+            Initialize();
+        }
+
+        originalPosition = rectTransform.anchoredPosition;
+        originalParent = rectTransform.parent;
+
+        // mete a peça como filha do grid para alinhar com as células
+        rectTransform.SetParent(gridParent, worldPositionStays: false);
+        rectTransform.SetAsLastSibling();
+
+        // ✨ IMPORTANTE:
+        // NÃO limpamos aqui a célula; vamos tratar disso
+        // no SnapToClosestCell, para podermos sincronizar com os outros.
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (!rectTransform || !canvas || !photonView || !gridParent)
+        {
+            Initialize();
+        }
+
+        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        SnapToClosestCell();
+        Debug.Log("Drag Ended on " + rectTransform.anchoredPosition);
+    }
+
+    private void SnapToClosestCell()
+    {
+        if (!gridParent) return;
+
+        RectTransform closestCellRT = null;
+        BoardCell closestCellComponent = null;
+        float closestDistance = float.MaxValue;
+
+        Vector2 currentPos = rectTransform.anchoredPosition;
+
+        // procura a célula mais perto que esteja livre
+        for (int i = 0; i < gridParent.childCount; i++)
+        {
+            var child = gridParent.GetChild(i);
+            var cellRT = child as RectTransform;
+            if (!cellRT || cellRT == rectTransform) continue; // ignora a própria peça
+
+            var cell = child.GetComponent<BoardCell>();
+            if (cell == null) continue;
+
+            // ignora células ocupadas
+            if (!cell.IsFree()) continue;
+
+            float distance = Vector2.Distance(cellRT.anchoredPosition, currentPos);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestCellRT = cellRT;
+                closestCellComponent = cell;
+            }
+        }
+
+        if (closestCellRT != null && closestCellComponent != null)
+        {
+            // índice antigo e novo (para limpar e ocupar nos outros clientes)
+            int oldIndex = currentCellIndex;
+            int newIndex = closestCellRT.GetSiblingIndex();
+
+            // limpa célula antiga localmente
+            if (currentCell != null)
+            {
+                currentCell.SetOccupied(false);
+            }
+
+            // ocupa célula nova localmente
+            closestCellComponent.SetOccupied(true);
+            currentCell = closestCellComponent;
+            currentCellIndex = newIndex;
+
+            // move visualmente a peça
+            rectTransform.SetParent(gridParent, worldPositionStays: false);
+            rectTransform.anchoredPosition = closestCellRT.anchoredPosition;
+
+            // sincroniza com os outros
+            if (photonView != null && photonView.IsMine)
+            {
+                photonView.RPC(nameof(RPC_SnapToCellByIndex), RpcTarget.Others, newIndex, oldIndex);
+            }
+        }
+        else
+        {
+            // não encontrou célula válida → volta ao sítio original
+            rectTransform.SetParent(originalParent, worldPositionStays: false);
+            rectTransform.anchoredPosition = originalPosition;
+        }
+    }
+
+    [PunRPC]
+    void RPC_SnapToCellByIndex(int newIndex, int oldIndex)
+    {
+        if (!gridParent) return;
+        if (newIndex < 0 || newIndex >= gridParent.childCount) return;
+
+        // limpa célula antiga neste cliente
+        if (oldIndex >= 0 && oldIndex < gridParent.childCount)
+        {
+            var oldChild = gridParent.GetChild(oldIndex);
+            var oldCell = oldChild.GetComponent<BoardCell>();
+            if (oldCell != null)
+            {
+                oldCell.SetOccupied(false);
+            }
+        }
+
+        // ocupa célula nova
+        var child = gridParent.GetChild(newIndex);
+        var targetRT = child as RectTransform;
+        var targetCell = child.GetComponent<BoardCell>();
+        if (!targetRT || targetCell == null) return;
+
+        if (!targetCell.IsFree()) return;
+
+        rectTransform.SetParent(gridParent, worldPositionStays: false);
+        rectTransform.anchoredPosition = targetRT.anchoredPosition;
+
+        targetCell.SetOccupied(true);
+        currentCell = targetCell;
+        currentCellIndex = newIndex;
     }
 }

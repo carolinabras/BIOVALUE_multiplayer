@@ -98,6 +98,7 @@ public class InstrumentHook : MonoBehaviourPun
         Description = instr.description;
         Icon = instr.icon;
         
+        
     }
 
     public void SetInstrumentInNetwork(Instrument instr)

@@ -71,7 +71,7 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     IEnumerator LoadNextScene()
     {
         yield return new WaitForSeconds(1.5f);
-        SceneManager.LoadScene("Lobby"); //Lobby
+        SceneManager.LoadScene(2); //Lobby
     }
     
 }

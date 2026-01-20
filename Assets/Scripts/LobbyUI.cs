@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using Photon.Pun;
 
 public class LobbyUI : MonoBehaviour
 {
@@ -97,6 +98,8 @@ public class LobbyUI : MonoBehaviour
         
     }
     /*
+     
+     
 
     public void OnClickselectedObjective()
     {
@@ -106,4 +109,9 @@ public class LobbyUI : MonoBehaviour
         }
     }
      */
+    
+    public void GoToNextPhase()
+    {
+        PhotonNetwork.LoadLevel("Role");
+    }
 }

@@ -397,6 +397,7 @@ MonoBehaviour:
     type: 0
     icon: {fileID: 0}
     generalDescription: General Description of the Instrument
+    isSelected: 0
   nameText: {fileID: 107451540073569995}
   dragPiece: {fileID: 0}
   descriptionText: {fileID: 5015630537012434235}
@@ -483,6 +484,7 @@ MonoBehaviour:
   detailsPrefab: {fileID: 4259152329352099224, guid: edcda5c431e628f40b505cdb417220a3, type: 3}
   longPressDuration: 0.5
   instrumentHook: {fileID: 4591776669159816083}
+  detailsParent: {fileID: 0}
 --- !u!114 &4349978303098139749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -495,7 +497,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 866a3f12728d618488eba3b81a657731, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isSelected: 0
 --- !u!1 &6643966830514618017
 GameObject:
   m_ObjectHideFlags: 0

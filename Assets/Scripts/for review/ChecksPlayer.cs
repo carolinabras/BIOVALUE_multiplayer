@@ -5,6 +5,8 @@ public class ChecksPlayer : MonoBehaviour
 {
     [SerializeField] public GameObject deck;
     [SerializeField] public GameObject panelGM;
+
+    public bool isGM;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,9 +23,16 @@ public class ChecksPlayer : MonoBehaviour
        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void CheckRole()
     {
-        
+        if (PhotonNetwork.IsMasterClient)
+        {
+            isGM = true;
+            
+        }
+        else
+        {
+            isGM = false;
+        }
     }
 }
