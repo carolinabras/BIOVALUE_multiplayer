@@ -1,0 +1,832 @@
+fileFormatVersion: 2
+guid: 42f139266cb4c864d83d889ccbb4a531
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6775185104193492347
+    second: "Write the game\u2019s objective__0"
+  - first:
+      213: 9179582918474105920
+    second: "Write the game\u2019s objective__1"
+  - first:
+      213: -4589727247872848473
+    second: "Write the game\u2019s objective__2"
+  - first:
+      213: -4607984934153629590
+    second: "Write the game\u2019s objective__3"
+  - first:
+      213: 5873448654153377248
+    second: "Write the game\u2019s objective__4"
+  - first:
+      213: 4564597715643531257
+    second: "Write the game\u2019s objective__5"
+  - first:
+      213: 5784526888646576741
+    second: "Write the game\u2019s objective__6"
+  - first:
+      213: -8277782209668287356
+    second: "Write the game\u2019s objective__7"
+  - first:
+      213: 7858757651418827060
+    second: "Write the game\u2019s objective__8"
+  - first:
+      213: 5126629820574489673
+    second: "Write the game\u2019s objective__9"
+  - first:
+      213: 8375288956505678870
+    second: "Write the game\u2019s objective__10"
+  - first:
+      213: -8847827391339804782
+    second: "Write the game\u2019s objective__11"
+  - first:
+      213: -2148426475127513290
+    second: "Write the game\u2019s objective__12"
+  - first:
+      213: -6514572621942195005
+    second: "Write the game\u2019s objective__13"
+  - first:
+      213: 3476790369121747362
+    second: "Write the game\u2019s objective__14"
+  - first:
+      213: 5941903334152414555
+    second: "Write the game\u2019s objective__15"
+  - first:
+      213: 5898735567022306814
+    second: "Write the game\u2019s objective__16"
+  - first:
+      213: 2117205778299142842
+    second: "Write the game\u2019s objective__17"
+  - first:
+      213: 3399920009119831674
+    second: "Write the game\u2019s objective__18"
+  - first:
+      213: 7317262060733427604
+    second: "Write the game\u2019s objective__19"
+  - first:
+      213: 9062104119479655473
+    second: "Write the game\u2019s objective__20"
+  - first:
+      213: 8672363119930003004
+    second: "Write the game\u2019s objective__21"
+  - first:
+      213: 6084310176710478909
+    second: "Write the game\u2019s objective__22"
+  - first:
+      213: -4733831976045541992
+    second: "Write the game\u2019s objective__23"
+  - first:
+      213: 6477406598219337478
+    second: "Write the game\u2019s objective__24"
+  - first:
+      213: -2854602215282052080
+    second: "Write the game\u2019s objective__25"
+  - first:
+      213: -1087989795555380665
+    second: "Write the game\u2019s objective__26"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 109.38
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__0"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58a67015b05b9f1a0800000000000000
+      internalID: -6775185104193492347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__1"
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 5
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04484e1670e646f70800000000000000
+      internalID: 9179582918474105920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__2"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 25
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ad8b9ea2630e40c0800000000000000
+      internalID: -4589727247872848473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__3"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 5
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a60db65dd162d00c0800000000000000
+      internalID: -4607984934153629590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__4"
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 5
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e5ee4d9e6ea28150800000000000000
+      internalID: 5873448654153377248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__5"
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 5
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fffd772075b85f30800000000000000
+      internalID: 4564597715643531257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__6"
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 5
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56a8977be84c64050800000000000000
+      internalID: 5784526888646576741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__7"
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 5
+        width: 18
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4847ca810f86f1d80800000000000000
+      internalID: -8277782209668287356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__8"
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 5
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 439c3bc427aef0d60800000000000000
+      internalID: 7858757651418827060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__9"
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 0
+        width: 17
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94c5446e8a2752740800000000000000
+      internalID: 5126629820574489673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__10"
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 5
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 614e5c78ee00b3470800000000000000
+      internalID: 8375288956505678870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__11"
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 5
+        width: 25
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29748398dd3363580800000000000000
+      internalID: -8847827391339804782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__12"
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 5
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63fdaf3f0814f22e0800000000000000
+      internalID: -2148426475127513290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__13"
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 22
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cc76ad47b69795a0800000000000000
+      internalID: -6514572621942195005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__14"
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 5
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a1400e7b6a004030800000000000000
+      internalID: 3476790369121747362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__15"
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 5
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b552dd1d991e57250800000000000000
+      internalID: 5941903334152414555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__16"
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 5
+        width: 17
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef5b350deb48cd150800000000000000
+      internalID: 5898735567022306814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__17"
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 0
+        width: 11
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab2cceb1073d16d10800000000000000
+      internalID: 2117205778299142842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__18"
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 25
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7694581c31fe2f20800000000000000
+      internalID: 3399920009119831674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__19"
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 5
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49f657263132c8560800000000000000
+      internalID: 7317262060733427604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__20"
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 5
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13c503ffeaf03cd70800000000000000
+      internalID: 9062104119479655473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__21"
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 25
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3e40a63f4c6a5870800000000000000
+      internalID: 8672363119930003004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__22"
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 5
+        width: 7
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3c4f12aedfcf6450800000000000000
+      internalID: 6084310176710478909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__23"
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 5
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8958b6116ec0e4eb0800000000000000
+      internalID: -4733831976045541992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__24"
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 5
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60f82a87bfe54e950800000000000000
+      internalID: 6477406598219337478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__25"
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 15
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 014f117d86a6268d0800000000000000
+      internalID: -2854602215282052080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the game\u2019s objective__26"
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 5
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 742fbac9b0fa6e0f0800000000000000
+      internalID: -1087989795555380665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "Write the game\u2019s objective__0": -6775185104193492347
+      "Write the game\u2019s objective__1": 9179582918474105920
+      "Write the game\u2019s objective__10": 8375288956505678870
+      "Write the game\u2019s objective__11": -8847827391339804782
+      "Write the game\u2019s objective__12": -2148426475127513290
+      "Write the game\u2019s objective__13": -6514572621942195005
+      "Write the game\u2019s objective__14": 3476790369121747362
+      "Write the game\u2019s objective__15": 5941903334152414555
+      "Write the game\u2019s objective__16": 5898735567022306814
+      "Write the game\u2019s objective__17": 2117205778299142842
+      "Write the game\u2019s objective__18": 3399920009119831674
+      "Write the game\u2019s objective__19": 7317262060733427604
+      "Write the game\u2019s objective__2": -4589727247872848473
+      "Write the game\u2019s objective__20": 9062104119479655473
+      "Write the game\u2019s objective__21": 8672363119930003004
+      "Write the game\u2019s objective__22": 6084310176710478909
+      "Write the game\u2019s objective__23": -4733831976045541992
+      "Write the game\u2019s objective__24": 6477406598219337478
+      "Write the game\u2019s objective__25": -2854602215282052080
+      "Write the game\u2019s objective__26": -1087989795555380665
+      "Write the game\u2019s objective__3": -4607984934153629590
+      "Write the game\u2019s objective__4": 5873448654153377248
+      "Write the game\u2019s objective__5": 4564597715643531257
+      "Write the game\u2019s objective__6": 5784526888646576741
+      "Write the game\u2019s objective__7": -8277782209668287356
+      "Write the game\u2019s objective__8": 7858757651418827060
+      "Write the game\u2019s objective__9": 5126629820574489673
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

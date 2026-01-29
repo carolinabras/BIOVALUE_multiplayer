@@ -52,4 +52,6 @@ public class SelectInstrument : MonoBehaviour
            backgroundImage.color = instrumentHook.instrument.isSelected ? Color.green : Color.white;
        }
    }
+
+ 
 }

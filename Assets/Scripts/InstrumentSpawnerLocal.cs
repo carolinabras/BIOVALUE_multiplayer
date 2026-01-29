@@ -18,7 +18,18 @@ public class InstrumentSpawnerLocal : MonoBehaviour
     {
         //disable dragging for local spawner
         instrumentPrefab.GetComponent<DragPiece>().enabled = false;
-        Invoke(nameof(Populate), 2.0f);
+        Invoke(nameof(Populate), 0.5f);
+    }
+    private void OnEnable()
+    {
+        if (instrumentsDatabase != null)
+            instrumentsDatabase.OnDatabaseChanged.AddListener(Populate);
+    }
+
+    private void OnDisable()
+    {
+        if (instrumentsDatabase != null)
+            instrumentsDatabase.OnDatabaseChanged.RemoveListener(Populate);
     }
 
     public void Populate()
@@ -43,6 +54,11 @@ public class InstrumentSpawnerLocal : MonoBehaviour
         {
             parentOfInstruments = this.gameObject;
         }
+        
+        for (int i = parentOfInstruments.transform.childCount - 1; i >= 0; i--)
+            Destroy(parentOfInstruments.transform.GetChild(i).gameObject);
+
+        injectionStepHooks.Clear();
 
         injectionStepHooks =
             UiUtils.FillContainerWithPrefab<InstrumentHook>(parentOfInstruments, instrumentPrefab,

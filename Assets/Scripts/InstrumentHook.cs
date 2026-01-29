@@ -2,14 +2,19 @@ using System;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InstrumentHook : MonoBehaviourPun
 {
     [HideInInspector] public Instrument instrument;
 
     [SerializeField] private TMP_Text nameText;
+    
 
     [SerializeField] private DragPiece dragPiece;
+
+    [SerializeField] private Image iconImage;
+    [SerializeField] private IconDatabase iconDatabase;
 
     public string Name
     {
@@ -96,8 +101,12 @@ public class InstrumentHook : MonoBehaviourPun
 
         Name = instr.name;
         Description = instr.description;
-        Icon = instr.icon;
-        
+        var sprite = iconDatabase.GetIcon(instr.typeOne, instr.typeTwo);
+        if (iconImage != null)
+        {
+            iconImage.sprite = sprite;
+            iconImage.enabled = (sprite != null);
+        }
         
     }
 
@@ -106,7 +115,7 @@ public class InstrumentHook : MonoBehaviourPun
         if (photonView)
         {
             photonView.RPC(nameof(RPC_SetInstrument), RpcTarget.All, instr.id, instr.name, instr.description,
-                instr.type);
+                instr.typeOne, instr.typeTwo);
         }
         else
         {
@@ -116,14 +125,15 @@ public class InstrumentHook : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void RPC_SetInstrument(int id, string instrumentName, string description, InstrumentType type)
+    public void RPC_SetInstrument(int id, string instrumentName, string description, InstrumentType type1, InstrumentType type2)
     {
         Instrument instr = new Instrument
         {
             id = id,
             name = instrumentName,
             description = description,
-            type = type
+            typeOne = type1,
+            typeTwo = type2
         };
         SetInstrument(instr);
     }

@@ -14,94 +14,125 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instruments:
   - id: 1
-    name: The What?
-    description: 
-    type: 0
+    name: Expropriation of Land and Compulsory Easements
+    description: 'A legal tool that allows  public authorities to acquire private
+      land or impose usage restrictions for  conservation purposes. It helps protect
+      biodiversity by securing land,  expanding habitats and/or ensuring better land
+      management. '
+    typeOne: 1
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 'A legal tool that allows  public authorities to acquire
+      private land or impose usage restrictions for  conservation purposes. It helps
+      protect biodiversity by securing land,  expanding habitats and/or ensuring
+      better land management. '
+    isSelected: 0
   - id: 2
-    name: The Who
-    description: 
-    type: 0
+    name: Administrative Possession
+    description: 'This tool allows public authorities to  temporarily manage land
+      to address neglect or ecological threats. It can  support biodiversity by restoring
+      neglected areas and improving habitat  connectivity. '
+    typeOne: 1
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 'This tool allows public authorities to  temporarily manage
+      land to address neglect or ecological threats. It can  support biodiversity
+      by restoring neglected areas and improving habitat  connectivity. '
+    isSelected: 0
   - id: 3
-    name: The When
+    name: Preemption rights
+    description: A legal right that allows authorities to purchase land  before private
+      buyers to prevent environmentally harmful developments.  They help protect
+      ecologically valuable land from development and can  support green networks.
+    typeOne: 1
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: A legal right that allows authorities to purchase land  before
+      private buyers to prevent environmentally harmful developments.  They help
+      protect ecologically valuable land from development and can  support green
+      networks.
+    isSelected: 0
+  - id: 4
+    name: Quantitative Targets and Standards
     description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
-  - id: 3
-    name: The When
-    description: 
-    type: 0
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: ' This regulatory tool sets specific and  quantifiable targets
+      for biodiversity conservation in development projects  or in land-use planning.
+      They can enhance biodiversity by increasing natural  areas and can also improve
+      habitat quality and ecological connectivity. '
+    isSelected: 0
+  - id: 5
+    name: Qualitative and Technological Requirements
+    description: 'Regulations setting  qualitative ecological and/or technological
+      elements for land use  management or infrastructure development projects. They
+      enhance  biodiversity by integrating green infrastructure, improving resource 
+      management, and promoting good ecological conditions. '
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 'Regulations setting  qualitative ecological and/or technological
+      elements for land use  management or infrastructure development projects. They
+      enhance  biodiversity by integrating green infrastructure, improving resource 
+      management, and promoting good ecological conditions. '
+    isSelected: 0
+  - id: 6
+    name: Compensation Measures
+    description: Obligations imposed on developers to offset  environmental damage
+      through habitat restoration or conservation efforts.  These measures can support
+      biodiversity by offsetting impacts and  restoring ecosystems.
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Obligations imposed on developers to offset  environmental
+      damage through habitat restoration or conservation efforts.  These measures
+      can support biodiversity by offsetting impacts and  restoring ecosystems.
+    isSelected: 0
+  - id: 7
+    name: Performance-Based Approaches (Point Systems)
+    description: 'A scoring mechanism  that rewards development projects integrating
+      biodiversity-friendly  features. They can improve biodiversity by promoting
+      habitat creation and  ecological alignment '
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 'A scoring mechanism  that rewards development projects integrating
+      biodiversity-friendly  features. They can improve biodiversity by promoting
+      habitat creation and  ecological alignment '
+    isSelected: 0
+  - id: 8
+    name: Protected and Conservation Areas
+    description: 'Legally designated sites where  ecological preservation is prioritized
+      through restrictions on land use and  activities. These areas preserve biodiversity
+      by safeguarding habitats,  halting land-use change and connecting green spaces. '
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  - id: 9
+    name: Land Rearrangements
+    description: 'The reorganization of land parcel ownership to  create larger,
+      ecologically viable habitat patches. This can support  biodiversity by creating
+      cohesive, connected habitats. Needs to be paired  with conservation areas or
+      zoning for effective biodiversity conservation '
+    typeOne: 3
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  - id: 9
+    name: Land Rearrangements
+    description: 'The reorganization of land parcel ownership to  create larger,
+      ecologically viable habitat patches. This can support  biodiversity by creating
+      cohesive, connected habitats. Needs to be paired  with conservation areas or
+      zoning for effective biodiversity conservation '
+    typeOne: 3
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  OnDatabaseChanged:
+    m_PersistentCalls:
+      m_Calls: []

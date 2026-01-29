@@ -1,0 +1,832 @@
+fileFormatVersion: 2
+guid: cf749a16ba28f324883df71bcbcd4156
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4403121319260446042
+    second: Write the link to materials__0
+  - first:
+      213: -594798084301379065
+    second: Write the link to materials__1
+  - first:
+      213: -614859572993140038
+    second: Write the link to materials__2
+  - first:
+      213: 7869170286840585478
+    second: Write the link to materials__3
+  - first:
+      213: -3652938091932454463
+    second: Write the link to materials__4
+  - first:
+      213: -2093115796327895252
+    second: Write the link to materials__5
+  - first:
+      213: -1250735566034971616
+    second: Write the link to materials__6
+  - first:
+      213: 1106684237738368292
+    second: Write the link to materials__7
+  - first:
+      213: -7131976205448841023
+    second: Write the link to materials__8
+  - first:
+      213: -8874300914018659295
+    second: Write the link to materials__9
+  - first:
+      213: 7064530020927615266
+    second: Write the link to materials__10
+  - first:
+      213: 1005509324490950289
+    second: Write the link to materials__11
+  - first:
+      213: 3738507943492488187
+    second: Write the link to materials__12
+  - first:
+      213: -3868023152343696765
+    second: Write the link to materials__13
+  - first:
+      213: 65502720195269736
+    second: Write the link to materials__14
+  - first:
+      213: -2405601149898798154
+    second: Write the link to materials__15
+  - first:
+      213: -6389439711105745721
+    second: Write the link to materials__16
+  - first:
+      213: -3943468956904802817
+    second: Write the link to materials__17
+  - first:
+      213: 2608069074174332140
+    second: Write the link to materials__18
+  - first:
+      213: -7459566603915674365
+    second: Write the link to materials__19
+  - first:
+      213: -5445907219533811848
+    second: Write the link to materials__20
+  - first:
+      213: 1745611931426864249
+    second: Write the link to materials__21
+  - first:
+      213: -92665853623340994
+    second: Write the link to materials__22
+  - first:
+      213: -6208741783081022350
+    second: Write the link to materials__23
+  - first:
+      213: -4080929210588497215
+    second: Write the link to materials__24
+  - first:
+      213: 1070933404096769597
+    second: Write the link to materials__25
+  - first:
+      213: 8524645687428816167
+    second: Write the link to materials__26
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Write the link to materials__0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a228862d78f4e2c0800000000000000
+      internalID: -4403121319260446042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__1
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 0
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70a22203b4adeb7f0800000000000000
+      internalID: -594798084301379065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__2
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 20
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abadefcd9749777f0800000000000000
+      internalID: -614859572993140038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__3
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 0
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60d1138eea8e43d60800000000000000
+      internalID: 7869170286840585478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__4
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 0
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c17fd3d8282e4dc0800000000000000
+      internalID: -3652938091932454463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__5
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2fed16e542c3f2e0800000000000000
+      internalID: -2093115796327895252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__6
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 0
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024d98e11ae74aee0800000000000000
+      internalID: -1250735566034971616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__7
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 0
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42d5be4637bbb5f00800000000000000
+      internalID: 1106684237738368292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__8
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 0
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c8feaf8d61260d90800000000000000
+      internalID: -7131976205448841023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__9
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 0
+        width: 8
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1245ef5365628d480800000000000000
+      internalID: -8874300914018659295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__10
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 20
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2213972ef904a0260800000000000000
+      internalID: 7064530020927615266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__11
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 0
+        width: 7
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19640a8376944fd00800000000000000
+      internalID: 1005509324490950289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__12
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfb88d9ca29d1e330800000000000000
+      internalID: 3738507943492488187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__13
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 0
+        width: 16
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38a3195cf65025ac0800000000000000
+      internalID: -3868023152343696765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__14
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 0
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8649f018066b8e000800000000000000
+      internalID: 65502720195269736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__15
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 0
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bbc205ef769d9ed0800000000000000
+      internalID: -2405601149898798154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__16
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 0
+        width: 25
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cc74c97f662457a0800000000000000
+      internalID: -6389439711105745721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__17
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 0
+        width: 28
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff5b8e880ebf549c0800000000000000
+      internalID: -3943468956904802817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__18
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cecc7db3109b13420800000000000000
+      internalID: 2608069074174332140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__19
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 0
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30d3d3b32bb4a7890800000000000000
+      internalID: -7459566603915674365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__20
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 20
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87fa3fbcc304c64b0800000000000000
+      internalID: -5445907219533811848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__21
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 0
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97cb1609dc8a93810800000000000000
+      internalID: 1745611931426864249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__22
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e30f8f7a5e8c6bef0800000000000000
+      internalID: -92665853623340994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__23
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 0
+        width: 7
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27c845d5e3e16d9a0800000000000000
+      internalID: -6208741783081022350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__24
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 0
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca7b513180ad57c0800000000000000
+      internalID: -4080929210588497215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__25
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 10
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3ea949c148bcde00800000000000000
+      internalID: 1070933404096769597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Write the link to materials__26
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 0
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72d92435610ad4670800000000000000
+      internalID: 8524645687428816167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Write the link to materials__0: -4403121319260446042
+      Write the link to materials__1: -594798084301379065
+      Write the link to materials__10: 7064530020927615266
+      Write the link to materials__11: 1005509324490950289
+      Write the link to materials__12: 3738507943492488187
+      Write the link to materials__13: -3868023152343696765
+      Write the link to materials__14: 65502720195269736
+      Write the link to materials__15: -2405601149898798154
+      Write the link to materials__16: -6389439711105745721
+      Write the link to materials__17: -3943468956904802817
+      Write the link to materials__18: 2608069074174332140
+      Write the link to materials__19: -7459566603915674365
+      Write the link to materials__2: -614859572993140038
+      Write the link to materials__20: -5445907219533811848
+      Write the link to materials__21: 1745611931426864249
+      Write the link to materials__22: -92665853623340994
+      Write the link to materials__23: -6208741783081022350
+      Write the link to materials__24: -4080929210588497215
+      Write the link to materials__25: 1070933404096769597
+      Write the link to materials__26: 8524645687428816167
+      Write the link to materials__3: 7869170286840585478
+      Write the link to materials__4: -3652938091932454463
+      Write the link to materials__5: -2093115796327895252
+      Write the link to materials__6: -1250735566034971616
+      Write the link to materials__7: 1106684237738368292
+      Write the link to materials__8: -7131976205448841023
+      Write the link to materials__9: -8874300914018659295
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

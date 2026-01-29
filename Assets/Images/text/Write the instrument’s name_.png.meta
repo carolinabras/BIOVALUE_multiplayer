@@ -1,0 +1,832 @@
+fileFormatVersion: 2
+guid: 49342d4b4747d2d45b5c9fcd952ff5de
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3222405828010364203
+    second: "Write the instrument\u2019s name__0"
+  - first:
+      213: -99508936393132056
+    second: "Write the instrument\u2019s name__1"
+  - first:
+      213: 6577366303417302756
+    second: "Write the instrument\u2019s name__2"
+  - first:
+      213: 7576318700003437376
+    second: "Write the instrument\u2019s name__3"
+  - first:
+      213: -7091169657891805083
+    second: "Write the instrument\u2019s name__4"
+  - first:
+      213: -7315440964826017310
+    second: "Write the instrument\u2019s name__5"
+  - first:
+      213: 4185586598074895757
+    second: "Write the instrument\u2019s name__6"
+  - first:
+      213: 253527419332829201
+    second: "Write the instrument\u2019s name__7"
+  - first:
+      213: -5394886741680052558
+    second: "Write the instrument\u2019s name__8"
+  - first:
+      213: -8786405713740248503
+    second: "Write the instrument\u2019s name__9"
+  - first:
+      213: -4505440155160006101
+    second: "Write the instrument\u2019s name__10"
+  - first:
+      213: 5130036384434426524
+    second: "Write the instrument\u2019s name__11"
+  - first:
+      213: -4017960701658166305
+    second: "Write the instrument\u2019s name__12"
+  - first:
+      213: -4328956144324499553
+    second: "Write the instrument\u2019s name__13"
+  - first:
+      213: 8236611792999217981
+    second: "Write the instrument\u2019s name__14"
+  - first:
+      213: 8226254535442602041
+    second: "Write the instrument\u2019s name__15"
+  - first:
+      213: -5314026604226812349
+    second: "Write the instrument\u2019s name__16"
+  - first:
+      213: 7138184524284134970
+    second: "Write the instrument\u2019s name__17"
+  - first:
+      213: 7476253977440988567
+    second: "Write the instrument\u2019s name__18"
+  - first:
+      213: 1565306803467773608
+    second: "Write the instrument\u2019s name__19"
+  - first:
+      213: 4077646667959845668
+    second: "Write the instrument\u2019s name__20"
+  - first:
+      213: -7790524901863730514
+    second: "Write the instrument\u2019s name__21"
+  - first:
+      213: -7946145358070141195
+    second: "Write the instrument\u2019s name__22"
+  - first:
+      213: 1000496230566336800
+    second: "Write the instrument\u2019s name__23"
+  - first:
+      213: 9083286183896072344
+    second: "Write the instrument\u2019s name__24"
+  - first:
+      213: 9089436273331258510
+    second: "Write the instrument\u2019s name__25"
+  - first:
+      213: -5818844867003595882
+    second: "Write the instrument\u2019s name__26"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__0"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2dc4bc070948bc20800000000000000
+      internalID: 3222405828010364203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__1"
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 0
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e77f4a46297e9ef0800000000000000
+      internalID: -99508936393132056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__2"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 20
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4eeffc8fdcf774b50800000000000000
+      internalID: 6577366303417302756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__3"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 0
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04baad277bd742960800000000000000
+      internalID: 7576318700003437376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__4"
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 0
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 568a45b44ca179d90800000000000000
+      internalID: -7091169657891805083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__5"
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e1543c83355a7a90800000000000000
+      internalID: -7315440964826017310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__6"
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 0
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8dc3e2b5d0361a30800000000000000
+      internalID: 4185586598074895757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__7"
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 0
+        width: 18
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 110a72a38d5b48300800000000000000
+      internalID: 253527419332829201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__8"
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 0
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b622be77138125b0800000000000000
+      internalID: -5394886741680052558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__9"
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 20
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94acc044e8a601680800000000000000
+      internalID: -8786405713740248503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__10"
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 0
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2238eabc067971c0800000000000000
+      internalID: -4505440155160006101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__11"
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c921b0b59ec813740800000000000000
+      internalID: 5130036384434426524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__12"
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 0
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdb8f28a7065d38c0800000000000000
+      internalID: -4017960701658166305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__13"
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 0
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f972b4192557ce3c0800000000000000
+      internalID: -4328956144324499553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__14"
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 0
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3bf28a49c25e4270800000000000000
+      internalID: 8236611792999217981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__15"
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 0
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93890095ae6892270800000000000000
+      internalID: 8226254535442602041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__16"
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 0
+        width: 24
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 346e51855f8c046b0800000000000000
+      internalID: -5314026604226812349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__17"
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a36852f410def0360800000000000000
+      internalID: 7138184524284134970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__18"
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 0
+        width: 28
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79da8ffa16df0c760800000000000000
+      internalID: 7476253977440988567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__19"
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 17
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a6e2319e3619b510800000000000000
+      internalID: 1565306803467773608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__20"
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 0
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4234d4b4a06b69830800000000000000
+      internalID: 4077646667959845668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__21"
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea2d392b0ee72e390800000000000000
+      internalID: -7790524901863730514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__22"
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fe2c96b5ee99b190800000000000000
+      internalID: -7946145358070141195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__23"
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 0
+        width: 25
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0291606550a72ed00800000000000000
+      internalID: 1000496230566336800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__24"
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 0
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 890c650b8a05e0e70800000000000000
+      internalID: 9083286183896072344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__25"
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 10
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e84c578f12a242e70800000000000000
+      internalID: 9089436273331258510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Write the instrument\u2019s name__26"
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 0
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 693452b4c6f4f3fa0800000000000000
+      internalID: -5818844867003595882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "Write the instrument\u2019s name__0": 3222405828010364203
+      "Write the instrument\u2019s name__1": -99508936393132056
+      "Write the instrument\u2019s name__10": -4505440155160006101
+      "Write the instrument\u2019s name__11": 5130036384434426524
+      "Write the instrument\u2019s name__12": -4017960701658166305
+      "Write the instrument\u2019s name__13": -4328956144324499553
+      "Write the instrument\u2019s name__14": 8236611792999217981
+      "Write the instrument\u2019s name__15": 8226254535442602041
+      "Write the instrument\u2019s name__16": -5314026604226812349
+      "Write the instrument\u2019s name__17": 7138184524284134970
+      "Write the instrument\u2019s name__18": 7476253977440988567
+      "Write the instrument\u2019s name__19": 1565306803467773608
+      "Write the instrument\u2019s name__2": 6577366303417302756
+      "Write the instrument\u2019s name__20": 4077646667959845668
+      "Write the instrument\u2019s name__21": -7790524901863730514
+      "Write the instrument\u2019s name__22": -7946145358070141195
+      "Write the instrument\u2019s name__23": 1000496230566336800
+      "Write the instrument\u2019s name__24": 9083286183896072344
+      "Write the instrument\u2019s name__25": 9089436273331258510
+      "Write the instrument\u2019s name__26": -5818844867003595882
+      "Write the instrument\u2019s name__3": 7576318700003437376
+      "Write the instrument\u2019s name__4": -7091169657891805083
+      "Write the instrument\u2019s name__5": -7315440964826017310
+      "Write the instrument\u2019s name__6": 4185586598074895757
+      "Write the instrument\u2019s name__7": 253527419332829201
+      "Write the instrument\u2019s name__8": -5394886741680052558
+      "Write the instrument\u2019s name__9": -8786405713740248503
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

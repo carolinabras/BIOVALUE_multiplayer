@@ -47,9 +47,13 @@ public class BiovaluePlayer
 public enum InstrumentType
 {
     None = 0,
-    Fiscalization = 1,
-    Regulamentation = 2,
-    Accord = 3
+    Fiscalização = 1,
+    Regulamentação = 2,
+    Acordo = 3,
+    Informação = 4, 
+    Incentivo = 5, 
+    Planeamento = 6, 
+    
 }
 
 [Serializable]
@@ -79,7 +83,8 @@ public class Instrument
     public int id = -1;
     public string name = "New Instrument";
     public string description = "Instrument Description";
-    public InstrumentType type = InstrumentType.None;
+    public InstrumentType typeOne = InstrumentType.None;
+    public InstrumentType typeTwo = InstrumentType.None;
     public Sprite icon = null;
     public string generalDescription = "General Description of the Instrument";
     public bool isSelected = false;
@@ -94,7 +99,8 @@ public class Instrument
         this.id = instrument.id;
         this.name = instrument.name;
         this.description = instrument.description;
-        this.type = instrument.type;
+        this.typeOne = instrument.typeOne;
+        this.typeTwo = instrument.typeTwo;
         this.icon = instrument.icon;
         this.isSelected = instrument.isSelected;
         

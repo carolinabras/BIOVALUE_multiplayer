@@ -6,7 +6,8 @@ public class DetailsHook : MonoBehaviour
     
     [SerializeField] private TMPro.TMP_Text titleText;
     [SerializeField] private TMPro.TMP_Text descriptionText;
-    [SerializeField] private TMPro.TMP_Text typeText;
+    [SerializeField] private TMPro.TMP_Text typeTextOne;
+    [SerializeField] private TMPro.TMP_Text typeTextTwo;
     [SerializeField] private InstrumentHook innerInstrumentHook;
     
     public void SetInstrumentDetails(Instrument inst)
@@ -26,9 +27,13 @@ public class DetailsHook : MonoBehaviour
         {
             descriptionText.text = instrument.generalDescription;
         }
-        if (typeText)
+        if (typeTextOne)
         {
-            typeText.text = instrument.type.ToString();
+            typeTextOne.text = instrument.typeOne.ToString();
+        }
+        if (typeTextOne)
+        {
+            typeTextOne.text = instrument.typeOne.ToString();
         }
         
         if (innerInstrumentHook)

@@ -52,6 +52,11 @@ public class PlayerSelection : MonoBehaviour
         }
     }
     
+    public int GetSelectedPlayerCount()
+    {
+        return selectedPlayerCount;
+    }
+    
     
 }
 

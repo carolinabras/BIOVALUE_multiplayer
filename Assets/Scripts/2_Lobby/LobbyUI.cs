@@ -71,10 +71,16 @@ public class LobbyUI : MonoBehaviour
     
     public void SelectInstrumentPanel()
     {
-        if (toSelectInstrumentPanel != null)
-        {
-            toSelectInstrumentPanel.SetActive(true);
-        }
+        if (toSelectInstrumentPanel == null) return;
+
+        LeanTween.cancel(toSelectInstrumentPanel);
+
+        toSelectInstrumentPanel.SetActive(true);
+        toSelectInstrumentPanel.transform.localScale = Vector3.zero;
+
+        LeanTween.scale(toSelectInstrumentPanel, Vector3.one, 0.25f)
+            .setEaseOutBack()
+            .setIgnoreTimeScale(true);
     }
     
     public void SelectObjectivePanel()

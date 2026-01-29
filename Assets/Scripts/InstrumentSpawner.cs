@@ -16,7 +16,7 @@ public class InstrumentSpawner : MonoBehaviour
 
     private void Start()
     {
-        Invoke(nameof(Populate), 2.0f);
+        Invoke(nameof(Populate), 0.5f);
     }
 
     /*public void Populate()
