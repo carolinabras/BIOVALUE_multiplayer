@@ -6,7 +6,7 @@ public class AddEditInstrument : MonoBehaviour
 {
     // add instrument database
     public InstrumentsDatabase instrumentsDatabase;
-    
+    //private InstrumentsDatabase instrumentsDatabase;
     [SerializeField] private GameObject instrumentPrefab;
     
     //input fields
@@ -15,11 +15,39 @@ public class AddEditInstrument : MonoBehaviour
 
     [SerializeField] private GameObject addInstrumentPanel;
     
+    
+    private void Awake()
+    {
+        instrumentsDatabase = InstrumentDatabaseSession.Instance.SessionDb;
+        Debug.Log("AddEditInstrument using DB: " + instrumentsDatabase.name);
+        
+    }
+    
+    private int GenerateUniqueId()
+    {
+        int id;
+        int safety = 0;
+
+        do
+        {
+            id = UnityEngine.Random.Range(100, 1000);
+            safety++;
+        }
+        while (instrumentsDatabase.instruments.Exists(i => i.id == id) && safety < 1000);
+
+        if (safety >= 1000)
+            Debug.LogError("Failed to generate unique Instrument ID");
+
+        return id;
+    }
+    
     public void OnClickAddInstrument() // add new instrument to database 
     {
         if (instrumentsDatabase == null)
         {
             Debug.LogError("Instruments Database is not assigned.");
+            Debug.LogError($"Instruments Database is not assigned. (from {gameObject.name} / {GetType().Name})");
+
             return;
         }
         
@@ -35,6 +63,7 @@ public class AddEditInstrument : MonoBehaviour
         // create new instrument
         Instrument newInstrument = new Instrument
         {
+            id = GenerateUniqueId(),
             name = novoNome,
             description = descriptionNew,
             generalDescription = descriptionNew,

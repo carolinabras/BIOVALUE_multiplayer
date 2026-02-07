@@ -4,15 +4,19 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
+
+    
     public void StartGame()
     {
         StartCoroutine(StartGameCoroutine());
+        //copy instruments database to database copy
+        
     }
     
     IEnumerator StartGameCoroutine()
     {
-        yield return new WaitForSeconds(1.5f);
-        SceneManager.LoadScene(1); //Lobby
+        yield return new WaitForSeconds(0.5f);
+        SceneManager.LoadScene(0); //Lobby
     }
     
     public void QuitGame()

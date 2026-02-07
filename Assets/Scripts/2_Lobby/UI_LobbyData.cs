@@ -34,7 +34,7 @@ public class UI_LobbyData : MonoBehaviour
     public void Update()
     {
         ButtonSave();
-        Debug.Log("Objective: " + lobbyData.objective + ", Link: " + lobbyData.link + ", NumPlayers: " + lobbyData.numPlayers);
+        //Debug.Log("Objective: " + lobbyData.objective + ", Link: " + lobbyData.link + ", NumPlayers: " + lobbyData.numPlayers);
         
         // check if player count changes 
         int count = playerSelection.GetSelectedPlayerCount();
@@ -70,7 +70,7 @@ public class UI_LobbyData : MonoBehaviour
     private void LoadDataToUI()
     {
         objectiveInput.text = lobbyData.objective;
-        linkInput.text = lobbyData.link;
+        linkInput.text = lobbyData.link; 
         playerSelection.UpdateButtonStates();
         Debug.Log("Loaded Lobby Data to UI" + lobbyData.objective + ", " + lobbyData.link + ", " + lobbyData.numPlayers);
         
@@ -86,7 +86,7 @@ public class UI_LobbyData : MonoBehaviour
         
         if (string.IsNullOrWhiteSpace(lobbyData.objective))
         {
-            Debug.Log("Objective vazia.");
+            //Debug.Log("Objective vazia.");
             errorCode = 0;
             return false;
         }
@@ -97,7 +97,7 @@ public class UI_LobbyData : MonoBehaviour
         var instrumentsDb = GameKnowledge.Instance?.instrumentsDatabase;
         if (instrumentsDb == null)
         {
-            Debug.LogError("InstrumentsDatabase não encontrada em GameKnowledge.");
+            //Debug.LogError("InstrumentsDatabase não encontrada em GameKnowledge.");
             return false;
         }
         
@@ -106,7 +106,7 @@ public class UI_LobbyData : MonoBehaviour
         
         if (selectedInstruments < requiredInstruments)
         {
-            Debug.Log($"Número insuficiente de instrumentos selecionados. Selecionados: {selectedInstruments}, Necessários: {requiredInstruments}");
+            //Debug.Log($"Número insuficiente de instrumentos selecionados. Selecionados: {selectedInstruments}, Necessários: {requiredInstruments}");
             errorCode = 1;
             return false;
         }
@@ -143,7 +143,7 @@ public class UI_LobbyData : MonoBehaviour
         else
         {
            
-            Debug.Log("Failed to save lobby data. Conditions not met.");
+            //Debug.Log("Failed to save lobby data. Conditions not met.");
             //change sprite
             if (continueButtonImage != null && continueButtonDisabledSprite != null)
             {

@@ -14,6 +14,11 @@ public class InstrumentSpawner : MonoBehaviour
     [SerializeField] private PhotonView photonView;
 
 
+    private void Awake()
+    {
+        instrumentsDatabase = InstrumentDatabaseSession.Instance.SessionDb;
+    }
+    
     private void Start()
     {
         Invoke(nameof(Populate), 0.5f);
@@ -74,7 +79,7 @@ public class InstrumentSpawner : MonoBehaviour
         if (!photonView) return;
         if (!photonView.IsMine) return;
 
-        if (!instrumentsDatabase)
+        /*if (!instrumentsDatabase)
         {
             instrumentsDatabase = GameKnowledge.Instance?.instrumentsDatabase;
             if (!instrumentsDatabase)
@@ -82,7 +87,7 @@ public class InstrumentSpawner : MonoBehaviour
                 Debug.LogError("Instruments Database is not assigned.");
                 return;
             }
-        }
+        }*/
 
         if (!instrumentPrefab)
         {

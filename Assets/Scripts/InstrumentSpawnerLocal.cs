@@ -12,18 +12,28 @@ public class InstrumentSpawnerLocal : MonoBehaviour
     [HideInInspector] public List<InstrumentHook> injectionStepHooks = new List<InstrumentHook>();
 
    
-
+   
 
     private void Start()
     {
         //disable dragging for local spawner
         instrumentPrefab.GetComponent<DragPiece>().enabled = false;
+       
+        if (InstrumentDatabaseSession.Instance == null)
+        {
+            Debug.LogError("InstrumentDatabaseSession.Instance is null. Ensure the session object exists before this scene.");
+            return;
+        }
+
+        instrumentsDatabase = InstrumentDatabaseSession.Instance.SessionDb;
         Invoke(nameof(Populate), 0.5f);
+        
     }
-    private void OnEnable()
+    /*private void OnEnable()
     {
         if (instrumentsDatabase != null)
             instrumentsDatabase.OnDatabaseChanged.AddListener(Populate);
+        Populate();
     }
 
     private void OnDisable()
@@ -31,18 +41,36 @@ public class InstrumentSpawnerLocal : MonoBehaviour
         if (instrumentsDatabase != null)
             instrumentsDatabase.OnDatabaseChanged.RemoveListener(Populate);
     }
+    */
+    private void OnEnable()
+    {
+        var session = InstrumentDatabaseSession.Instance;
+        if (session == null || session.SessionDb == null)
+        {
+            Debug.LogError("Session DB ainda não existe. Garante que o Session object é criado antes desta cena.");
+            return;
+        }
 
+        instrumentsDatabase = session.SessionDb;
+
+        instrumentsDatabase.OnDatabaseChanged.AddListener(Populate);
+        Populate();
+    }
+
+    private void OnDisable()
+    {
+        if (instrumentsDatabase != null)
+            instrumentsDatabase.OnDatabaseChanged.RemoveListener(Populate);
+    }
+    
     public void Populate()
     {
-        if (!instrumentsDatabase)
+        if (instrumentsDatabase == null)
         {
-            instrumentsDatabase = GameKnowledge.Instance?.instrumentsDatabase;
-            if (!instrumentsDatabase)
-            {
-                Debug.LogError("Instruments Database is not assigned.");
-                return;
-            }
+            Debug.LogError("Populate chamado mas instrumentsDatabase é null.");
+            return;
         }
+        Debug.Log("Populate called. Count = " + instrumentsDatabase.instruments.Count);
 
         if (!instrumentPrefab)
         {

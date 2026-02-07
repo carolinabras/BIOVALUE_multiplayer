@@ -9,12 +9,17 @@ public class InstrumentHook : MonoBehaviourPun
     [HideInInspector] public Instrument instrument;
 
     [SerializeField] private TMP_Text nameText;
-    
+
+    [SerializeField] private TMP_Text typeOne;
+    [SerializeField] private TMP_Text typeTwo;
+
+    [SerializeField] private TMP_Text id;
 
     [SerializeField] private DragPiece dragPiece;
 
     [SerializeField] private Image iconImage;
     [SerializeField] private IconDatabase iconDatabase;
+    
 
     public string Name
     {
@@ -33,14 +38,70 @@ public class InstrumentHook : MonoBehaviourPun
         }
     }
     
+    public string TypeOne
+    {
+        get => instrument != null ? instrument.typeOne.ToString() : string.Empty;
+        set
+        {
+            if (instrument != null && Enum.TryParse(value, out InstrumentType type))
+            {
+                instrument.typeOne = type;
+            }
+
+            if (typeOne)
+            {
+                typeOne.text = value;
+            }
+        }
+    }
+    
+    public string TypeTwo
+    {
+        get => instrument != null ? instrument.typeTwo.ToString() : string.Empty;
+        set
+        {
+            if (instrument != null && Enum.TryParse(value, out InstrumentType type))
+            {
+                instrument.typeTwo = type;
+            }
+
+            if (typeTwo)
+            {
+                typeTwo.text = value;
+            }
+        }
+    }
+    
+    public string Id
+    {
+        get => instrument != null ? instrument.id.ToString() : string.Empty;
+        set
+        {
+            if (instrument != null && int.TryParse(value, out int idValue))
+            {
+                instrument.id = idValue;
+            }
+
+            if (id)
+            {
+                id.text = value;
+            }
+        }
+    }
+    
     public Sprite Icon
     {
         get => instrument != null ? instrument.icon : null;
         set
         {
-            if (dragPiece != null)
+            if (instrument == null) return;
+
+            instrument.icon = value;
+
+            if (iconImage != null)
             {
-                instrument.icon = value;
+                iconImage.sprite = value;
+                iconImage.enabled = (value != null);
             }
         }
     }
@@ -101,12 +162,60 @@ public class InstrumentHook : MonoBehaviourPun
 
         Name = instr.name;
         Description = instr.description;
+        
+        if ( instr.typeOne != InstrumentType.None ){
+            TypeOne = instr.typeOne.ToString();
+            
+        }
+        else
+        {
+            TypeOne = "";
+        }
+
+        if (instr.typeTwo != InstrumentType.None)
+        {
+            TypeTwo = instr.typeTwo.ToString();
+        }
+        else
+        {
+            TypeTwo = "";
+        }
+
+        if (instr.id <= 100)
+        {
+            Id = instr.id.ToString();
+        }
+        else        {
+            Id = "";
+        }
+        
+        
+    
         var sprite = iconDatabase.GetIcon(instr.typeOne, instr.typeTwo);
+
+        
+        instrument.icon = sprite;
+
+       
         if (iconImage != null)
         {
             iconImage.sprite = sprite;
             iconImage.enabled = (sprite != null);
         }
+        
+        /* var sprite = iconDatabase.GetIcon(instr.typeOne, instr.typeTwo);
+        if (iconImage != null)
+        {
+            iconImage.sprite = sprite;
+            iconImage.enabled = (sprite != null);
+        } */
+        
+        Debug.Log(
+            $"[InstrumentHook] {instr.name} types=({instr.typeOne},{instr.typeTwo}) " +
+            $"iconDb={(iconDatabase ? iconDatabase.name : "NULL")} " +
+            $"iconImage={(iconImage ? iconImage.name : "NULL")} " +
+            $"sprite={(sprite ? sprite.name : "NULL")}"
+        );
         
     }
 
@@ -134,6 +243,7 @@ public class InstrumentHook : MonoBehaviourPun
             description = description,
             typeOne = type1,
             typeTwo = type2
+            
         };
         SetInstrument(instr);
     }
