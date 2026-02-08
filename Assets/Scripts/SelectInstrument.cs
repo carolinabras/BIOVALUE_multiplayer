@@ -25,11 +25,20 @@ public class SelectInstrument : MonoBehaviour
          visualImage = button.GetComponent<Image>();
 
          // impedir o Button de sobrescrever a cor
-         button.transition = Selectable.Transition.None;
+         //button.transition = Selectable.Transition.None;
 
          backgroundImage = GetComponent<Image>();
 
          //UpdateVisual();
+   }
+
+   public void Start()
+   {
+       if (instrumentHook == null)
+       {
+           return;
+       }
+       UpdateVisual();
    }
 
    public void ToggleSelection()
@@ -55,17 +64,17 @@ public class SelectInstrument : MonoBehaviour
        realInstrument.isSelected = newValue;
 
        uiInstrument.isSelected = newValue;
-       db.NotifyDatabaseChanged();
+       // db.NotifyDatabaseChanged();
 
        //Debug.Log($"[SelectInstrument] {realInstrument.name} isSelected = {realInstrument.isSelected} (DB HASH={realInstrument.GetHashCode()})");
     
-       if (realInstrument.isSelected == true)
-       {
-           Debug.Log($"[SelectInstrument] {realInstrument.name} selected");
-           visualImage.color = Color.green;
-           backgroundImage.color = Color.green;
-           
-       }
+       // if (realInstrument.isSelected == true)
+       // {
+       //     Debug.Log($"[SelectInstrument] {realInstrument.name} selected");
+       //     visualImage.color = Color.green;
+       //     backgroundImage.color = Color.green;
+       //     
+       // }
        
        UpdateVisual();
    }
@@ -76,7 +85,6 @@ public class SelectInstrument : MonoBehaviour
 
        visualImage.color =
            instrumentHook.instrument.isSelected ? Color.green : Color.white;
-   
    }
    
    public void ChangeColor()
