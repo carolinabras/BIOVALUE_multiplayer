@@ -6,13 +6,10 @@ public class PlayerCapsuleUI : MonoBehaviour
     [SerializeField] private TMP_Text playerNumberText;
     [SerializeField] private TMP_Text playerNameText;
 
-    // Chamas isto depois de instanciar
-    public void Setup(int playerNumber, string playerName)
+    public void SetPlayer(int playerIndex1Based, string playerName)
     {
-        if (playerNumberText != null)
-            playerNumberText.text = $"Player {playerNumber}";
-
-        if (playerNameText != null)
-            playerNameText.text = playerName;
+        if (playerNumberText) playerNumberText.text = $"Player {playerIndex1Based}";
+        if (playerNameText)   playerNameText.text   = string.IsNullOrEmpty(playerName) ? "—" : playerName;
     }
+    
 }

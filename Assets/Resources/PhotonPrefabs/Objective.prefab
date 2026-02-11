@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 8016959602519526426}
   - component: {fileID: 107451540073569995}
   m_Layer: 5
-  m_Name: Objective_Title
+  m_Name: Objective_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,10 +108,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3046827317554260996}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.7536011, y: 16.303314}
-  m_SizeDelta: {x: -31.034973, y: -63.167603}
+  m_AnchorMin: {x: 0.08765032, y: 0.08534335}
+  m_AnchorMax: {x: 0.89267766, y: 1}
+  m_AnchoredPosition: {x: 3.2, y: 9.562}
+  m_SizeDelta: {x: 1.4819031, y: -19.123993}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8016959602519526426
 CanvasRenderer:
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Label
+  m_text: Default Objective
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -163,22 +163,23 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
+  m_TextStyleHashCode: 2426
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
-  m_fontSizeBase: 121.2
+  m_fontSize: 15
+  m_fontSizeBase: 15.95
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMin: 0
+  m_fontSizeMax: 15
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -223,17 +224,17 @@ GameObject:
   - component: {fileID: 6997020216971239202}
   - component: {fileID: 7539230493124311419}
   - component: {fileID: 7789264236572193059}
+  - component: {fileID: 7142902320108222058}
   - component: {fileID: 4050187812884455894}
   - component: {fileID: 6648481333402113553}
   - component: {fileID: 1141037753761246500}
-  - component: {fileID: 4591776669159816083}
+  - component: {fileID: 2701346178887825838}
   - component: {fileID: 5497158224760302012}
-  - component: {fileID: 7275311037626623383}
-  - component: {fileID: 881786046690370099}
-  - component: {fileID: 4349978303098139749}
-  - component: {fileID: 5300685353694265362}
+  - component: {fileID: 5105886805582091304}
+  - component: {fileID: 1763191039542849429}
+  - component: {fileID: 2869589671930520631}
   m_Layer: 5
-  m_Name: Objective_Selection
+  m_Name: Objective
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -248,16 +249,16 @@ RectTransform:
   m_GameObject: {fileID: 5782586414337912752}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3046827317554260996}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.2198486, y: -49.10327}
-  m_SizeDelta: {x: -1506.0496, y: -1012.8321}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 159.41, y: 169.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7539230493124311419
 CanvasRenderer:
@@ -297,6 +298,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7142902320108222058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5782586414337912752}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa187f2d7dcb1c84a93ea0c665e6b399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  placedInCell: 0
 --- !u!225 &4050187812884455894
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -348,7 +362,7 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &4591776669159816083
+--- !u!114 &2701346178887825838
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -357,20 +371,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5782586414337912752}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c18d34306f041389d153599f9ba6d4e, type: 3}
+  m_Script: {fileID: 11500000, guid: c4a50acdb9d7b6b479eaa2ee700b6c5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instrument:
-    id: -1
-    name: New Instrument
-    description: Instrument Description
-    type: 0
-    icon: {fileID: 0}
-    generalDescription: General Description of the Instrument
-    isSelected: 0
-  nameText: {fileID: 107451540073569995}
-  dragPiece: {fileID: 0}
-  descriptionText: {fileID: 0}
+  rectTransform: {fileID: 6997020216971239202}
+  canvas: {fileID: 0}
+  gridParent: {fileID: 0}
 --- !u!114 &5497158224760302012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -383,7 +389,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 253a3c4bc654417789d82eed06b5c142, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7275311037626623383
+--- !u!114 &5105886805582091304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5782586414337912752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5c536966e1c4cd4bac88774891b5981, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHook
+  objectiveText: {fileID: 107451540073569995}
+--- !u!114 &1763191039542849429
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -394,7 +413,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
     m_WrapAround: 0
@@ -426,47 +445,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7789264236572193059}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4349978303098139749}
-        m_TargetAssemblyTypeName: SelectInstrument, Assembly-CSharp
-        m_MethodName: ToggleSelection
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &881786046690370099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5782586414337912752}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 937e4eb8459449a4e9114fc585f5225b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detailsPrefab: {fileID: 4259152329352099224, guid: edcda5c431e628f40b505cdb417220a3, type: 3}
-  longPressDuration: 0.5
-  instrumentHook: {fileID: 4591776669159816083}
---- !u!114 &4349978303098139749
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5782586414337912752}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 866a3f12728d618488eba3b81a657731, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5300685353694265362
+      m_Calls: []
+--- !u!114 &2869589671930520631
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -475,12 +455,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5782586414337912752}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7ae5e6a892385448985173cdcc53812, type: 3}
+  m_Script: {fileID: 11500000, guid: 4867bf735c4c2774d96837a263e25790, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  objective:
-    id: -1
-    name: New Objective
-    description: Objective Description
-    isSelected: 0
-  nameText: {fileID: 107451540073569995}
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectideDetails_Spawner
+  detailsPrefab: {fileID: 4259152329352099224, guid: 07163698cbb076c4ca19316a2e3af173, type: 3}
+  longPressDuration: 0.5
+  objectiveHook: {fileID: 5105886805582091304}
+  detailsParent: {fileID: 0}

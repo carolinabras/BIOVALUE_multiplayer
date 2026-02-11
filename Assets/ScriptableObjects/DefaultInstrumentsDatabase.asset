@@ -24,12 +24,52 @@ MonoBehaviour:
   - id: 2
     name: 2
     description: 
-    typeOne: 1
+    typeOne: 5
     typeTwo: 0
     icon: {fileID: 0}
     generalDescription: 
     isSelected: 0
   - id: 3
+    name: 3
+    description: 
+    typeOne: 0
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  - id: 4
+    name: 3
+    description: 
+    typeOne: 0
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  - id: 4
+    name: 3
+    description: 
+    typeOne: 0
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  - id: 6
+    name: 3
+    description: 
+    typeOne: 0
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  - id: 6
+    name: 3
+    description: 
+    typeOne: 0
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: 
+    isSelected: 0
+  - id: 6
     name: 3
     description: 
     typeOne: 0

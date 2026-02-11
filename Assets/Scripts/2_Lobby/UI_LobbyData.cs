@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class UI_LobbyData : MonoBehaviour
 {
     [SerializeField] private LobbyData lobbyData;
@@ -12,8 +13,8 @@ public class UI_LobbyData : MonoBehaviour
     [SerializeField] private TMP_InputField linkInput;
     
     [SerializeField] private PlayerSelection playerSelection;
-    
-    [SerializeField] private InstrumentsDatabase instrumentsDatabase;
+    //todo: change database to database instance
+    public InstrumentsDatabase dbSession;
     
     public Image continueButtonImage;
     public GameObject continueButton;
@@ -29,6 +30,15 @@ public class UI_LobbyData : MonoBehaviour
     public void Start()
     {
         LoadDataToUI();
+        
+    }
+    
+    public void Awake()
+    {   
+        dbSession = InstrumentDatabaseSession.Instance.SessionDb;
+       
+        
+        
     }
 
     public void Update()
@@ -94,15 +104,15 @@ public class UI_LobbyData : MonoBehaviour
         
         //check if number of instruments is at least numPlayers * 2
         
-        var instrumentsDb = GameKnowledge.Instance?.instrumentsDatabase;
-        if (instrumentsDb == null)
-        {
+        //var instrumentsDb = GameKnowledge.Instance?.instrumentsDatabase;
+       // if (instrumentsDb == null)
+        //{
             //Debug.LogError("InstrumentsDatabase não encontrada em GameKnowledge.");
-            return false;
-        }
+           // return false;
+        //}
         
         int requiredInstruments = lobbyData.numPlayers * 2;
-        int selectedInstruments = instrumentsDb.GetSelectedCount();
+        int selectedInstruments = dbSession.GetSelectedCount();
         
         if (selectedInstruments < requiredInstruments)
         {
@@ -167,6 +177,7 @@ public class UI_LobbyData : MonoBehaviour
     {
         if (Interactable())
         {
+            SaveLobbyObjectiveToRoom();
             GoToNextPhase();
         }       
         else
@@ -190,6 +201,19 @@ public class UI_LobbyData : MonoBehaviour
         {
             errorMessageText.text = "*Please write the objective and select enough instruments." + " (Min: " + (lobbyData.numPlayers * 2) + ")";
         }
+    }
+    
+    public void SaveLobbyObjectiveToRoom()
+    {
+        // idealmente só o MasterClient escreve para evitar conflitos
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        string obj = objectiveInput.text;
+
+        Hashtable props = new Hashtable();
+        props[BiovalueStatics.GameObjectiveKey] = obj;
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }
     
     

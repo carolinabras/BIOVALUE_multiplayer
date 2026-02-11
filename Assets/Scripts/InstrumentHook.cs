@@ -202,6 +202,9 @@ public class InstrumentHook : MonoBehaviourPun
             iconImage.sprite = sprite;
             iconImage.enabled = (sprite != null);
         }
+        else {
+           
+        }
         
         /* var sprite = iconDatabase.GetIcon(instr.typeOne, instr.typeTwo);
         if (iconImage != null)

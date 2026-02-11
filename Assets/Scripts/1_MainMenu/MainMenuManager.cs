@@ -16,7 +16,7 @@ public class MainMenuManager : MonoBehaviour
     IEnumerator StartGameCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
-        SceneManager.LoadScene(0); //Lobby
+        SceneManager.LoadScene(1); //Loading
     }
     
     public void QuitGame()

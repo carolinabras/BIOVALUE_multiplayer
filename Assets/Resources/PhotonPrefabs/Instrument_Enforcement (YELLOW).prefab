@@ -180,6 +180,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -391,12 +392,18 @@ MonoBehaviour:
     id: -1
     name: New Instrument
     description: Instrument Description
-    type: 0
+    typeOne: 0
+    typeTwo: 0
     icon: {fileID: 0}
     generalDescription: General Description of the Instrument
     isSelected: 0
   nameText: {fileID: 107451540073569995}
+  typeOne: {fileID: 0}
+  typeTwo: {fileID: 0}
+  id: {fileID: 0}
   dragPiece: {fileID: 2701346178887825838}
+  iconImage: {fileID: 0}
+  iconDatabase: {fileID: 0}
   descriptionText: {fileID: 5015630537012434235}
 --- !u!114 &5497158224760302012
 MonoBehaviour:
@@ -513,6 +520,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

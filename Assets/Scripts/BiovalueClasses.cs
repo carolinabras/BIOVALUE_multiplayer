@@ -9,6 +9,7 @@ public class BiovalueStatics
     public const string PlayerNameKey = "card_name";
     public const string PlayerObjectiveKey = "card_objective";
     public const string PlayerReadyKey = "card_ready";
+    public const string GameObjectiveKey = "game_objective";
 }
 
 public class BiovaluePlayer
@@ -59,10 +60,8 @@ public enum InstrumentType
 [Serializable]
 public class Objective
 {
-    public int id = -1;
-    public string name = "New Objective";
     public string description = "Objective Description";
-    public bool isSelected = false;
+    
     
     public Objective()
     {
@@ -70,10 +69,9 @@ public class Objective
     
     public Objective(Objective objective)
     {
-        this.id = objective.id;
-        this.name = objective.name;
+       
         this.description = objective.description;
-        this.isSelected = objective.isSelected;
+       
     }
 }
 

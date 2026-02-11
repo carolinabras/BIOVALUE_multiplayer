@@ -12,6 +12,7 @@ public class SpawnerDetails: MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     private bool isPressed;
     private float timer;
     
+    
     [SerializeField] private InstrumentHook instrumentHook;
     
     [SerializeField] private Transform detailsParent;

@@ -25,9 +25,13 @@ public class DetailsHook : MonoBehaviour
         }
         if (descriptionText)
         {
-            descriptionText.text = instrument.generalDescription;
+            descriptionText.text = instrument.description;
         }
-        if (typeTextOne.text != "None")
+        
+        
+        
+        
+        if (instrument.typeOne.ToString() != "None")
         {
             typeTextOne.text = instrument.typeOne.ToString();
         }
@@ -35,7 +39,9 @@ public class DetailsHook : MonoBehaviour
         {
             typeTextOne.text = "";
         }
-        if (typeTextTwo.text != "None")
+        
+        
+        if (instrument.typeTwo.ToString() != "None")
         {
             typeTextTwo.text = instrument.typeTwo.ToString();
         }
@@ -48,6 +54,8 @@ public class DetailsHook : MonoBehaviour
         {
             innerInstrumentHook.SetInstrument(instrument);
         }
+        
+        
     }
     
     public void SetDescription(string description)

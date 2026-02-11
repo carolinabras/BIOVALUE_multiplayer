@@ -15,6 +15,7 @@ public class IconDatabase : ScriptableObject
 
             if (sameOrder || swapped)
                 return entry.sprite;
+            
         }
         return null;
     }
