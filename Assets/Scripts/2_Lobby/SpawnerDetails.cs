@@ -11,6 +11,7 @@ public class SpawnerDetails: MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     [SerializeField] private float longPressDuration = 0.5f;
     private bool isPressed;
     private float timer;
+    private bool spawned; 
     
     
     [SerializeField] private InstrumentHook instrumentHook;
@@ -19,25 +20,37 @@ public class SpawnerDetails: MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     private void Awake()
     {
+        // if (!detailsParent)
+        //     detailsParent = GetComponentInParent<Canvas>().transform;
+        //
+        // if (!instrumentHook)
+        //     instrumentHook = GetComponentInParent<InstrumentHook>();
         if (!detailsParent)
         {
-            detailsParent = GetComponentInParent<Canvas>().transform;
+            var c = GetComponentInParent<Canvas>(true); // inclui inactivos
+            if (c != null) detailsParent = c.transform;
+            else
+            {
+                var anyCanvas = FindFirstObjectByType<Canvas>(); // Unity 6
+                if (anyCanvas != null) detailsParent = anyCanvas.transform;
+                else Debug.LogError("[SpawnerDetails] Não encontrei nenhum Canvas na cena.");
+            }
         }
     }
 
     private void Update()
     {
-        if (!isPressed) return;
+        if (!isPressed || spawned) return;
 
         timer += Time.deltaTime;
-        
-
         if (timer >= longPressDuration)
         {
-            
+            spawned = true;
+            isPressed = false;
             SpawnDetails();
             Debug.Log("Long press detected, spawning details.");
         }
+        
     }
 
     public void OnPointerDown(PointerEventData e)
@@ -45,6 +58,8 @@ public class SpawnerDetails: MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         timer = 0f;
         isPressed = true;
         Debug.Log("Pointer down detected, starting timer.");
+        spawnedThisPress = false;
+        spawned = false;
     }
 
     public void OnPointerUp(PointerEventData e)
@@ -81,4 +96,12 @@ public class SpawnerDetails: MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         Instrument instrument = instrumentHook.instrument;
         detailsHook.SetInstrumentDetails(instrument);
     }
+    
+    public void CancelLongPress()
+    {
+        isPressed = false;
+        timer = 0f;
+    }
+
+    private bool spawnedThisPress = false;
 }

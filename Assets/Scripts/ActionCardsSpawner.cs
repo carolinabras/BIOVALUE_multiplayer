@@ -17,9 +17,14 @@ public class ActionCardsSpawner : MonoBehaviour
 
     [HideInInspector] public List<ActionCardsHook> injectionStepHooks = new List<ActionCardsHook>();
 
+    private void Awake()
+    {
+        actionCardsDatabase = ActionCardsDatabaseSession.Instance.SessionDb;
+    }
+    
     private void Start()
     {
-        Invoke(nameof(SpawnActionCards), 2.0f);
+        //Invoke(nameof(SpawnActionCards), 3.0f);
     }
 
     /* public void Populate()
@@ -70,6 +75,7 @@ public class ActionCardsSpawner : MonoBehaviour
     */
     public void SpawnActionCards()
     {
+        UiUtils.ClearChildren(panelParent.gameObject);
         foreach (var actionCard in actionCardsDatabase.actionCards)
         {
             GameObject cardObject = Instantiate(actionCardPrefab, panelParent);

@@ -52,6 +52,17 @@ MonoBehaviour:
   - RPC_SetActionCard
   - RPC_SetObjective
   - RPC_KickPlayer
+  - RPC_SetPlayerInfo
+  - RPC_PopulateBoard
+  - RPC_SpawnBoard
+  - RPC_SetPlayerActionCards
+  - RPC_GiveOwner
+  - RPC_StartVote
+  - RPC_SubmitVote
+  - RPC_RevertToCell
+  - RPC_IncrementRejectedCount
+  - RPC_SpawnPlayerCards
+  - RPC_ShowCollaboration
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

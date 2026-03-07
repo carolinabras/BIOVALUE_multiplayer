@@ -125,6 +125,8 @@ public class ActionCardsHook : MonoBehaviourPun
     public void OnSelectedClicked()
     {
         IsSelected = !IsSelected;
+        
+        // change color of border when selected
     }
 
     public void SetActionCard(ActionCard card)

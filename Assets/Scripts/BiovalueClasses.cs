@@ -10,6 +10,7 @@ public class BiovalueStatics
     public const string PlayerObjectiveKey = "card_objective";
     public const string PlayerReadyKey = "card_ready";
     public const string GameObjectiveKey = "game_objective";
+    public const string CollabTokensKey = "CollabTokens";
 }
 
 public class BiovaluePlayer
@@ -86,6 +87,8 @@ public class Instrument
     public Sprite icon = null;
     public string generalDescription = "General Description of the Instrument";
     public bool isSelected = false;
+    public int ownerId;
+    public bool isPlaced = false;
     
     
     public Instrument()
@@ -101,6 +104,8 @@ public class Instrument
         this.typeTwo = instrument.typeTwo;
         this.icon = instrument.icon;
         this.isSelected = instrument.isSelected;
+        this.ownerId =  instrument.ownerId;
+        this.isPlaced = instrument.isPlaced; 
         
     }
 }

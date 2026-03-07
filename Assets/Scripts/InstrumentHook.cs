@@ -20,6 +20,8 @@ public class InstrumentHook : MonoBehaviourPun
     [SerializeField] private Image iconImage;
     [SerializeField] private IconDatabase iconDatabase;
     
+    
+    
 
     public string Name
     {

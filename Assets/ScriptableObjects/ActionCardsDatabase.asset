@@ -14,20 +14,162 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionCards:
   - cardName: Card 1
-    descriptionGeneral: Use this thing to plan better
-    descriptionHow: 
-    type: 1
-    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
-    id: 0
-  - cardName: Card 2
-    descriptionGeneral: Use bills
+    descriptionGeneral: Changing the way I work to enhance biodiversity
     descriptionHow: 
     type: 1
     icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
     id: 1
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 2
+    descriptionGeneral: Supporting education on biodiversity
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 2
+    isSelected: 0
+    isPlayed: 0
   - cardName: Card 3
+    descriptionGeneral: Creating partnerships to enhance biodiversity
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 3
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 4
+    descriptionGeneral: Joining a network that supports biodiversity
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 4
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 5
+    descriptionGeneral: "5.\tSharing my land for biodiversity projects"
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 5
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 6
+    descriptionGeneral: Donating to biodiversity causes
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 6
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 7
+    descriptionGeneral: Demonstrating against actions that harm biodiversity
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 7
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 8
+    descriptionGeneral: Voting for campaigns that prioritize biodiversity
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 8
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 9
+    descriptionGeneral: Building infrastructure that supports biodiversity
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 9
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 10
+    descriptionGeneral: Using tools and materials that support biodiversity
+    descriptionHow: 
+    type: 1
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 10
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 11
     descriptionGeneral: 
     descriptionHow: 
     type: 2
     icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
-    id: 2
+    id: 14
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 12
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 12
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 13
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 13
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 14
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 11
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 15
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 15
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 16
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 16
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 17
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 17
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 16
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 16
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 16
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 16
+    isSelected: 0
+    isPlayed: 0
+  - cardName: Card 16
+    descriptionGeneral: 
+    descriptionHow: 
+    type: 2
+    icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}
+    id: 16
+    isSelected: 0
+    isPlayed: 0

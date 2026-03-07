@@ -5,15 +5,12 @@ using Photon.Pun;
 
 public class GameMasterPanelUI : MonoBehaviourPunCallbacks
 {
-   
-    public RectTransform panel;
-
+    public RectTransform masterPanel;
     
+    [SerializeField] private float openX;
+
    
     
-    public float visibleWidth = 80f;
-
-    public float animTime = 0.4f;
     public LeanTweenType easeType = LeanTweenType.easeOutCubic;
 
     private bool isOpen = false;
@@ -22,30 +19,21 @@ public class GameMasterPanelUI : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        //checks if is GM, if not, deactivate panel
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            panel.gameObject.SetActive(false);
-        }
+        // //checks if is GM, if not, deactivate panel
+        // if (!PhotonNetwork.IsMasterClient)
+        // {
+        //     panel.gameObject.SetActive(false);
+        // }
         
     }
 
     private void Awake()
     {
-        if (panel == null)
-            panel = GetComponent<RectTransform>();
-
-       
-        shownPos = panel.anchoredPosition;
-
-        float width = panel.rect.width;
-
+        if(!masterPanel) return;
+        openX = masterPanel.rect.width;
+        hiddenPos = masterPanel.anchoredPosition;
+        shownPos = new Vector2(masterPanel.anchoredPosition.x + openX, masterPanel.anchoredPosition.y);
         
-        hiddenPos = shownPos + new Vector2(-(width - visibleWidth), 0);
-
-       
-        panel.anchoredPosition = hiddenPos;
-        isOpen = false;
     }
 
     public void TogglePanel()
@@ -53,9 +41,7 @@ public class GameMasterPanelUI : MonoBehaviourPunCallbacks
         isOpen = !isOpen;
 
         Vector2 target = isOpen ? shownPos : hiddenPos;
+        LeanTween.move(masterPanel, target, 0.25f).setEaseOutCubic();
 
-        LeanTween.cancel(panel);
-        LeanTween.move(panel, target, animTime)
-            .setEase(easeType);
     }
 }

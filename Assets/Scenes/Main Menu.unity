@@ -1567,6 +1567,7 @@ GameObject:
   - component: {fileID: 1577190504}
   - component: {fileID: 1577190503}
   - component: {fileID: 1577190505}
+  - component: {fileID: 1577190506}
   m_Layer: 0
   m_Name: MenuManager
   m_TagString: Untagged
@@ -1614,6 +1615,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InstrumentDatabaseSession
   masterDatabase: {fileID: 11400000, guid: c3fadf012b0092c73b5a86274bd98b86, type: 2}
+--- !u!114 &1577190506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577190502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f38fe372926e34d49976b733bf625f61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActionCardsDatabaseSession
+  actionCardsDatabase: {fileID: 11400000, guid: 9635911798ded3d43b958558a47db15b, type: 2}
 --- !u!1 &1634024660
 GameObject:
   m_ObjectHideFlags: 0
@@ -2075,7 +2089,7 @@ MonoBehaviour:
     m_Top: 20
     m_Bottom: 43
   m_ChildAlignment: 4
-  m_Spacing: -229.15
+  m_Spacing: -72.79
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0

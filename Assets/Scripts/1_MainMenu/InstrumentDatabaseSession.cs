@@ -30,20 +30,7 @@ public class InstrumentDatabaseSession : MonoBehaviour
 
         foreach (var inst in masterDatabase.instruments)
         {
-            SessionDb.instruments.Add(new Instrument
-            {
-                id = inst.id,
-                name = inst.name,
-                description = inst.description,
-                generalDescription = inst.generalDescription,
-                isSelected = inst.isSelected,
-                typeOne = inst.typeOne,
-                typeTwo = inst.typeTwo,
-                
-                icon = inst.icon
-                
-                
-            });
+            SessionDb.instruments.Add(new Instrument(inst));
         }
 
         SessionDb.NotifyDatabaseChanged();

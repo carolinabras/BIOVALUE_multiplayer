@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 
 
-public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     /* private Vector2 originalPosition;
     private Transform originalParent;
@@ -186,7 +186,7 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             rectTransform.SetParent(originalParent, worldPositionStays:false); // move to original parent
         }
     }
-     
+
 
     private void SnapToClosestCell()
     {
@@ -256,78 +256,162 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         targetCell.SetOccupied(true);
         currentCell = targetCell;
     }
-    */ 
-      private Vector2 originalPosition;
-    private Transform originalParent;
-    public RectTransform rectTransform;
-    public Canvas canvas;
+    */
 
-    private PhotonView photonView;
+
+
+    // ////////////////////////////////////////FUNCIONA ESTE
+    private Vector2 originalPosition;
+    private Transform originalParent;
+
+
+    // teste //////////////////////////////////////////
+
+    private Transform parentAfterDrag;
+
+
+
+    public RectTransform rectTransform;
+
+
+    public GameState _gameState;
 
     // célula onde a peça está atualmente
     private BoardCell currentCell;
     private int currentCellIndex = -1;
 
-    // parent que contém TODAS as células do tabuleiro (RectTransform)
+
+    public GameObject tempBoard;
+    public bool canDrag; // só pode arrastar quando estiver no seu turno
+
+
     public RectTransform gridParent;
+
+
 
     private void Awake()
     {
-        Initialize();
+        _gameState = GameState.Instance;
+
+
+        // originalPosition = this.transform.localPosition;
+        // originalParent = this.transform.parent;
+        //
+        if (!gridParent)
+        {
+            var board = GameObject.Find("Board");
+            if (board != null)
+            {
+                gridParent = board.GetComponent<RectTransform>();
+            }
+
+
+
+
+
+
+        }
     }
 
-    public void Initialize()
+    private void Start()
     {
+        if (_gameState == null) return;
+        _gameState.onPlayerTurnIndexChanged.AddListener(OnPlayerTurnIndexChanged);
+        OnPlayerTurnIndexChanged(_gameState.GetCurrentPlayerTurnIndex());
+
+
+
+
+    }
+
+    public void OnPlayerTurnIndexChanged(int index)
+    {
+        if (_gameState.IsMyTurn())
+        {
+            canDrag = true;
+        }
+        else
+        {
+            canDrag = false;
+        }
+    }
+
+
+    /*public void Initialize()
+    {
+        // rectTransform = GetComponent<RectTransform>();
+        // canvas = GetComponentInParent<Canvas>();
+        // photonView = GetComponent<PhotonView>();
+        //
+        // if (!gridParent && transform.parent != null)
+        // {
+        //     gridParent = transform.parent as RectTransform;
+        // }
+
+
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         photonView = GetComponent<PhotonView>();
 
-        if (!gridParent && transform.parent != null)
+        if (!gridParent)
         {
-            gridParent = transform.parent as RectTransform;
+            var board = GameObject.Find("Board");
+            if (board != null)
+            {
+                gridParent = board.GetComponent<RectTransform>();
+            }
+            Debug.LogWarning("GridParent não atribuído no Inspector, tentando encontrar um GameObject chamado 'Board'... " + (gridParent ? "Encontrado!" : "Não encontrado!"));
         }
-    }
+    }*/
+
+
+
+    private bool isDragging = false;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!canDrag) return;
         if (!photonView.IsMine)
         {
-            // pede ownership e sai deste drag
+            // pede ownership 
+
             photonView.RequestOwnership();
-            return;
+
+
         }
 
-        if (!rectTransform || !canvas || !photonView || !gridParent)
-        {
-            Initialize();
-        }
+        GetComponent<SpawnerDetails>()?.CancelLongPress();
 
         originalPosition = rectTransform.anchoredPosition;
         originalParent = rectTransform.parent;
 
         // mete a peça como filha do grid para alinhar com as células
-        rectTransform.SetParent(gridParent, worldPositionStays: false);
-        rectTransform.SetAsLastSibling();
+        //rectTransform.SetParent(gridParent, worldPositionStays: false);
+        this.transform.SetParent(gridParent.transform);
+        this.transform.SetAsLastSibling();
+        Debug.LogWarning("the parent of this object is " + this.transform.parent.name);
+        isDragging = true;
 
-        // ✨ IMPORTANTE:
-        // NÃO limpamos aqui a célula; vamos tratar disso
-        // no SnapToClosestCell, para podermos sincronizar com os outros.
+
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!rectTransform || !canvas || !photonView || !gridParent)
-        {
-            Initialize();
-        }
 
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        if (!isDragging) return;
+        //rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        transform.position = Input.mousePosition;
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!isDragging) return;
         SnapToClosestCell();
+        GetComponent<SpawnerDetails>()?.CancelLongPress();
         Debug.Log("Drag Ended on " + rectTransform.anchoredPosition);
+
+        isDragging = false;
     }
 
     private void SnapToClosestCell()
@@ -345,7 +429,7 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         {
             var child = gridParent.GetChild(i);
             var cellRT = child as RectTransform;
-            if (!cellRT || cellRT == rectTransform) continue; // ignora a própria peça
+            if (!cellRT || cellRT == this.transform) continue; // ignora a própria peça
 
             var cell = child.GetComponent<BoardCell>();
             if (cell == null) continue;
@@ -387,6 +471,11 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             if (photonView != null && photonView.IsMine)
             {
                 photonView.RPC(nameof(RPC_SnapToCellByIndex), RpcTarget.Others, newIndex, oldIndex);
+                GiveOwner(GameState.Instance.localPlayerIndex);
+                VotingManager.Instance.StartVote(photonView.ViewID, newIndex, oldIndex);
+
+
+
             }
         }
         else
@@ -423,10 +512,80 @@ public class DragPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         if (!targetCell.IsFree()) return;
 
         rectTransform.SetParent(gridParent, worldPositionStays: false);
+
         rectTransform.anchoredPosition = targetRT.anchoredPosition;
 
         targetCell.SetOccupied(true);
         currentCell = targetCell;
         currentCellIndex = newIndex;
+
+    }
+
+    // ── Revert ──────────────────────────────────────────────────────────────
+
+    [PunRPC]
+    public void RPC_RevertToCell(int oldCellIndex)
+    {
+        RevertToCell(oldCellIndex);
+    }
+
+    public void RevertToCell(int oldCellIndex)
+    {
+        if (oldCellIndex < 0)
+        {
+            rectTransform.SetParent(originalParent, worldPositionStays: false);
+            rectTransform.anchoredPosition = originalPosition;
+            return;
+        }
+
+        if (!gridParent || oldCellIndex >= gridParent.childCount) return;
+
+        if (currentCell != null)
+            currentCell.SetOccupied(false);
+
+        var oldChild = gridParent.GetChild(oldCellIndex);
+        var oldRT = oldChild as RectTransform;
+        var oldCell = oldChild.GetComponent<BoardCell>();
+        if (oldRT == null || oldCell == null) return;
+
+        rectTransform.SetParent(gridParent, worldPositionStays: false);
+        rectTransform.anchoredPosition = oldRT.anchoredPosition;
+        oldCell.SetOccupied(true);
+        currentCell = oldCell;
+        currentCellIndex = oldCellIndex;
+    }
+    
+    public void GiveOwner(int ownerID)
+    {
+        var instrument = GetComponent<InstrumentHook>()?.instrument;
+        if (instrument != null)
+        {
+            InstrumentDatabaseSession.Instance.SessionDb.SetOwner(ownerID, instrument);
+            instrument.isPlaced = true;
+            InstrumentDatabaseSession.Instance.SessionDb.NotifyDatabaseChanged();
+            Debug.Log("player owner is" + instrument.ownerId);
+        }
+
+        photonView.RPC(nameof(RPC_GiveOwner), RpcTarget.Others, ownerID);
+    }
+
+    [PunRPC]
+    void RPC_GiveOwner(int ownerID)
+    {
+        var instrument = GetComponent<InstrumentHook>()?.instrument;
+        if (instrument == null)
+        {
+            Debug.LogWarning("RPC_GiveOwner: Instrument não encontrado.");
+            return;
+        }
+
+        InstrumentDatabaseSession.Instance.SessionDb.SetOwner(ownerID, instrument);
+        instrument.isPlaced = true;
+        InstrumentDatabaseSession.Instance.SessionDb.NotifyDatabaseChanged();
+        Debug.Log(
+            $"Owner definido: PlayerIndex {ownerID} → Instrument {instrument.id}, isPlaced: {instrument.isPlaced}");
+
+
+
     }
 }

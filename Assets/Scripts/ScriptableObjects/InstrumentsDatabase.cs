@@ -23,7 +23,13 @@ public class InstrumentsDatabase : ScriptableObject
         OnDatabaseChanged?.Invoke();
     }
 
+    public void SetOwner(int ownerID, Instrument instrument)
+    {
+        instrument.ownerId = ownerID;
+        
+    }
 
+ 
     
     public void RemoveInstrument(Instrument instrument)
     {

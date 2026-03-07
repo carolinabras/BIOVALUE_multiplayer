@@ -146,6 +146,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -248,6 +252,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -350,6 +358,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -452,6 +464,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (17)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -554,6 +570,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -656,6 +676,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (15)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -758,6 +782,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (19)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -860,6 +888,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (16)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -962,6 +994,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (20)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1064,6 +1100,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (18)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1166,6 +1206,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1268,6 +1312,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1370,6 +1418,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1472,6 +1524,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1574,6 +1630,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1676,6 +1736,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (14)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1778,6 +1842,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1880,6 +1948,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1982,6 +2054,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardCell (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 9221189685117094253, guid: 9678415acbe23414f822db7b3a090ace, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6750033715232265413, guid: 01c28acfcdfd3c2448f4d69e2aeddf53, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

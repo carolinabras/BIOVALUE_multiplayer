@@ -5,6 +5,8 @@ using Photon.Pun;
 [RequireComponent(typeof(PhotonView))]
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(CanvasGroup))]
+
+
 public class DraggablePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     private Canvas canvas;
@@ -12,6 +14,8 @@ public class DraggablePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     private CanvasGroup cg;
     private Transform originalParent;
     private PhotonView pv;
+    private Transform dragArea; // camada onde as peças ficam enquanto são arrastadas (para desenhar por cima de tudo)
+
 
     [HideInInspector] public bool placedInCell = false;
 
@@ -21,10 +25,14 @@ public class DraggablePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         cg   = GetComponent<CanvasGroup>();
         pv   = GetComponent<PhotonView>();
         canvas = GetComponentInParent<Canvas>();
+
+        dragArea = GameObject.Find("Board").transform;
+        Debug.Log("Drag area: " + dragArea);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        
         // se esta peça tem Tag "GM", só o GM pode mexer
         if (CompareTag("GM") && !IAmGM())
         {
@@ -35,11 +43,14 @@ public class DraggablePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
         if (!pv.IsMine) pv.RequestOwnership();
 
-        originalParent = transform.parent;
+        originalParent = this.transform;
         placedInCell = false;
 
         cg.blocksRaycasts = false;          // deixar o raycast chegar às células
-        transform.SetParent(canvas.transform); // desenhar por cima de tudo
+        // transform.SetParent(canvas.transform); // desenhar por cima de tudo
+        // Debug.Log("originalParent: " + originalParent);
+        transform.SetParent(dragArea, worldPositionStays: true);
+        transform.SetAsLastSibling();
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -55,7 +66,9 @@ public class DraggablePiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         // se não foi largada numa célula, volta à origem (só localmente)
         if (!placedInCell)
         {
-            transform.SetParent(originalParent);
+            // transform.SetParent(originalParent);
+            // rect.anchoredPosition = Vector2.zero;
+            transform.SetParent(originalParent, worldPositionStays: false);
             rect.anchoredPosition = Vector2.zero;
         }
     }

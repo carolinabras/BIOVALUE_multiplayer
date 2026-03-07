@@ -14,68 +14,485 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instruments:
   - id: 1
-    name: 1
-    description: 
-    typeOne: 5
+    name: Guidelines for Public Space Design and Management
+    description: Frameworks for integrating biodiversity into planning and upkeep
+      of public spaces. This can support biodiversity by guiding ecological design
+      in public spaces and favouring integration with green networks.
+    typeOne: 4
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Public Services and Administration
     isSelected: 0
   - id: 2
-    name: 2
-    description: 
+    name: Best Practice Guidelines for Private Landowners
+    description: Recommendations for biodiversity-friendly land management on private
+      properties. This can enhance biodiversity by encouraging more sustainable land
+      management and ecologically friendly practices.
+    typeOne: 4
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 3
+    name: 'Protected and Conservation Areas '
+    description: Legally designated sites where ecological preservation is prioritised
+      through restrictions on land use and activities. These areas preserve biodiversity
+      by safeguarding habitats, halting land-use change and connecting green spaces.
+    typeOne: 6
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 4
+    name: Land Use Zoning
+    description: A tool that allocates land (at different scales) for specific uses,
+      balancing development and conservation goals. It supports biodiversity by organising
+      land use to protect habitats and potentially linking natural habitats to increase
+      connectivity.
+    typeOne: 6
+    typeTwo: 2
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 5
+    name: Design-Based Instruments
+    description: Design approaches incorporating nature-based solutions to support
+      biodiversity. This can enhance biodiversity by prioritising green design and
+      potentially connecting natural habitats.
+    typeOne: 6
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards
+    isSelected: 0
+  - id: 6
+    name: Land Acquisition
+    description: The purchase of land by public authorities to protect or restore
+      habitats. It supports biodiversity by preserving natural habitats and improving
+      management for conservation. It can also be used to create green networks.
+    typeOne: 6
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Land Ownership
+    isSelected: 0
+  - id: 7
+    name: Density Bonuses
+    description: Incentives allowing increased building capacity in exchange for
+      biodiversity enhancements, promoting natural elements, habitat preservation,
+      and creation. This can support biodiversity by incentivising habitat safeguard
+      and enhancement.
     typeOne: 5
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Practices
     isSelected: 0
-  - id: 3
-    name: 3
-    description: 
+  - id: 8
+    name: Fast-Tracking Approval Process
+    description: A streamlined approval process for developments that incorporate
+      biodiversity enhancements. This promotes biodiversity by aligning development
+      with ecological goals and reducing delays in projects with positive effects
+      for habitat quality or connectivity.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Public Services and Administration
+    isSelected: 0
+  - id: 9
+    name: 'Interim Use Permits for Vacant Land '
+    description: Temporary land-use permits that allow ecological functions on underutilised
+      land. This can improve biodiversity by activating spaces for nature-based solutions
+      and increasing ecological value.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 10
+    name: Land Rearrangements
+    description: The reorganisation of land parcel ownership to create larger, ecologically
+      viable habitat patches. This can support biodiversity by creating cohesive,
+      connected habitats. Needs to be paired with conservation areas or zoning for
+      effective biodiversity conservation.
+    typeOne: 3
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Land Ownership
+    isSelected: 0
+  - id: 11
+    name: Contractualization and Stewardship Programs
+    description: Voluntary or contractual arrangements where landowners commit to
+      maintaining ecological conditions, ensuring that conservation practices are
+      upheld over time. Habitat quality and connectivity can be enhanced through
+      such collaborative stewardship.
+    typeOne: 3
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 12
+    name: 'Transfer of Development Rights (TDR) '
+    description: Mechanisms that transfer development potential from ecologically
+      sensitive areas to designated growth zones. TDRs can preserve biodiversity
+      by protecting habitats and guiding sustainable development.
+    typeOne: 3
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 13
+    name: Performance-Based Approaches (Point Systems)
+    description: A scoring mechanism that rewards development projects integrating
+      biodiversity-friendly features. They can improve biodiversity by promoting
+      habitat creation and ecological alignment.
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards
+    isSelected: 0
+  - id: 14
+    name: 'Quantitative Targets and Standards '
+    description: This regulatory tool sets specific and quantifiable targets for
+      biodiversity conservation in development projects or in land-use planning.
+      They can enhance biodiversity by increasing natural areas and can also improve
+      habitat quality and ecological connectivity.
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards
+    isSelected: 0
+  - id: 15
+    name: 'Qualitative and Technological Requirements '
+    description: Regulations setting qualitative ecological and/or technological
+      elements for land use management or infrastructure development projects. They
+      enhance biodiversity by integrating green infrastructure, improving resource
+      management, and promoting good ecological conditions.
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards
+    isSelected: 0
+  - id: 16
+    name: 'Compensation Measures '
+    description: Obligations imposed on developers to offset environmental damage
+      through habitat restoration or conservation efforts. These measures can support
+      biodiversity by offsetting impacts and restoring ecosystems.
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards
+    isSelected: 0
+  - id: 17
+    name: 'Expropriation of Land and Compulsory Easements '
+    description: A legal tool that allows public authorities to acquire private land
+      or impose usage restrictions for conservation purposes. It helps protect biodiversity
+      by securing land, expanding habitats and/or ensuring better land management.
+    typeOne: 1
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Land Ownership
+    isSelected: 0
+  - id: 18
+    name: 'Administrative Possession '
+    description: This tool allows public authorities to temporarily manage land to
+      address neglect or ecological threats. It can support biodiversity by restoring
+      neglected areas and improving habitat connectivity.
+    typeOne: 1
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Land Ownership
+    isSelected: 0
+  - id: 19
+    name: 'Pre-emption Rights '
+    description: A legal right that allows authorities to purchase land before private
+      buyers to prevent environmentally harmful developments. They help protect ecologically
+      valuable land from development and can support green networks.
     typeOne: 0
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Land Ownership
     isSelected: 0
-  - id: 4
-    name: 3
-    description: 
+  - id: 20
+    name: 'Assessment of Cumulative Impacts '
+    description: An evaluation of the aggregated impacts from different planning
+      activities within the same area. Cumulative impact assessments can be an instrument
+      on its own, but assessing cumulative impacts can also be an integrated part
+      of SEAs and EIAs. They capture the broader, systemic interactions that contribute
+      to biodiversity loss or gain, which is essential for understanding how individual
+      impacts can accumulate in time and space.
     typeOne: 0
+    typeTwo: 4
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 21
+    name: Scoping
+    description: The process of identifying the relevant and significant impacts
+      associated with a given planning activity and which are important to decision
+      making. The issues identified in the scoping process are to be addressed and
+      assessed in the coming SEA and/or EIA. Scoping is conducted early in the EA
+      process and is a crucial step in ensuring that relevant biodiversity impacts
+      are included and assessed.
+    typeOne: 4
+    typeTwo: 6
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 22
+    name: 'Information, Consultation, Engagement '
+    description: Methods for involving stakeholders in biodiversity-related planning
+      decisions. Sharing information and engaging communities collaboratively empowers
+      decision-making, ensuring diverse perspectives are integrated, fostering a
+      more sustainable, biodiversity-focused approach.
+    typeOne: 4
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Awareness and Engagement
     isSelected: 0
-  - id: 4
-    name: 3
-    description: 
-    typeOne: 0
+  - id: 23
+    name: 'Baseline Assessment '
+    description: Evaluations of biodiversity conditions, challenges, and transformative
+      opportunities to inform land-use decisions. SEA uses existing data to map biodiversity,
+      land use, and ecosystem conditions, guiding strategies for habitat restoration
+      and ecosystem connectivity.
+    typeOne: 4
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Performance and Standards
     isSelected: 0
-  - id: 6
-    name: 3
-    description: 
-    typeOne: 0
+  - id: 24
+    name: 'Monitoring and Evaluation '
+    description: Systematic tracking of environmental conditions to assess biodiversity
+      outcomes, refine mitigation measures, and inform future planning cycles and
+      SP&MI through condition indicators, including biodiversity metrics. SEA tracks
+      broader systemic outcomes, like ecosystem health, while EIA focuses on project-specific
+      issues.
+    typeOne: 4
+    typeTwo: 6
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards
+    isSelected: 0
+  - id: 25
+    name: 'Strategic Environmental Assessment (SEA) '
+    description: "Horizontal instrument and regulation within the EU\u2019s environmental
+      policy framework. SEA integrates biodiversity considerations, along with other
+      critical environmental factors like climatic factors, land and population,
+      at the strategic level of policies, plans and programs."
+    typeOne: 6
+    typeTwo: 2
+    icon: {fileID: 0}
+    generalDescription: Public Services and Administration, Practices, Awareness
+      and Engagement
+    isSelected: 0
+  - id: 26
+    name: Environmental Impact Assessment (EIA)
+    description: A horizontal and mandatory instrument aligned with SEA but applied
+      to specific project-levels of planning. EIAs provide a process for the early
+      identification and mitigation of potential impacts to ensure compliance with
+      environmental standards and protect local biodiversity.
+    typeOne: 6
+    typeTwo: 2
+    icon: {fileID: 0}
+    generalDescription: Public Services and Administration, Practices, Awareness
+      and Engagement
+    isSelected: 0
+  - id: 27
+    name: 'Formulation of Alternatives '
+    description: Development of different planning scenarios to evaluate impact on
+      biodiversity, ecosystem services, and human well-being. It clarifies trade-offs,
+      supports informed decisions, and prioritises interventions like green infrastructure
+      and habitat connectivity.
+    typeOne: 6
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Awareness and Engagement
     isSelected: 0
-  - id: 6
-    name: 3
-    description: 
-    typeOne: 0
+  - id: 28
+    name: 'Mitigation Hierarchy '
+    description: "Mitigation Hierarchy A structured approach to minimising environmental
+      damage. It prioritises avoidance, minimisation, reparation, or offsetting through
+      a framework that emphasises harm prevention before considering corrective actions.
+      See Ravn Boess & K\xF8rn\xF8v (2024) for a catalogue of mitigation measures."
+    typeOne: 6
+    typeTwo: 5
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 29
+    name: 'Enhancement Measures '
+    description: "Proactive efforts to improve current baseline biodiversity conditions
+      beyond mitigation. These measures aim for net-positive environmental outcomes
+      and alignment with biodiversity goals. See K\xF8rn\xF8v et al. (2024b) for
+      a catalogue of enhancement measures."
+    typeOne: 6
+    typeTwo: 5
+    icon: {fileID: 0}
+    generalDescription: Public Services and Administration
+    isSelected: 0
+  - id: 30
+    name: 'User Fees and Surcharges '
+    description: Fees or charges for using or consuming goods and services or activities
+      associated with natural areas. They can be used to generate revenue for conservation,
+      recover costs and/or manage demand of land and/or resource use.
+    typeOne: 5
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Funds dor Conservation
     isSelected: 0
-  - id: 6
-    name: 3
-    description: 
-    typeOne: 0
+  - id: 31
+    name: 'Payments for Ecosystem Services and Direct Payments '
+    description: Voluntary payments (in cash or in kind, including carbon payments)
+      or performance-based compensation for undertaking agreed conservation actions
+      to enhance ecosystem services provision or biodiversity conservation.
+    typeOne: 5
     typeTwo: 0
     icon: {fileID: 0}
-    generalDescription: 
+    generalDescription: Funds dor Conservation
+    isSelected: 0
+  - id: 32
+    name: 'Environmental Taxes '
+    description: Levies applied to activities that use ecosystem services or may
+      harm biodiversity and ecosystem services. Success depends on whether relevant
+      authorities have the political power to influence fiscal measures, which are
+      often decided at the state or national level.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Funds dor Conservation
+    isSelected: 0
+  - id: 33
+    name: Tax Reliefs and Subsidies
+    description: Tax reductions, exemptions, or subsidy payments by the government
+      to support products, technologies, and practices that minimise or prevent environmental
+      degradation or contribute to conservation goals. They are often decided at
+      state or national level.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Funds dor Conservation
+    isSelected: 0
+  - id: 34
+    name: 'Ecological Fiscal Transfers '
+    description: Redistribution of revenues within or between public sector agencies
+      to help lower-tier governments cover costs for providing nature-related public
+      goods and services. Redistribution occurs according to certain environmental
+      criteria, including conservation measures.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Funds dor Conservation
+    isSelected: 0
+  - id: 35
+    name: 'Benefit and Revenue Sharing '
+    description: A flat fee or percentage of public revenues or private income generated
+      from conservation products and services that is shared with local communities
+      to recognise their essential role in conservation and provide incentives and
+      tangible benefits.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Funds for Conservation
+    isSelected: 0
+  - id: 36
+    name: 'Awards and Recognitions '
+    description: Recognition of individuals, groups, or communities demonstrating
+      good environmental practices to motivate the continuation or improvement of
+      conservation activities. These measures are often combined with other incentives
+      or awareness campaigns.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Awareness and Engagement
+    isSelected: 0
+  - id: 37
+    name: 'Auctions and Tenders '
+    description: "Auctions are a mechanism to decide which landowners receive a contract
+      that pays them to change land use and implement conservation measures on their
+      land. Multiple landowners make competing propositions or bids for the price
+      they ask to implement conservation measures, and a buyer \u2013 either government
+      or a private entity \u2013 selects the best offer."
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Funds for Conservation
+    isSelected: 0
+  - id: 38
+    name: 'Habitat/Mitigation Banking '
+    description: When such a bank is established, a landowner who acts to conserve
+      the natural habitat is seen as making a deposit in the bank and receives credits.
+      Others who want to develop the habitat or otherwise impact on it must purchase
+      a credit from the bank. These instruments are often determined by national
+      law and require high transaction costs for setting up and management.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards
+    isSelected: 0
+  - id: 39
+    name: 'Green Products and Eco-Labelling/Certification '
+    description: 'These initiatives promote income streams from products based on
+      sustainable land and resource use, or provide voluntary trademarks to environmentally
+      sustainable products, services, processes or financial products for reaching
+      new markets or generating additional revenues. They aim to provide incentives
+      for businesses to operate in a way compatible with biodiversity conservation. '
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Sustainable Business & Finance
+    isSelected: 0
+  - id: 40
+    name: 'Green Credits and Investment Facilities '
+    description: 'Credit and loans or preferential terms and conditions are granted
+      to green products and enterprises or may stipulate certain environmental requirements
+      in their terms of agreement, including both small-scale loans and large-scale
+      sources of credits and investment for green or biodiversity-based enterprises. '
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Sustainable Business & Finance
+    isSelected: 0
+  - id: 41
+    name: 'Quotas and Licenses '
+    description: Quotas that restrict the extraction or use of natural resources
+      can limit environmental damage to sustainable levels. They can be sold or auctioned
+      to generate additional revenue for conservation efforts. Revenues from licenses
+      can also generate additional income for environmental purposes and conservation
+      projects.
+    typeOne: 5
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Performance and Standards, Fund for Conservation
+    isSelected: 0
+  - id: 42
+    name: 'Voluntary Donations and Sponsorships '
+    description: Financial contributions from individuals or companies interested
+      in conservation, or who benefit from ecosystem services, or recognise their
+      role in ecosystem degradation. This also includes voluntarily sponsoring activities
+      that enhance biodiversity or channel funds to local communities.
+    typeOne: 3
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Funds for Conservation
+    isSelected: 0
+  - id: 43
+    name: 'Fines, Penalties, and Legal Liabilities '
+    description: Punishments and financial consequences applied to individuals or
+      companies that overuse, harm or pollute the environment. The goal is to avoid
+      or minimise negative environmental impacts or, for damage incurred, to oblige
+      the responsible party legally and financially to compensate for it.
+    typeOne: 2
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Practices
+    isSelected: 0
+  - id: 44
+    name: 'Deposits and Performance Bonds '
+    description: Individuals or companies undertaking activities which threaten the
+      environment or require some form of mitigation, remediation or management plan
+      are required to make a (usually refundable) deposit of funds against the expenditure
+      involved. This money is earmarked for mitigating or compensating damage.
+    typeOne: 1
+    typeTwo: 0
+    icon: {fileID: 0}
+    generalDescription: Practices
     isSelected: 0
   OnDatabaseChanged:
     m_PersistentCalls:

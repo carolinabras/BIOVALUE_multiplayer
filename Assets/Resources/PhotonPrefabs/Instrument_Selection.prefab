@@ -169,8 +169,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -246,9 +246,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8877841958924781154}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.45956612, y: 0.5}
-  m_AnchorMax: {x: 0.45956612, y: 0.5}
-  m_AnchoredPosition: {x: 4.9999695, y: 0.39999962}
+  m_AnchorMin: {x: 0.43533602, y: 0.5}
+  m_AnchorMax: {x: 0.43533602, y: 0.5}
+  m_AnchoredPosition: {x: 7.9999695, y: 0.39999962}
   m_SizeDelta: {x: 31.846802, y: 44.9467}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6105829558106511525
@@ -582,8 +582,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -662,9 +662,9 @@ RectTransform:
   m_Father: {fileID: 6997020216971239202}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.20700002, y: 0.7432657}
-  m_AnchorMax: {x: 0.7671549, y: 0.86244285}
-  m_AnchoredPosition: {x: 6.6614075, y: -5.3150024}
-  m_SizeDelta: {x: 13.323, y: 25.6314}
+  m_AnchorMax: {x: 0.79122597, y: 0.85700005}
+  m_AnchoredPosition: {x: 0.16140747, y: -3.8150024}
+  m_SizeDelta: {x: 0.32299995, y: 28.631401}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7686268192522286098
 CanvasRenderer:
@@ -1166,10 +1166,10 @@ RectTransform:
   - {fileID: 5923127895691538402}
   m_Father: {fileID: 6997020216971239202}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.3916193, y: 0.087000005}
-  m_AnchorMax: {x: 0.61800003, y: 0.22339067}
-  m_AnchoredPosition: {x: 1.0083008, y: 2.3139648}
-  m_SizeDelta: {x: 0.971405, y: 7.173889}
+  m_AnchorMin: {x: 0.41553557, y: 0.087000005}
+  m_AnchorMax: {x: 0.58315486, y: 0.22339067}
+  m_AnchoredPosition: {x: 4.008301, y: 2.3139648}
+  m_SizeDelta: {x: 32.971405, y: 7.173889}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7900307080952371194
 CanvasRenderer:
