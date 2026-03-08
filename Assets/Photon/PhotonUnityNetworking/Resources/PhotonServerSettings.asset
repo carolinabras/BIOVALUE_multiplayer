@@ -63,6 +63,7 @@ MonoBehaviour:
   - RPC_IncrementRejectedCount
   - RPC_SpawnPlayerCards
   - RPC_ShowCollaboration
+  - RPC_HideCollaboration
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -162,6 +162,7 @@ GameObject:
   - component: {fileID: 1032946661285298536}
   - component: {fileID: 8671051279685810113}
   - component: {fileID: 4195049166278972818}
+  - component: {fileID: 5315660193568804412}
   m_Layer: 5
   m_Name: CollabToken
   m_TagString: Untagged
@@ -227,3 +228,16 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5315660193568804412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4483606486529378859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dee193df3210cb4294c512e7acdb70b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollaboratorHook
+  playerNameText: {fileID: 6856499241160839625}
