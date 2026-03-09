@@ -43,3 +43,4 @@ MonoBehaviour:
   - type1: 0
     type2: 0
     sprite: {fileID: -4298056599330406823, guid: b456225a24351c8429bf6d2b3a0df589, type: 3}
+  defaultSprite: {fileID: -4298056599330406823, guid: b456225a24351c8429bf6d2b3a0df589, type: 3}

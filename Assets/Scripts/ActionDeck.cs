@@ -16,7 +16,7 @@ public class ActionDeck : MonoBehaviour
 
     public List<ActionCard> playedCards;
     public List<int> playedCardIds;
-    
+    [SerializeField] private GameObject panelMenuMaster;
 
     
     [SerializeField] private float animationTime = 0.5f;
@@ -24,32 +24,41 @@ public class ActionDeck : MonoBehaviour
     private bool isOpen = false;
     
     [SerializeField] private ActionCardsDatabase actionCardsDatabase;
-    public void Awake()
-    {
-        actionCardsDatabase = ActionCardsDatabaseSession.Instance.SessionDb;
-    }
+    [SerializeField] private ActionCardsSpawner actionCardsSpawner;
 
     public void PlaySelectedCardsButton()
     {
-        actionCardsDatabase.PlaySelectedActionCards();
-        playedCards = actionCardsDatabase.GetAllSelectedActionCards();
-        foreach (var actionCard in playedCards)
-        {
-            int id = actionCard.id;
-            playedCardIds.Add(id);
-        }
+        playedCards.Clear();
+        playedCardIds.Clear();
 
         int localPlayerId = GameState.Instance.localPlayerIndex;
+
+        foreach (var hook in actionCardsSpawner.spawnedHooks)
+        {
+            if (hook.IsSelected)
+            {
+                playedCards.Add(hook.actionCard);
+                playedCardIds.Add(hook.actionCard.id);
+
+                if (!string.IsNullOrEmpty(hook.actionCard.descriptionGeneral))
+                    GameState.Instance.SetActionCardDescription(localPlayerId, hook.actionCard.id, hook.actionCard.descriptionGeneral);
+                if (!string.IsNullOrEmpty(hook.actionCard.descriptionHow))
+                    GameState.Instance.SetActionCardDescriptionHow(localPlayerId, hook.actionCard.id, hook.actionCard.descriptionHow);
+            }
+        }
+
+        if (playedCardIds.Count == 0)
+        {
+            Debug.LogWarning("Nenhuma carta selecionada!");
+            return;
+        }
+
         GameState.Instance.SetPlayerActionCards(localPlayerId, playedCardIds);
-        
-        
+
         CloseMenu();
-        
-            int playedCardsCount = actionCardsDatabase.GetSelectedCount();
-            playedCardsText.text = $"You played {playedCardsCount} action cards";
-        //wait for 5 seconds and then clear the text
+
+        playedCardsText.text = $"You played {playedCardIds.Count} action cards";
         Invoke(nameof(ClearPlayedCardsText), 5f);
-        
     }
 
     public void ClearPlayedCardsText()
@@ -64,6 +73,7 @@ public class ActionDeck : MonoBehaviour
         {
            
             isOpen = true;
+            panelMenuMaster.SetActive(true);
             panelMenu.SetActive(true);
             buttonPlayCards.SetActive(true);
             LeanTween.scale(panelMenu.GetComponent<RectTransform>(), Vector3.one, animationTime).setEaseOutBack();
@@ -76,6 +86,7 @@ public class ActionDeck : MonoBehaviour
         {
           
             isOpen = false;
+            panelMenuMaster.SetActive(false);
             buttonPlayCards.SetActive(false);
             LeanTween.scale(panelMenu.GetComponent<RectTransform>(), Vector3.zero, animationTime).setEaseInBack()
                 .setOnComplete(() => panelMenu.SetActive(false));

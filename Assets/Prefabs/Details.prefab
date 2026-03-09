@@ -380,6 +380,8 @@ MonoBehaviour:
     icon: {fileID: 0}
     generalDescription: General Description of the Instrument
     isSelected: 0
+    ownerId: 0
+    isPlaced: 0
   titleText: {fileID: 8429214499156232806}
   descriptionText: {fileID: 8365601153575825793}
   typeTextOne: {fileID: 6823954231240571086}
@@ -1117,11 +1119,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: 7f61dffc53c39f443bdac7430cf47e05, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 106
+      value: 94.115
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: 7f61dffc53c39f443bdac7430cf47e05, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 52.998962
+      value: 94.474
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: 7f61dffc53c39f443bdac7430cf47e05, type: 3}
       propertyPath: m_LocalScale.x
@@ -1165,11 +1167,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: 7f61dffc53c39f443bdac7430cf47e05, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2
+      value: -3.0786133
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: 7f61dffc53c39f443bdac7430cf47e05, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 26.499542
+      value: 8.776306
       objectReference: {fileID: 0}
     - target: {fileID: 6997020216971239202, guid: 7f61dffc53c39f443bdac7430cf47e05, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

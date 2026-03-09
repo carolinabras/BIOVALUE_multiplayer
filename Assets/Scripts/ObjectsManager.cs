@@ -7,6 +7,7 @@ public class ObjectsManager : MonoBehaviour
     [SerializeField] private GameObject ActionCardSpawnerArea;
     
     [SerializeField] private PhaseAnimationsManager phaseAnimationsManager;
+    [SerializeField] private GameObject endTurnButton;
 
     public void Start()
     {
@@ -29,6 +30,8 @@ public class ObjectsManager : MonoBehaviour
             phaseAnimationsManager.OpenActions();
             InstrumentSpawnerArea.SetActive(false);
             ActionCardSpawnerArea.SetActive(true);
+            endTurnButton.SetActive(false);
+            
         }
        
     }

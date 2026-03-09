@@ -64,6 +64,11 @@ MonoBehaviour:
   - RPC_SpawnPlayerCards
   - RPC_ShowCollaboration
   - RPC_HideCollaboration
+  - RPC_SetActionCardDescription
+  - RPC_SetActionCardDescriptionHow
+  - RPC_ClosePanel
+  - RPC_SpawnSummary
+  - RPC_OpenEndGame
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

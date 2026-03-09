@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,13 +22,14 @@ public class CollaborateButton : MonoBehaviourPun
 
         bool isGM = GameState.Instance.localPlayerIndex == 0;
         bool isOwnCard = cardOwnerActorNumber == PhotonNetwork.LocalPlayer.ActorNumber;
+        
+        Debug.Log($"Setup: cardOwnerActorNumber={cardOwnerActorNumber}, localActorNumber={PhotonNetwork.LocalPlayer.ActorNumber}, isGM={isGM}, isOwnCard={isOwnCard}, buttonActive={!isOwnCard && !isGM}");
         button.gameObject.SetActive(!isOwnCard && !isGM);
     }
 
     public void OnClickCollaborate()
     {
         
-        Debug.Log($"OnClickCollaborate chamado! _hasCollaborated={_hasCollaborated}, _cardIndex={_cardIndex}, _cardOwnerActorNumber={_cardOwnerActorNumber}");
         if (_hasCollaborated)
             RemoveCollaboration();
         else
@@ -37,7 +39,6 @@ public class CollaborateButton : MonoBehaviourPun
     private void AddCollaboration()
     {
         bool hasKey = PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(BiovalueStatics.CollabTokensKey, out var tokenss);
-        Debug.Log($"AddCollaboration: hasKey={hasKey}, tokens={tokenss}");
     
         if (!hasKey) return;
         if (!PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(BiovalueStatics.CollabTokensKey, out var tokensObj)) return;
@@ -45,7 +46,6 @@ public class CollaborateButton : MonoBehaviourPun
         int tokens = (int)tokensObj;
         if (tokens <= 0)
         {
-            Debug.LogWarning("Sem tokens de colaboração!");
             return;
         }
 
@@ -61,7 +61,6 @@ public class CollaborateButton : MonoBehaviourPun
             _cardIndex
             
         );
-        Debug.Log($"A enviar colaboração: collaborator={PhotonNetwork.LocalPlayer.ActorNumber}, owner={_cardOwnerActorNumber}, index={_cardIndex}");
     }
 
     private void RemoveCollaboration()
@@ -82,9 +81,13 @@ public class CollaborateButton : MonoBehaviourPun
         );
     }
 
+    private Dictionary<int, GameObject> _collabInstances = new Dictionary<int, GameObject>();
+
     public void ShowCollab(int collaboratorActorNumber)
     {
-        Debug.Log($"ShowCollab chamado! collaborator={collaboratorActorNumber}, prefab={collaboratorNamePrefab}, container={collaborateContainer}");
+        // evita duplicados
+        if (_collabInstances.ContainsKey(collaboratorActorNumber)) return;
+
         string collaboratorName = $"Player {collaboratorActorNumber}";
         foreach (var player in PhotonNetwork.PlayerList)
         {
@@ -98,18 +101,16 @@ public class CollaborateButton : MonoBehaviourPun
 
         GameObject collab = Instantiate(collaboratorNamePrefab, collaborateContainer);
         collab.GetComponent<CollaboratorHook>()?.Setup(collaboratorName);
-
-        // guarda referência só para o cliente que colaborou
-        if (collaboratorActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
-            _myCollabInstance = collab;
+        _collabInstances[collaboratorActorNumber] = collab;
     }
 
     public void HideCollab(int collaboratorActorNumber)
     {
-        if (collaboratorActorNumber == PhotonNetwork.LocalPlayer.ActorNumber && _myCollabInstance != null)
+        if (_collabInstances.TryGetValue(collaboratorActorNumber, out GameObject collab))
         {
-            Destroy(_myCollabInstance);
-            _myCollabInstance = null;
+            Destroy(collab);
+            _collabInstances.Remove(collaboratorActorNumber);
         }
     }
-}
+    }
+

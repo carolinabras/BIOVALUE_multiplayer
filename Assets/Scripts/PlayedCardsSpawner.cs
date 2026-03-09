@@ -18,13 +18,17 @@ public class PlayedCardsSpawner : MonoBehaviourPun
      [SerializeField] private GameObject parent;
      
     
-    public List<GameObject> spawnedCards = new List<GameObject>(); // público para o CollaborationManager
+   public List<GameObject> spawnedCards = new List<GameObject>();
     public int actorNumber;
 
     public void SetupContent(int playerId)
     {
         actionCardsDatabase = ActionCardsDatabaseSession.Instance.SessionDb;
         actorNumber = playerId;
+
+        ActivateActionHandButton activateButton = GetComponent<ActivateActionHandButton>();
+        if (activateButton != null)
+            activateButton.targetPlayerIndex = actorNumber - 1;
 
         Player targetPlayer = null;
         foreach (var player in PhotonNetwork.PlayerList)
@@ -46,9 +50,7 @@ public class PlayedCardsSpawner : MonoBehaviourPun
 
     public void OnClickSpawnCards()
     {
-        bool isGM = GameState.Instance.localPlayerIndex == 0;
-
-        if (isGM)
+        if (PhotonNetwork.IsMasterClient)
             photonView.RPC(nameof(RPC_SpawnPlayerCards), RpcTarget.All);
         else
             SpawnPlayerCards();
@@ -57,7 +59,29 @@ public class PlayedCardsSpawner : MonoBehaviourPun
     [PunRPC]
     public void RPC_SpawnPlayerCards()
     {
+        // fecha todos os outros spawners
+        foreach (var spawner in FindObjectsOfType<PlayedCardsSpawner>())
+        {
+            if (spawner != this)
+                spawner.ClosePanel();
+        }
+
         SpawnPlayerCards();
+        OpenPanel();
+    }
+
+    public void OnClickClosePanel()
+    {
+        if (PhotonNetwork.IsMasterClient)
+            photonView.RPC(nameof(RPC_ClosePanel), RpcTarget.All);
+        else
+            ClosePanel();
+    }
+
+    [PunRPC]
+    public void RPC_ClosePanel()
+    {
+        ClosePanel();
     }
 
     public void SpawnPlayerCards()
@@ -77,16 +101,49 @@ public class PlayedCardsSpawner : MonoBehaviourPun
             ActionCard cardData = actionCardsDatabase.GetActionCardById(actionCards[i]);
             if (cardData == null) continue;
 
+            ActionCard cardCopy = new ActionCard
+            {
+                id = cardData.id,
+                cardName = cardData.cardName,
+                descriptionGeneral = cardData.descriptionGeneral,
+                descriptionHow = cardData.descriptionHow,
+                type = cardData.type,
+                icon = cardData.icon
+            };
+
             GameObject card = Instantiate(ActionCardPrefab, spawnerTransform.transform);
 
             ActionCardsHook hook = card.GetComponent<ActionCardsHook>();
-            if (hook != null) hook.SetActionCard(cardData);
+            if (hook != null)
+            {
+                hook.isPlayedreal = true;
+                hook.ownerPlayerId = id;
+                hook.SetActionCard(cardCopy);
+            }
 
-            // setup do botão de colaboração com o index da carta
             CollaborateButton collab = card.GetComponent<CollaborateButton>();
             if (collab != null) collab.Setup(actorNumber, i);
 
             spawnedCards.Add(card);
         }
+    }
+
+    public void OpenPanel()
+    {
+        if (parent == null) return;
+        parent.SetActive(true);
+        LeanTween.cancel(parent);
+        parent.GetComponent<RectTransform>().localScale = Vector3.zero;
+        LeanTween.scale(parent.GetComponent<RectTransform>(), Vector3.one, 0.25f).setEaseOutBack();
+    }
+
+    public void ClosePanel()
+    {
+        if (parent == null || !parent.activeSelf) return;
+        LeanTween.cancel(parent);
+        parent.GetComponent<RectTransform>().localScale = Vector3.one;
+        LeanTween.scale(parent.GetComponent<RectTransform>(), Vector3.zero, 0.25f)
+            .setEaseInBack()
+            .setOnComplete(() => parent.SetActive(false));
     }
 }

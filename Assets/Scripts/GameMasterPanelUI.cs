@@ -6,6 +6,8 @@ using Photon.Pun;
 public class GameMasterPanelUI : MonoBehaviourPunCallbacks
 {
     public RectTransform masterPanel;
+
+    public RectTransform parentPanel;
     
     [SerializeField] private float openX;
 
@@ -19,11 +21,9 @@ public class GameMasterPanelUI : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        // //checks if is GM, if not, deactivate panel
-        // if (!PhotonNetwork.IsMasterClient)
-        // {
-        //     panel.gameObject.SetActive(false);
-        // }
+        if (!PhotonNetwork.IsMasterClient){
+            parentPanel.gameObject.SetActive(false);
+        }
         
     }
 

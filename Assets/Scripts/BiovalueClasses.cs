@@ -11,6 +11,10 @@ public class BiovalueStatics
     public const string PlayerReadyKey = "card_ready";
     public const string GameObjectiveKey = "game_objective";
     public const string CollabTokensKey = "CollabTokens";
+    public const string LinkKey = "Link";
+    public const string MainObjectiveRatingKey = "mainObjectiveRating";
+    public const string PersonalObjectiveRatingKey = "personalObjectiveRating";
+    public const string PersonalObjectiveChangeKey = "personalObjectiveChange";
 }
 
 public class BiovaluePlayer

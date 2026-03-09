@@ -17,9 +17,9 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-       
-        foreach (var player in PhotonNetwork.PlayerList)
-            AddOrUpdate(player);
+        
+            foreach (var player in PhotonNetwork.PlayerList)
+                AddOrUpdate(player);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer) => AddOrUpdate(newPlayer);
@@ -60,7 +60,7 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
             itemsByActor[player.ActorNumber] = item;
         }
 
-        string name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) ? n as string : $"Jogador {player.ActorNumber}";
+        string name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) ? n as string : $"Jogador {player.ActorNumber-1}";
         bool isReady = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerReadyKey, out var r) && r is bool b && b;
 
         item.GetComponent<PlayerStatus>().Setup(name, isReady);

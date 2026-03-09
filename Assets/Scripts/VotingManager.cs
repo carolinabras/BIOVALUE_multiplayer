@@ -1,6 +1,7 @@
 
 using System.Linq;
 using Photon.Pun;
+using TMPro;
 using UnityEngine;
 
 public class VotingManager : MonoBehaviourPun
@@ -16,6 +17,8 @@ public class VotingManager : MonoBehaviourPun
     private int _pendingPiecePhotonViewId = -1;
     private int _pendingNewCellIndex = -1;
     private int _pendingOldCellIndex = -1;
+
+    [SerializeField] private TMP_Text result;
 
     private void Awake()
     {
@@ -88,9 +91,12 @@ public class VotingManager : MonoBehaviourPun
         {
             // owner e isPlaced já foram definidos pelo GiveOwner — nada a fazer
             Debug.Log($"Votação aprovada: {_votesApprove} vs {_votesReject}");
-        }
+            result.text = "Instrument approved with " + _votesApprove + " votes!";
+    }
         else
         {
+            result.text = "Instrument rejected with " + _votesReject + " votes!";
+
             Debug.Log($"Votação rejeitada: {_votesApprove} vs {_votesReject}");
 
             if (piece != null)

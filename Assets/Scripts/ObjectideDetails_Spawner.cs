@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -103,6 +104,11 @@ public class ObjectideDetails_Spawner :  MonoBehaviour,
         // string objective = objectiveHook != null ? objectiveHook.GetText() : "";
 
         hook.SetObjective(objective);
+        string link = "";
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(BiovalueStatics.LinkKey, out var l))
+            link = l as string ?? "";
+
+        hook.SetLink(link);
     
     }
 }

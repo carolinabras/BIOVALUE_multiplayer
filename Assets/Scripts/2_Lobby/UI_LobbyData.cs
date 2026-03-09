@@ -212,6 +212,7 @@ public class UI_LobbyData : MonoBehaviour
 
         Hashtable props = new Hashtable();
         props[BiovalueStatics.GameObjectiveKey] = obj;
+        props[BiovalueStatics.LinkKey] = linkInput.text;
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }

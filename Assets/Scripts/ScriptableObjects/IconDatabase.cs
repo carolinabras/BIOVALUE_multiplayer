@@ -5,6 +5,7 @@ using UnityEngine;
 public class IconDatabase : ScriptableObject
 {
     public List<TypeIconData> icons;
+    [SerializeField] private Sprite defaultSprite;
 
     public Sprite GetIcon(InstrumentType t1, InstrumentType t2)
     {
@@ -17,6 +18,7 @@ public class IconDatabase : ScriptableObject
                 return entry.sprite;
             
         }
-        return null;
+        return defaultSprite;
     }
+    
 }

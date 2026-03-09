@@ -5,6 +5,7 @@ using UnityEngine;
 public class ObjectiveDetails : MonoBehaviourPun
 {
     [SerializeField] private TMP_Text titleText;
+    [SerializeField] private TMP_Text linkText;
 
     public void SetObjective(string title)
     {
@@ -30,6 +31,18 @@ public class ObjectiveDetails : MonoBehaviourPun
     public void RPC_SetObjective(string title)
     {
         SetObjective(title);
+    }
+    
+    [SerializeField] private UnityEngine.UI.Button linkButton;
+    private string _link;
+
+    public void SetLink(string link)
+    {
+        _link = link;
+        if (linkText) linkText.text = string.IsNullOrEmpty(link) ? "" : link;
+        if (linkButton) linkButton.gameObject.SetActive(!string.IsNullOrEmpty(link));
+        linkButton.onClick.RemoveAllListeners();
+        linkButton.onClick.AddListener(() => Application.OpenURL(_link));
     }
     
 }

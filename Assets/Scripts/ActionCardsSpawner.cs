@@ -22,6 +22,7 @@ public class ActionCardsSpawner : MonoBehaviour
         actionCardsDatabase = ActionCardsDatabaseSession.Instance.SessionDb;
     }
     
+    
     private void Start()
     {
         //Invoke(nameof(SpawnActionCards), 3.0f);
@@ -73,17 +74,33 @@ public class ActionCardsSpawner : MonoBehaviour
      }
 
     */
+    public List<ActionCardsHook> spawnedHooks = new List<ActionCardsHook>();
+
     public void SpawnActionCards()
     {
+        
+        spawnedHooks.Clear();
         UiUtils.ClearChildren(panelParent.gameObject);
         foreach (var actionCard in actionCardsDatabase.actionCards)
         {
+            ActionCard cardCopy = new ActionCard
+            {
+                id = actionCard.id,
+                cardName = actionCard.cardName,
+                descriptionGeneral = actionCard.descriptionGeneral,
+                descriptionHow = actionCard.descriptionHow,
+                type = actionCard.type,
+                icon = actionCard.icon
+            };
+
             GameObject cardObject = Instantiate(actionCardPrefab, panelParent);
             ActionCardsHook hook = cardObject.GetComponent<ActionCardsHook>();
             if (hook != null)
             {
-                hook.SetActionCard(actionCard);
+                hook.SetActionCard(cardCopy);
+                spawnedHooks.Add(hook);
             }
+            
         }
     }
 

@@ -246,11 +246,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8877841958924781154}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.43533602, y: 0.5}
-  m_AnchorMax: {x: 0.43533602, y: 0.5}
-  m_AnchoredPosition: {x: 7.9999695, y: 0.39999962}
-  m_SizeDelta: {x: 31.846802, y: 44.9467}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.30124724, y: 0.17}
+  m_AnchorMax: {x: 0.55025834, y: 0.665}
+  m_AnchoredPosition: {x: -0.5046686, y: 0.2898999}
+  m_SizeDelta: {x: 2.8648, y: 1.2589998}
+  m_Pivot: {x: 0.34579217, y: 0.49999994}
 --- !u!222 &6105829558106511525
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -308,15 +308,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40.2
-  m_fontSizeBase: 36
+  m_fontSize: 11.59
+  m_fontSizeBase: 11.59
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -385,10 +385,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3046827317554260996}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.098000005, y: 0.08534335}
-  m_AnchorMax: {x: 0.89267766, y: 0.6227711}
-  m_AnchoredPosition: {x: 2.5, y: -8}
-  m_SizeDelta: {x: 2.481903, y: -0.12399292}
+  m_AnchorMin: {x: 0.025389334, y: 0.08534335}
+  m_AnchorMax: {x: 1, y: 0.61136854}
+  m_AnchoredPosition: {x: 0.11029816, y: -5.381401}
+  m_SizeDelta: {x: 0.24920082, y: 5.1132}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8016959602519526426
 CanvasRenderer:
@@ -445,12 +445,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 43.7
-  m_fontSizeBase: 15.95
+  m_fontSize: 25
+  m_fontSizeBase: 21.1
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 11
-  m_fontSizeMax: 72
+  m_fontSizeMax: 25
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256

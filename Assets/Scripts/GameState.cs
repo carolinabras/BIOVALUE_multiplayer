@@ -234,6 +234,7 @@ public class GameState : MonoBehaviourPun
     {
         playerActionCards[playerId] = actionCardIds.ToList();
         Debug.LogWarning($"Player {playerId} played action cards with IDs: {string.Join(", ", actionCardIds)}");
+        onPlayerActionCardsSet.Invoke(playerId);
     }
 
     
@@ -289,6 +290,52 @@ public class GameState : MonoBehaviourPun
     }
 
    
+    #endregion
+    
+    #region ActionCardDescriptions
+    public Dictionary<string, string> actionCardDescriptions = new Dictionary<string, string>();
+    public Dictionary<string, string> actionCardDescriptionsHow = new Dictionary<string, string>();
+    
+    public UnityEvent<int> onActionCardDescriptionChanged = new UnityEvent<int>(); // cardId
+    
+    public UnityEvent<int> onPlayerActionCardsSet = new UnityEvent<int>(); // playerId
+
+    public void SetActionCardDescription(int playerId, int cardId, string description)
+    {
+        photonView.RPC(nameof(RPC_SetActionCardDescription), RpcTarget.All, playerId, cardId, description);
+    }
+
+    public void SetActionCardDescriptionHow(int playerId, int cardId, string descriptionHow)
+    {
+        photonView.RPC(nameof(RPC_SetActionCardDescriptionHow), RpcTarget.All, playerId, cardId, descriptionHow);
+    }
+
+    [PunRPC]
+    private void RPC_SetActionCardDescription(int playerId, int cardId, string description)
+    {
+        string key = $"{playerId}_{cardId}";
+        actionCardDescriptions[key] = description;
+        onActionCardDescriptionChanged.Invoke(cardId);
+    }
+
+    [PunRPC]
+    private void RPC_SetActionCardDescriptionHow(int playerId, int cardId, string descriptionHow)
+    {
+        string key = $"{playerId}_{cardId}";
+        actionCardDescriptionsHow[key] = descriptionHow;
+        onActionCardDescriptionChanged.Invoke(cardId);
+    }
+
+    public string GetActionCardDescription(int playerId, int cardId)
+    {
+        return actionCardDescriptions.TryGetValue($"{playerId}_{cardId}", out string desc) ? desc : string.Empty;
+    }
+
+    public string GetActionCardDescriptionHow(int playerId, int cardId)
+    {
+        return actionCardDescriptionsHow.TryGetValue($"{playerId}_{cardId}", out string desc) ? desc : string.Empty;
+    }
+
     #endregion
 
 

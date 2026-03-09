@@ -1,3 +1,4 @@
+using System;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
@@ -11,7 +12,36 @@ public class ActionCardsHook : MonoBehaviourPun
     [SerializeField] private TMP_InputField descriptionCustom;
 
     [SerializeField] private TMP_InputField descriptionHow;
+    
+    [SerializeField] private TMP_Text descriptionCustomReadOnly; // TMP_Text simples para mostrar o texto
+    [SerializeField] private TMP_Text descriptionHowReadOnly;
 
+    public bool isPlayedreal = false;
+
+    public void Start()
+    {
+        Debug.Log($"ActionCardsHook Start: subscrevendo onActionCardDescriptionChanged");
+        if (GameState.Instance != null)
+            GameState.Instance.onActionCardDescriptionChanged.AddListener(OnDescriptionChanged);
+        else
+            Debug.LogWarning("GameState.Instance é null no Start!");
+        
+    }
+    public int ownerPlayerId = -1;
+    private void OnDescriptionChanged(int cardId)
+    {
+        if (actionCard == null || actionCard.id != cardId) return;
+        if (!isPlayedreal) return; 
+    
+        string savedDesc = GameState.Instance?.GetActionCardDescription(ownerPlayerId, actionCard.id) ?? "";
+        string savedHow = GameState.Instance?.GetActionCardDescriptionHow(ownerPlayerId, actionCard.id) ?? "";
+
+        if (descriptionCustomReadOnly != null && !string.IsNullOrEmpty(savedDesc))
+            descriptionCustomReadOnly.text = savedDesc;
+        if (descriptionHowReadOnly != null && !string.IsNullOrEmpty(savedHow))
+            descriptionHowReadOnly.text = savedHow;
+        
+    }
 
     public void OnCustomValueChanged(string text)
     {
@@ -22,7 +52,15 @@ public class ActionCardsHook : MonoBehaviourPun
     public void OnCustomEndEdit(string text)
     {
         DescriptionCustom = text;
-        Debug.Log("Description changed" + text);
+        if (actionCard != null)
+            GameState.Instance.SetActionCardDescription(GameState.Instance.localPlayerIndex, actionCard.id, text);
+    }
+
+    public void OnHowEndEdit(string text)
+    {
+        DescriptionHow = text;
+        if (actionCard != null)
+            GameState.Instance.SetActionCardDescriptionHow(GameState.Instance.localPlayerIndex, actionCard.id, text);
     }
 
     public void OnHowValueChanged(string text)
@@ -30,11 +68,7 @@ public class ActionCardsHook : MonoBehaviourPun
         DescriptionHow = text;
     }
 
-    public void OnHowEndEdit(string text)
-    {
-        DescriptionHow = text;
-        Debug.Log("Description how changed" + text);
-    }
+    
 
 
     public string Description
@@ -60,11 +94,9 @@ public class ActionCardsHook : MonoBehaviourPun
         set
         {
             if (actionCard != null)
-            {
                 actionCard.descriptionHow = value;
-            }
 
-            if (descriptionHow != null)
+            if (descriptionHow != null && descriptionHow.text != value) 
             {
                 descriptionHow.text = value;
                 Debug.Log("DescriptionHow set to: " + value);
@@ -81,7 +113,7 @@ public class ActionCardsHook : MonoBehaviourPun
             if (actionCard != null)
                 actionCard.descriptionGeneral = value;
 
-            if (descriptionCustom != null)
+            if (descriptionCustom != null && descriptionCustom.text != value) // só atualiza se for diferente
                 descriptionCustom.text = value;
         }
     }
@@ -131,29 +163,45 @@ public class ActionCardsHook : MonoBehaviourPun
 
     public void SetActionCard(ActionCard card)
     {
+        Debug.Log($"SetActionCard: id={card.id}, type={card.type}, desc='{card.descriptionGeneral}', how='{card.descriptionHow}'");
         this.actionCard = card;
-        if (card == null)
-        {
-            Debug.LogError("Action Card is null");
-            return;
-        }
+        if (card == null) return;
 
-        DescriptionHow = card.descriptionHow;
+        string savedDesc = GameState.Instance?.GetActionCardDescription(ownerPlayerId, card.id) ?? "";
+        string savedHow = GameState.Instance?.GetActionCardDescriptionHow(ownerPlayerId, card.id) ?? "";
 
-        if (card.type == ActionCardType.Custom)
+        if (isPlayedreal) 
+            
         {
-            if (descriptionCustom != null)
+            Debug.Log($"isPlayedreal=true, descriptionCustomReadOnly={descriptionCustomReadOnly}, descriptionHowReadOnly={descriptionHowReadOnly}, savedDesc='{savedDesc}', savedHow='{savedHow}', card.desc='{card.descriptionGeneral}', card.how='{card.descriptionHow}'");            if (descriptionCustom != null) descriptionCustom.gameObject.SetActive(false);
+            if (descriptionHow != null) descriptionHow.gameObject.SetActive(false);
+
+            if (descriptionCustomReadOnly != null)
             {
-                descriptionCustom.gameObject.SetActive(true);
-                DescriptionCustom = card.descriptionGeneral;
+                descriptionCustomReadOnly.gameObject.SetActive(true);
+                descriptionCustomReadOnly.text = !string.IsNullOrEmpty(savedDesc) ? savedDesc : card.descriptionGeneral;
+            }
+            if (descriptionHowReadOnly != null)
+            {
+                descriptionHowReadOnly.gameObject.SetActive(true);
+                descriptionHowReadOnly.text = !string.IsNullOrEmpty(savedHow) ? savedHow : card.descriptionHow;
             }
         }
-
-        if (card.type == ActionCardType.PreDone)
+        else
         {
+            // Modo edição normal (ActionCardsSpawner)
+            Debug.Log($"isPlayedreal=false — entrou no modo edição");
             if (descriptionCustom != null)
             {
-                descriptionCustom.gameObject.SetActive(false);
+                descriptionCustom.gameObject.SetActive(card.type == ActionCardType.Custom);
+                DescriptionCustom = !string.IsNullOrEmpty(savedDesc) ? savedDesc : card.descriptionGeneral;
+            }
+            if (descriptionHow != null)
+            {
+                DescriptionHow = !string.IsNullOrEmpty(savedHow) ? savedHow : card.descriptionHow;
+            }
+            if (card.type == ActionCardType.PreDone)
+            {
                 Description = card.descriptionGeneral;
             }
         }
@@ -186,5 +234,27 @@ public class ActionCardsHook : MonoBehaviourPun
             type = type
         };
         SetActionCard(card);
+    }
+    
+    private void ShowDescriptionCustomReadOnly(string text)
+    {
+        if (descriptionCustom != null)
+            descriptionCustom.gameObject.SetActive(false);
+        if (descriptionCustomReadOnly != null)
+        {
+            descriptionCustomReadOnly.gameObject.SetActive(true);
+            descriptionCustomReadOnly.text = text;
+        }
+    }
+
+    private void ShowDescriptionHowReadOnly(string text)
+    {
+        if (descriptionHow != null)
+            descriptionHow.gameObject.SetActive(false);
+        if (descriptionHowReadOnly != null)
+        {
+            descriptionHowReadOnly.gameObject.SetActive(true);
+            descriptionHowReadOnly.text = text;
+        }
     }
 }
