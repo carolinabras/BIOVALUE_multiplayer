@@ -15,7 +15,7 @@ public class PlayedCardsSpawner : MonoBehaviourPun
      
      [SerializeField] TMP_Text playerName;
 
-     [SerializeField] private GameObject parent;
+     [SerializeField] public GameObject parent;
      
     
    public List<GameObject> spawnedCards = new List<GameObject>();
@@ -59,15 +59,28 @@ public class PlayedCardsSpawner : MonoBehaviourPun
     [PunRPC]
     public void RPC_SpawnPlayerCards()
     {
-        // fecha todos os outros spawners
+        OpenPanel();
+        // fecha todos os outros spawners imediatamente
         foreach (var spawner in FindObjectsOfType<PlayedCardsSpawner>())
         {
             if (spawner != this)
-                spawner.ClosePanel();
+            {
+                // destrói cartas imediatamente
+                foreach (var card in spawner.spawnedCards)
+                    Destroy(card);
+                spawner.spawnedCards.Clear();
+            
+                // fecha painel imediatamente sem animação
+                if (spawner.parent != null)
+                {
+                    LeanTween.cancel(spawner.parent);
+                    spawner.parent.SetActive(false);
+                }
+            }
         }
 
         SpawnPlayerCards();
-        OpenPanel();
+       
     }
 
     public void OnClickClosePanel()
@@ -87,6 +100,19 @@ public class PlayedCardsSpawner : MonoBehaviourPun
     public void SpawnPlayerCards()
     {
         parent.SetActive(true);
+
+        // atualiza o nome do owner
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.ActorNumber == actorNumber)
+            {
+                if (player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var nameObj))
+                    playerName.text = nameObj as string;
+                else
+                    playerName.text = $"Player {actorNumber}";
+                break;
+            }
+        }
 
         foreach (var card in spawnedCards)
             Destroy(card);
@@ -132,18 +158,16 @@ public class PlayedCardsSpawner : MonoBehaviourPun
     {
         if (parent == null) return;
         parent.SetActive(true);
-        LeanTween.cancel(parent);
-        parent.GetComponent<RectTransform>().localScale = Vector3.zero;
-        LeanTween.scale(parent.GetComponent<RectTransform>(), Vector3.one, 0.25f).setEaseOutBack();
+        
+        // parent.GetComponent<RectTransform>().localScale = Vector3.zero;
+        
     }
 
     public void ClosePanel()
     {
         if (parent == null || !parent.activeSelf) return;
-        LeanTween.cancel(parent);
-        parent.GetComponent<RectTransform>().localScale = Vector3.one;
-        LeanTween.scale(parent.GetComponent<RectTransform>(), Vector3.zero, 0.25f)
-            .setEaseInBack()
-            .setOnComplete(() => parent.SetActive(false));
+        
+        // parent.GetComponent<RectTransform>().localScale = Vector3.one;
+        parent.SetActive(false);
     }
 }

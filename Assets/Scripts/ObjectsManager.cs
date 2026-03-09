@@ -8,6 +8,7 @@ public class ObjectsManager : MonoBehaviour
     
     [SerializeField] private PhaseAnimationsManager phaseAnimationsManager;
     [SerializeField] private GameObject endTurnButton;
+    [SerializeField] private GameObject resultText;
 
     public void Start()
     {
