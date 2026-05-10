@@ -14,19 +14,49 @@ public class CreateJoin : MonoBehaviourPunCallbacks
 {
     public TMP_InputField joinInputField;
     public TMP_InputField createInputField;
-    public const string ROLE_KEY = "role"; // "GM" | "Player" 
+    public const string ROLE_KEY = "role"; // "GM" | "Player"
 
     public static CreateJoin Instance { get; private set; }
 
     [SerializeField] private GameObject waitingPanel;
     [SerializeField] private GameObject lobbyConfig;
-    
-    public string currentRoomCode { get; private set; } = "";
+    [SerializeField] private TMP_Text roomNameText;
 
+    [SerializeField] private Button createButton;
+    [SerializeField] private Button joinButton;
+
+    private const float AlphaEmpty = 0.2f;
+    private const float AlphaFull  = 1.0f;
+
+    private CanvasGroup _createGroup;
+    private CanvasGroup _joinGroup;
+
+    public string currentRoomCode { get; private set; } = "";
 
     private void Awake()
     {
         // DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        if (createButton != null)
+        {
+            _createGroup = createButton.gameObject.GetComponent<CanvasGroup>();
+            if (_createGroup == null) _createGroup = createButton.gameObject.AddComponent<CanvasGroup>();
+            _createGroup.alpha = AlphaEmpty;
+            createInputField.onValueChanged.AddListener(_ =>
+                _createGroup.alpha = createInputField.text.Length > 0 ? AlphaFull : AlphaEmpty);
+        }
+
+        if (joinButton != null)
+        {
+            _joinGroup = joinButton.gameObject.GetComponent<CanvasGroup>();
+            if (_joinGroup == null) _joinGroup = joinButton.gameObject.AddComponent<CanvasGroup>();
+            _joinGroup.alpha = AlphaEmpty;
+            joinInputField.onValueChanged.AddListener(_ =>
+                _joinGroup.alpha = joinInputField.text.Length > 0 ? AlphaFull : AlphaEmpty);
+        }
     }
 
     public void CreateRoom()
@@ -34,7 +64,13 @@ public class CreateJoin : MonoBehaviourPunCallbacks
         if (createInputField.text != "")
         {
             PhotonNetwork.CreateRoom(createInputField.text);
+            if (roomNameText != null) roomNameText.text = createInputField.text;
+            LeanTween.cancel(lobbyConfig);
             lobbyConfig.SetActive(true);
+            lobbyConfig.GetComponent<RectTransform>().localScale = Vector3.zero;
+            LeanTween.scale(lobbyConfig.GetComponent<RectTransform>(), Vector3.one, 0.25f)
+                .setEaseOutBack()
+                .setIgnoreTimeScale(true);
             Debug.Log("[Photon] Tentando criar a sala: " + createInputField.text);
            
         }

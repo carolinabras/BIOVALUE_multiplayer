@@ -23,6 +23,8 @@ public class Role : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waiting;
     
     [SerializeField] private Image readyButton;
+    [SerializeField] private Image readyIndicator;
+    [SerializeField] private TextMeshProUGUI readyStatusText;
 
     private bool isReady = false;
     
@@ -51,6 +53,11 @@ public class Role : MonoBehaviour
        
 
         Debug.Log($"[SceneController] Eu sou {(isGM ? "GM" : "Player")}, painel carregado.");
+
+        if (readyIndicator == null)
+            Debug.LogWarning("[Role] readyIndicator is not assigned in the Inspector!");
+        else
+            readyIndicator.color = Color.blue;
     }
     
 
@@ -123,8 +130,9 @@ public class Role : MonoBehaviour
             { BiovalueStatics.PlayerReadyKey, false }
         });
         isReady = false;
-        readyButton.color = Color.white;
-        waiting.text = "Press the button when you are ready to start the game";
+        if (readyIndicator != null) readyIndicator.color = Color.blue;
+        if (readyButton != null) readyButton.color = Color.white;
+        if (readyStatusText != null) readyStatusText.text = "";
 
         Debug.Log("[Role] Estado PRONTO removido (entrou em modo edição)");
     }
@@ -143,16 +151,9 @@ public class Role : MonoBehaviour
             [BiovalueStatics.PlayerReadyKey] = isReady
         });
 
-        if (isReady)
-        {
-            waiting.text = "Waiting for the GM to confirm your data and start the game ";
-        }
-        else
-        {
-            waiting.text = "Press the button when you are ready to start the game";
-        }
-        
-       readyButton.color = isReady ? Color.green : Color.white;
+        if (readyIndicator != null) readyIndicator.color = isReady ? Color.white : Color.blue;
+        if (readyButton != null) readyButton.color = isReady ? new Color(0xBB / 255f, 0xFF / 255f, 0xC1 / 255f) : Color.white;
+        if (readyStatusText != null) readyStatusText.text = isReady ? "Wait for the GM to start the game" : "";
        
         Debug.Log($"[Ready] Jogador {(isReady ? "PRONTO " : "NÃO PRONTO ")}.");
     }

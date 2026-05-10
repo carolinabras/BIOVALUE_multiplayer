@@ -97,6 +97,7 @@ public class ActionCardsSpawner : MonoBehaviour
             ActionCardsHook hook = cardObject.GetComponent<ActionCardsHook>();
             if (hook != null)
             {
+                hook.ownerPlayerId = GameState.Instance.localPlayerIndex;
                 hook.SetActionCard(cardCopy);
                 spawnedHooks.Add(hook);
             }

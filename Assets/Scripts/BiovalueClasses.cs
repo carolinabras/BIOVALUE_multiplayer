@@ -15,6 +15,13 @@ public class BiovalueStatics
     public const string MainObjectiveRatingKey = "mainObjectiveRating";
     public const string PersonalObjectiveRatingKey = "personalObjectiveRating";
     public const string PersonalObjectiveChangeKey = "personalObjectiveChange";
+
+    // Room custom property keys — persisted server-side for reconnecting players
+    public const string TurnActorKey = "turn_actor";       // int: actor number of current turn holder
+    public const string GamePhaseKey = "game_phase";       // int: GamePhase enum value
+    public const string ActionCardsKeyPrefix = "ac_";      // "ac_" + playerId → int[]
+    public const string SkipActorsKey = "skip_actors";     // int[]: actors deferred to end of turn cycle after rejoin
+    public const string SelectedInstrumentsKey = "selected_instruments"; // int[]: IDs of instruments selected in lobby
 }
 
 public class BiovaluePlayer

@@ -69,6 +69,13 @@ MonoBehaviour:
   - RPC_ClosePanel
   - RPC_SpawnSummary
   - RPC_OpenEndGame
+  - RPC_CollabAccepted
+  - RPC_CollabDeclined
+  - RPC_ShowCollabPopUp
+  - RPC_SetTurnForActorNumber
+  - RPC_SyncStateToRejoiner
+  - RPC_EndVoteSession
+  - RPC_BeginDrag
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

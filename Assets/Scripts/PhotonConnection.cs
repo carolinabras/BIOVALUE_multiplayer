@@ -6,72 +6,49 @@ using System.Collections;
 
 public class PhotonConnection : MonoBehaviourPunCallbacks
 {
-    public static PhotonConnection Instance { get; private set; }
-    public bool IsConnected => PhotonNetwork.IsConnectedAndReady;
-
     [SerializeField] private GameObject canva;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        if (PhotonNetwork.InLobby)
-        {
-            Debug.Log("[Photon] Already in Lobby.");
-            
-            SceneManager.LoadScene("Lobby"); //Lobby
-        }
-        PhotonNetwork.AutomaticallySyncScene = true; //important 
-        if (!PhotonNetwork.IsConnected)
-            PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.AutomaticallySyncScene = true;
+        StartCoroutine(ConnectWhenReady());
+    }
 
-       
-    }
-    
-    private void Start()
+    private IEnumerator ConnectWhenReady()
     {
-        PhotonNetwork.AutomaticallySyncScene = true; //important 
+        // Wait for any in-progress disconnect to finish fully.
+        while (PhotonNetwork.NetworkClientState == ClientState.Disconnecting)
+            yield return null;
+
+        // One extra frame so the SDK finishes its internal cleanup —
+        // ConnectUsingSettings can fail silently if called the same frame
+        // the Disconnected state is reached.
+        yield return null;
+
         if (!PhotonNetwork.IsConnected)
             PhotonNetwork.ConnectUsingSettings();
-        
+        else if (PhotonNetwork.InLobby)
+            StartCoroutine(LoadNextScene());
+        else
+            PhotonNetwork.JoinLobby();
     }
-    
-    
-    
+
     public override void OnConnectedToMaster()
     {
-        if (!PhotonNetwork.InLobby)
-        {
-            Debug.Log("[Photon] Connected to Master.");
-            PhotonNetwork.JoinLobby();
-        }
-        
+        Debug.Log("[Photon] Connected to Master.");
+        PhotonNetwork.JoinLobby();
     }
-    
+
     public override void OnJoinedLobby()
     {
         Debug.Log("[Photon] Joined Lobby.");
-        canva.gameObject.GetComponent<FadingScript>().FadeIn();
-        
+        canva.GetComponent<FadingScript>().FadeIn();
         StartCoroutine(LoadNextScene());
     }
 
-    public override void OnDisconnected(DisconnectCause cause)
-    {
-        Debug.LogWarning($"[Photon] Disconnected: {cause}");
-    }
-    
     IEnumerator LoadNextScene()
     {
         yield return new WaitForSeconds(1.5f);
-        SceneManager.LoadScene(2); //Lobby
+        SceneManager.LoadScene(2); // Lobby
     }
-    
 }

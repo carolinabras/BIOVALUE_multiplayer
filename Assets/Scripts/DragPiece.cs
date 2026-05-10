@@ -271,8 +271,9 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
 
 
-    public RectTransform rectTransform;
+    [SerializeField] private GameObject closeInstrumentButton;
 
+    public RectTransform rectTransform;
 
     public GameState _gameState;
 
@@ -293,10 +294,8 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
     {
         _gameState = GameState.Instance;
 
+        if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
 
-        // originalPosition = this.transform.localPosition;
-        // originalParent = this.transform.parent;
-        //
         if (!gridParent)
         {
             var board = GameObject.Find("Board");
@@ -382,6 +381,8 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
         GetComponent<SpawnerDetails>()?.CancelLongPress();
 
+        if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
+
         originalPosition = rectTransform.anchoredPosition;
         originalParent = rectTransform.parent;
 
@@ -466,6 +467,10 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
             // move visualmente a peça
             rectTransform.SetParent(gridParent, worldPositionStays: false);
             rectTransform.anchoredPosition = closestCellRT.anchoredPosition;
+
+            // mostra botão de fechar só para o dono da peça
+            if (closeInstrumentButton && photonView != null && photonView.IsMine)
+                closeInstrumentButton.SetActive(true);
 
             // sincroniza com os outros
             if (photonView != null && photonView.IsMine)
@@ -555,6 +560,22 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         currentCellIndex = oldCellIndex;
     }
     
+    // Called by the closeInstrumentButton on the prefab.
+    public void OnCloseInstrument()
+    {
+        if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
+
+        rectTransform.SetParent(originalParent, worldPositionStays: false);
+        rectTransform.anchoredPosition = originalPosition;
+
+        if (currentCell != null)
+        {
+            currentCell.SetOccupied(false);
+            currentCell = null;
+            currentCellIndex = -1;
+        }
+    }
+
     public void GiveOwner(int ownerID)
     {
         var instrument = GetComponent<InstrumentHook>()?.instrument;

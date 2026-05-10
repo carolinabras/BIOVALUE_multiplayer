@@ -4,8 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
-using Photon.Realtime;
-using ExitGames.Client.Photon;
+using UnityEngine.SceneManagement;
 
 public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
 {
@@ -66,8 +65,24 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
         item.GetComponent<PlayerStatus>().Setup(name, isReady);
     }
 
+    private const string NextSceneKey = "nextScene";
+
     public void GoNext()
     {
-        PhotonNetwork.LoadLevel("MainGame");
+        if (!PhotonNetwork.IsMasterClient) return;
+        PhotonNetwork.AutomaticallySyncScene = true;
+        // Setting a room property fires OnRoomPropertiesUpdate on ALL clients,
+        // including the master client itself — this is what was missing.
+        PhotonNetwork.CurrentRoom.SetCustomProperties(
+            new Hashtable { { NextSceneKey, "MainGame" } }
+        );
+    }
+
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        if (propertiesThatChanged.TryGetValue(NextSceneKey, out var scene) && scene is string sceneName)
+        {
+            PhotonNetwork.LoadLevel(sceneName);
+        }
     }
 }

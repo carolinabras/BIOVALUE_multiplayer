@@ -50,22 +50,66 @@ public class LobbyUI : MonoBehaviour
 
     private void SetCreateLobbyPanel(bool set)
     {
-        if (createPanel != null)
+        if (createPanel == null) return;
+
+        if (set)
         {
-            createPanel.SetActive(set);
+            LeanTween.cancel(createPanel);
+            createPanel.SetActive(true);
+            createPanel.GetComponent<RectTransform>().localScale = Vector3.zero;
+            LeanTween.scale(createPanel.GetComponent<RectTransform>(), Vector3.one, 0.25f)
+                .setEaseOutBack()
+                .setIgnoreTimeScale(true);
+        }
+        else
+        {
+            LeanTween.cancel(createPanel);
+            createPanel.GetComponent<RectTransform>().localScale = Vector3.one;
+            LeanTween.scale(createPanel.GetComponent<RectTransform>(), Vector3.zero, 0.25f)
+                .setEaseInBack()
+                .setIgnoreTimeScale(true)
+                .setOnComplete(() =>
+                {
+                    createPanel.SetActive(false);
+                    createPanel.GetComponent<RectTransform>().localScale = Vector3.one;
+                });
         }
     }
     
     public void OnClickBackToMainMenu()
     {
-       
         StartCoroutine(GoBack());
     }
-    
+
     private IEnumerator GoBack()
     {
-        
-        yield return new WaitForSeconds(2);
+        // Disable scene sync FIRST so Photon can't redirect the next scene load.
+        PhotonNetwork.AutomaticallySyncScene = false;
+
+        // Leave the room gracefully before disconnecting.
+        if (PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LeaveRoom();
+            float leaveTimeout = 3f;
+            while (PhotonNetwork.InRoom && leaveTimeout > 0f)
+            {
+                leaveTimeout -= Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        if (PhotonNetwork.IsConnected)
+            PhotonNetwork.Disconnect();
+
+        // Wait for the FULLY disconnected state.
+        // IsConnected can return false during Disconnecting, which is not safe yet.
+        float timeout = 5f;
+        while (PhotonNetwork.NetworkClientState != Photon.Realtime.ClientState.Disconnected && timeout > 0f)
+        {
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+
         SceneManager.LoadScene(0);
     }
     

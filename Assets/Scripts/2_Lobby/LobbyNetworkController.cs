@@ -51,7 +51,16 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
 
         // create room 
         CurrentRoomCode = GenerateRoomCode(6);
-        var opts = new RoomOptions { MaxPlayers = (byte)maxPlayers, IsOpen = true, IsVisible = false };
+        // PlayerTtl: Photon holds the player slot for 60 s after a disconnect so they can rejoin.
+        // EmptyRoomTtl: keeps the room alive for 60 s even if all players temporarily drop.
+        var opts = new RoomOptions
+        {
+            MaxPlayers = (byte)maxPlayers,
+            IsOpen = true,
+            IsVisible = false,
+            PlayerTtl = 60000,
+            EmptyRoomTtl = 60000,
+        };
         PhotonNetwork.CreateRoom(CurrentRoomCode, opts, TypedLobby.Default);
         codeText.text = CurrentRoomCode;
         //createPanel.SetActive(true);

@@ -20,7 +20,11 @@ public class closeThisPanel : MonoBehaviour
       parent.GetComponent<RectTransform>().localScale = Vector3.one;
       LeanTween.scale(parent.GetComponent<RectTransform>(), Vector3.zero, 0.25f)
         .setEaseInBack()
-        .setOnComplete(() => parent.SetActive(false));
+        .setOnComplete(() =>
+        {
+            parent.SetActive(false);
+            parent.GetComponent<RectTransform>().localScale = Vector3.one;
+        });
     }
   }
 }

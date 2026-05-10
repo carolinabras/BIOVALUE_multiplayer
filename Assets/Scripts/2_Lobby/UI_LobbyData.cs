@@ -205,14 +205,17 @@ public class UI_LobbyData : MonoBehaviour
     
     public void SaveLobbyObjectiveToRoom()
     {
-        // idealmente só o MasterClient escreve para evitar conflitos
         if (!PhotonNetwork.IsMasterClient) return;
 
-        string obj = objectiveInput.text;
+        // Collect selected instrument IDs.
+        var selectedIds = new System.Collections.Generic.List<int>();
+        foreach (var inst in dbSession.instruments)
+            if (inst.isSelected) selectedIds.Add(inst.id);
 
         Hashtable props = new Hashtable();
-        props[BiovalueStatics.GameObjectiveKey] = obj;
-        props[BiovalueStatics.LinkKey] = linkInput.text;
+        props[BiovalueStatics.GameObjectiveKey]        = objectiveInput.text;
+        props[BiovalueStatics.LinkKey]                 = linkInput.text;
+        props[BiovalueStatics.SelectedInstrumentsKey]  = selectedIds.ToArray();
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }

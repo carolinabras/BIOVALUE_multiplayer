@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -18,8 +20,6 @@ public class GMResultsPanel : MonoBehaviourPunCallbacks
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
         if (!panel.activeSelf) return;
-        
-        // atualiza se alguma das keys mudou
         if (changedProps.ContainsKey(BiovalueStatics.MainObjectiveRatingKey) ||
             changedProps.ContainsKey(BiovalueStatics.PersonalObjectiveRatingKey) ||
             changedProps.ContainsKey(BiovalueStatics.PersonalObjectiveChangeKey))
@@ -30,20 +30,72 @@ public class GMResultsPanel : MonoBehaviourPunCallbacks
 
     private void RefreshResults()
     {
+        var allPlayers = PhotonNetwork.PlayerList
+            .Where(p => !(p.IsLocal && p.IsMasterClient))
+            .ToArray();
+
+        // Sorted list used to map actor → playerActionCards index.
+        var sorted = PhotonNetwork.PlayerList.OrderBy(p => p.ActorNumber).ToArray();
+
+        // Compute means across all players who have already submitted scores.
+        var generalRatings  = new List<float>();
+        var personalRatings = new List<float>();
+        foreach (var player in allPlayers)
+        {
+            if (TryGetIntProp(player, BiovalueStatics.MainObjectiveRatingKey, out int g))
+                generalRatings.Add(g);
+            if (TryGetIntProp(player, BiovalueStatics.PersonalObjectiveRatingKey, out int p))
+                personalRatings.Add(p);
+        }
+
+        float meanGeneral  = generalRatings.Count  > 0 ? generalRatings.Average()  : 0f;
+        float meanPersonal = personalRatings.Count > 0 ? personalRatings.Average() : 0f;
+
         foreach (Transform child in container)
             Destroy(child.gameObject);
 
-        foreach (var player in PhotonNetwork.PlayerList)
+        foreach (var player in allPlayers)
         {
-            if (player.IsLocal && PhotonNetwork.IsMasterClient) continue;
+            string name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n)
+                ? n as string : $"Player {player.ActorNumber}";
 
-            string name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) ? n as string : $"Player {player.ActorNumber}";
-            string mainRating = player.CustomProperties.TryGetValue(BiovalueStatics.MainObjectiveRatingKey, out var m) ? m as string : "-";
-            string personalRating = player.CustomProperties.TryGetValue(BiovalueStatics.PersonalObjectiveRatingKey, out var p) ? p as string : "-";
-            string change = player.CustomProperties.TryGetValue(BiovalueStatics.PersonalObjectiveChangeKey, out var c) ? c as string : "-";
+            bool hasMain     = TryGetIntProp(player, BiovalueStatics.MainObjectiveRatingKey,     out int mainRaw);
+            bool hasPersonal = TryGetIntProp(player, BiovalueStatics.PersonalObjectiveRatingKey, out int personalRaw);
+            string mainStr     = hasMain     ? mainRaw.ToString()     : "-";
+            string personalStr = hasPersonal ? personalRaw.ToString() : "-";
+            string change      = player.CustomProperties.TryGetValue(BiovalueStatics.PersonalObjectiveChangeKey, out var c)
+                ? c as string : "-";
 
-            GameObject obj = Instantiate(playerResultPrefab, container);
-            obj.GetComponent<PlayerResultHook>()?.Setup(name, mainRating, personalRating, change);
+            // Index into playerActionCards (sorted position, 0 = GM).
+            int sortedIndex  = System.Array.IndexOf(sorted, player);
+            int actionCards  = GameState.Instance.playerActionCards.TryGetValue(sortedIndex, out var cards)
+                ? cards.Count : 0;
+
+            int collabsDone     = ColaborationManager.Instance != null
+                ? ColaborationManager.Instance.GetCollaborationsDone(player.ActorNumber)     : 0;
+            int collabsReceived = ColaborationManager.Instance != null
+                ? ColaborationManager.Instance.GetCollaborationsReceived(player.ActorNumber) : 0;
+            int disagrees       = VotingManager.Instance != null
+                ? VotingManager.Instance.GetDisagreeCount(player.ActorNumber) : 0;
+
+            // Formula: mean_general × mean_personal + 2 × actions + (collabs_done + collabs_received) + disagrees
+            string scoreStr = (hasMain && hasPersonal)
+                ? (meanGeneral * meanPersonal + 2f * actionCards + (collabsDone + collabsReceived) + disagrees).ToString("F1")
+                : "-";
+
+            var obj = Instantiate(playerResultPrefab, container);
+            obj.GetComponent<PlayerResultHook>()?.Setup(name, mainStr, personalStr, change, scoreStr);
         }
+    }
+
+    private static bool TryGetIntProp(Player player, string key, out int value)
+    {
+        if (player.CustomProperties.TryGetValue(key, out var raw) && raw is int i)
+        {
+            value = i;
+            return true;
+        }
+        value = 0;
+        return false;
     }
 }

@@ -54,6 +54,8 @@ public class ActionCardsHook : MonoBehaviourPun
         DescriptionCustom = text;
         if (actionCard != null)
             GameState.Instance.SetActionCardDescription(GameState.Instance.localPlayerIndex, actionCard.id, text);
+        if (!string.IsNullOrEmpty(text))
+            ShowDescriptionCustomReadOnly(text);
     }
 
     public void OnHowEndEdit(string text)
@@ -61,6 +63,8 @@ public class ActionCardsHook : MonoBehaviourPun
         DescriptionHow = text;
         if (actionCard != null)
             GameState.Instance.SetActionCardDescriptionHow(GameState.Instance.localPlayerIndex, actionCard.id, text);
+        if (!string.IsNullOrEmpty(text))
+            ShowDescriptionHowReadOnly(text);
     }
 
     public void OnHowValueChanged(string text)
@@ -191,15 +195,31 @@ public class ActionCardsHook : MonoBehaviourPun
         {
             // Modo edição normal (ActionCardsSpawner)
             Debug.Log($"isPlayedreal=false — entrou no modo edição");
-            if (descriptionCustom != null)
+
+            bool hasCustomType = card.type == ActionCardType.Custom;
+
+            if (hasCustomType && !string.IsNullOrEmpty(savedDesc))
             {
-                descriptionCustom.gameObject.SetActive(card.type == ActionCardType.Custom);
-                DescriptionCustom = !string.IsNullOrEmpty(savedDesc) ? savedDesc : card.descriptionGeneral;
+                // Already saved — show as read-only so the text stays visible.
+                ShowDescriptionCustomReadOnly(savedDesc);
             }
-            if (descriptionHow != null)
+            else if (descriptionCustom != null)
             {
-                DescriptionHow = !string.IsNullOrEmpty(savedHow) ? savedHow : card.descriptionHow;
+                descriptionCustom.gameObject.SetActive(hasCustomType);
+                if (descriptionCustomReadOnly != null) descriptionCustomReadOnly.gameObject.SetActive(false);
+                DescriptionCustom = card.descriptionGeneral;
             }
+
+            if (!string.IsNullOrEmpty(savedHow))
+            {
+                ShowDescriptionHowReadOnly(savedHow);
+            }
+            else if (descriptionHow != null)
+            {
+                if (descriptionHowReadOnly != null) descriptionHowReadOnly.gameObject.SetActive(false);
+                DescriptionHow = card.descriptionHow;
+            }
+
             if (card.type == ActionCardType.PreDone)
             {
                 Description = card.descriptionGeneral;

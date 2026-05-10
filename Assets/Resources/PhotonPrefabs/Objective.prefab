@@ -374,6 +374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a50acdb9d7b6b479eaa2ee700b6c5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  closeInstrumentButton: {fileID: 0}
   rectTransform: {fileID: 6997020216971239202}
   _gameState: {fileID: 0}
   tempBoard: {fileID: 0}
