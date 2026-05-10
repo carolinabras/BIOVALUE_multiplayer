@@ -17,16 +17,14 @@ public class EndGameManager : MonoBehaviourPun
     // Opens the FinalPlayerCard panel on every non-GM client.
     public void OnClickOpenEndGame()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
-        photonView.RPC(nameof(RPC_OpenEndGame), RpcTarget.All);
+        photonView.RPC(nameof(RPC_OpenEndGame), RpcTarget.Others);
     }
 
     [PunRPC]
     private void RPC_OpenEndGame()
     {
-        bool isGM = GameState.Instance.localPlayerIndex == 0;
-        if (isGM) return; // GM has a separate results panel — nothing here
-        endGamePanel.SetActive(true);
+        if (PhotonNetwork.IsMasterClient) return;
+        if (endGamePanel != null) endGamePanel.SetActive(true);
     }
 
     // Called by a separate GM-only button to open the results overview.

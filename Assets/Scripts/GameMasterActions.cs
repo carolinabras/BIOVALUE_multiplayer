@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameMasterActions : MonoBehaviour
 {
     [SerializeField] public TMP_InputField playerName;
+    [SerializeField] private EndGameManager endGameManager;
 
     public ChecksPlayer checksPlayer;
 
@@ -17,6 +18,16 @@ public class GameMasterActions : MonoBehaviour
     public void EndTurn()
     {
         VotingManager.Instance?.EndTurn();
+    }
+
+    public void EndActionsRound()
+    {
+        endGameManager?.OnClickOpenEndGame();
+    }
+
+    public void ShowResults()
+    {
+        endGameManager?.OnClickOpenGMResults();
     }
 
     public void KickPlayer()
