@@ -60,13 +60,12 @@ public class BiovaluePlayer
 public enum InstrumentType
 {
     None = 0,
-    Fiscalização = 1,
-    Regulamentação = 2,
-    Acordo = 3,
-    Informação = 4, 
-    Incentivo = 5, 
-    Planeamento = 6, 
-    
+    Inspection = 1,
+    Regulation = 2,
+    Agreement = 3,
+    Information = 4,
+    Incentive = 5,
+    Planning = 6,
 }
 
 [Serializable]

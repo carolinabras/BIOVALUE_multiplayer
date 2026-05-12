@@ -6,6 +6,7 @@ using Photon.Pun;
 [RequireComponent(typeof(PhotonView))]
 public class ChatManager : MonoBehaviourPun
 {
+    public static ChatManager Instance { get; private set; }
     [Header("UI")]
     [SerializeField] private TMP_InputField inputField;        
     [SerializeField] private RectTransform messagesContent;    
@@ -14,6 +15,7 @@ public class ChatManager : MonoBehaviourPun
 
     private void Awake()
     {
+        Instance = this;
         if (inputField != null) inputField.lineType = TMP_InputField.LineType.SingleLine;
 
       
@@ -69,17 +71,23 @@ public class ChatManager : MonoBehaviourPun
     private void ReceiveMessage(string sender, string message)
     {
         var go = Instantiate(messagePrefab, messagesContent);
-        if (!go.activeSelf) go.SetActive(true); // se usares o MESSAGEITEM como template desativado
+        if (!go.activeSelf) go.SetActive(true);
 
         var label = go.GetComponentInChildren<TMP_Text>(true);
         if (label != null) label.text = $"<b>{sender}:</b> {message}";
         else Debug.LogError("[Chat] O Message Prefab não tem TMP_Text (nem nos filhos).");
 
-        // auto-scroll para o fundo
         if (scrollRect != null)
         {
             Canvas.ForceUpdateCanvases();
             scrollRect.verticalNormalizedPosition = 0f;
         }
+    }
+
+    public void ClearChat()
+    {
+        if (messagesContent == null) return;
+        foreach (Transform child in messagesContent)
+            Destroy(child.gameObject);
     }
 }

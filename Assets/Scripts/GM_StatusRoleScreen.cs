@@ -59,7 +59,7 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
             itemsByActor[player.ActorNumber] = item;
         }
 
-        string name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) ? n as string : $"Jogador {player.ActorNumber-1}";
+        string name = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) ? n as string : $"Player {player.ActorNumber-1}";
         bool isReady = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerReadyKey, out var r) && r is bool b && b;
 
         item.GetComponent<PlayerStatus>().Setup(name, isReady);

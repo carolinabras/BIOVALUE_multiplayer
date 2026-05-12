@@ -13,6 +13,8 @@ public class FinalPlayerCard : MonoBehaviour
 
     [SerializeField] private TMP_Text mainObjectiveValueText;
     [SerializeField] private TMP_Text personalObjectiveValueText;
+    [SerializeField] private GameObject resultsSaveText;
+    [SerializeField] private GameObject panelRoot;
 
     public void Awake()
     {
@@ -54,10 +56,14 @@ public class FinalPlayerCard : MonoBehaviour
                 : string.Empty,
         };
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+
+        if (resultsSaveText != null)
+            resultsSaveText.SetActive(true);
     }
 
     public void Closethis()
     {
-        gameObject.SetActive(false);
+        if (panelRoot != null)
+            panelRoot.SetActive(false);
     }
 }

@@ -27,7 +27,7 @@ public class GameMasterActions : MonoBehaviour
 
     public void ShowResults()
     {
-        endGameManager?.OnClickOpenGMResults();
+        endGameManager?.OnClickShowResultsToAll();
     }
 
     public void KickPlayer()

@@ -14,7 +14,13 @@ public class GMResultsPanel : MonoBehaviourPunCallbacks
     public void OpenResults()
     {
         panel.SetActive(true);
-        RefreshResults();
+        RefreshResults(container);
+    }
+
+    // Spawns result cards into an external container (used by EndGameManager for the all-players panel).
+    public void SpawnInto(Transform targetContainer)
+    {
+        RefreshResults(targetContainer);
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
@@ -24,14 +30,14 @@ public class GMResultsPanel : MonoBehaviourPunCallbacks
             changedProps.ContainsKey(BiovalueStatics.PersonalObjectiveRatingKey) ||
             changedProps.ContainsKey(BiovalueStatics.PersonalObjectiveChangeKey))
         {
-            RefreshResults();
+            RefreshResults(container);
         }
     }
 
-    private void RefreshResults()
+    private void RefreshResults(Transform targetContainer)
     {
         var allPlayers = PhotonNetwork.PlayerList
-            .Where(p => !(p.IsLocal && p.IsMasterClient))
+            .Where(p => !p.IsMasterClient)
             .ToArray();
 
         // Sorted list used to map actor → playerActionCards index.
@@ -51,7 +57,7 @@ public class GMResultsPanel : MonoBehaviourPunCallbacks
         float meanGeneral  = generalRatings.Count  > 0 ? generalRatings.Average()  : 0f;
         float meanPersonal = personalRatings.Count > 0 ? personalRatings.Average() : 0f;
 
-        foreach (Transform child in container)
+        foreach (Transform child in targetContainer)
             Destroy(child.gameObject);
 
         foreach (var player in allPlayers)
@@ -83,7 +89,7 @@ public class GMResultsPanel : MonoBehaviourPunCallbacks
                 ? (meanGeneral * meanPersonal + 2f * actionCards + (collabsDone + collabsReceived) + disagrees).ToString("F1")
                 : "-";
 
-            var obj = Instantiate(playerResultPrefab, container);
+            var obj = Instantiate(playerResultPrefab, targetContainer);
             obj.GetComponent<PlayerResultHook>()?.Setup(name, mainStr, personalStr, change, scoreStr);
         }
     }

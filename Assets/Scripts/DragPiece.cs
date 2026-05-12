@@ -538,8 +538,28 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
     {
         if (oldCellIndex < 0)
         {
-            rectTransform.SetParent(originalParent, worldPositionStays: false);
-            rectTransform.anchoredPosition = originalPosition;
+            // Clear current board-cell occupancy on all clients.
+            if (currentCell != null)
+            {
+                currentCell.SetOccupied(false);
+                currentCell = null;
+                currentCellIndex = -1;
+            }
+
+            if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
+
+            // Use the spawn parent (stored in PhotonView.InstantiationData) so this
+            // works on every client, not only the one who dragged the piece.
+            Transform spawnParent = GetSpawnParent();
+            rectTransform.SetParent(spawnParent != null ? spawnParent : originalParent, worldPositionStays: false);
+            rectTransform.anchoredPosition = Vector2.zero;
+
+            var instrument = GetComponent<InstrumentHook>()?.instrument;
+            if (instrument != null)
+            {
+                instrument.isPlaced = false;
+                InstrumentDatabaseSession.Instance?.SessionDb?.NotifyDatabaseChanged();
+            }
             return;
         }
 
@@ -558,6 +578,21 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         oldCell.SetOccupied(true);
         currentCell = oldCell;
         currentCellIndex = oldCellIndex;
+    }
+
+    // Reads the spawn-parent transform from the PhotonView instantiation data.
+    // This is set by UiUtils.FillContainerWithPrefab and works on every client.
+    private Transform GetSpawnParent()
+    {
+        var pv = GetComponent<PhotonView>();
+        if (pv?.InstantiationData != null &&
+            pv.InstantiationData.Length > 0 &&
+            pv.InstantiationData[0] is int parentViewId)
+        {
+            var parentPv = PhotonView.Find(parentViewId);
+            if (parentPv != null) return parentPv.transform;
+        }
+        return null;
     }
     
     // Called by the closeInstrumentButton on the prefab.
