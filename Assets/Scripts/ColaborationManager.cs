@@ -31,11 +31,11 @@ public class ColaborationManager : MonoBehaviourPun
     {
         string requesterName = GetPlayerName(collaboratorActorNumber);
         string requesterEntity = GetPlayerCompany(collaboratorActorNumber);
-        string cardName = GetCardName(cardOwnerActorNumber, cardIndex);
+        string cardDescription = GetCardDescription(cardOwnerActorNumber, cardIndex);
 
         Transform parent = popUpParent != null ? popUpParent : FindObjectOfType<Canvas>().transform;
         GameObject popUp = Instantiate(collabPopUpPrefab, parent);
-        popUp.GetComponent<CollabPopUpHook>()?.Setup(requesterName, requesterEntity, cardName, collaboratorActorNumber, cardOwnerActorNumber, cardIndex);
+        popUp.GetComponent<CollabPopUpHook>()?.Setup(requesterName, requesterEntity, cardDescription, collaboratorActorNumber, cardOwnerActorNumber, cardIndex);
     }
 
     // ── Owner response ────────────────────────────────────────────────────────
@@ -205,5 +205,14 @@ public class ColaborationManager : MonoBehaviourPun
         if (cardIndex < 0 || cardIndex >= cardIds.Count) return "";
         ActionCard card = ActionCardsDatabaseSession.Instance.SessionDb.GetActionCardById(cardIds[cardIndex]);
         return card?.cardName ?? "";
+    }
+
+    private string GetCardDescription(int cardOwnerActorNumber, int cardIndex)
+    {
+        int ownerIndex = cardOwnerActorNumber - 1;
+        if (!GameState.Instance.playerActionCards.TryGetValue(ownerIndex, out var cardIds)) return "";
+        if (cardIndex < 0 || cardIndex >= cardIds.Count) return "";
+        ActionCard card = ActionCardsDatabaseSession.Instance.SessionDb.GetActionCardById(cardIds[cardIndex]);
+        return card?.descriptionGeneral ?? "";
     }
 }

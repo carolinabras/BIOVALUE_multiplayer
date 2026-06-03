@@ -198,16 +198,16 @@ public class ActionCardsHook : MonoBehaviourPun
 
             bool hasCustomType = card.type == ActionCardType.Custom;
 
-            if (hasCustomType && !string.IsNullOrEmpty(savedDesc))
+            if (!string.IsNullOrEmpty(savedDesc) && hasCustomType)
             {
-                // Already saved — show as read-only so the text stays visible.
                 ShowDescriptionCustomReadOnly(savedDesc);
             }
             else if (descriptionCustom != null)
             {
                 descriptionCustom.gameObject.SetActive(hasCustomType);
                 if (descriptionCustomReadOnly != null) descriptionCustomReadOnly.gameObject.SetActive(false);
-                DescriptionCustom = card.descriptionGeneral;
+                if (hasCustomType)
+                    DescriptionCustom = card.descriptionGeneral;
             }
 
             if (!string.IsNullOrEmpty(savedHow))

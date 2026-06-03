@@ -29,11 +29,15 @@ public class EndGameManager : MonoBehaviourPunCallbacks
         var props = PhotonNetwork.CurrentRoom.CustomProperties;
 
         // Late-joiner: end-game was already triggered.
-        if (props.TryGetValue(EndGameKey, out var ev) && ev is bool eb && eb && !PhotonNetwork.IsMasterClient)
-            ShowEndGameForPlayers();
+        if (props.TryGetValue(EndGameKey, out var ev) && ev is bool eb && eb)
+        {
+            if (PhotonNetwork.IsMasterClient) OpenAllPlayersResults();
+            else ShowEndGameForPlayers();
+        }
 
-        // Late-joiner: results were already broadcast.
-        if (props.TryGetValue(ShowResultsKey, out var sv) && sv is bool sb && sb)
+        // Late-joiner: results were already broadcast — only show if GM explicitly sent them.
+        if (PhotonNetwork.IsMasterClient &&
+            props.TryGetValue(ShowResultsKey, out var sv) && sv is bool sb && sb)
             OpenAllPlayersResults();
     }
 
@@ -57,7 +61,9 @@ public class EndGameManager : MonoBehaviourPunCallbacks
         if (changedProps.ContainsKey(EndGameKey))
         {
             ChatManager.Instance?.ClearChat();
-            if (!PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
+                OpenAllPlayersResults();
+            else
                 ShowEndGameForPlayers();
         }
 
@@ -86,11 +92,5 @@ public class EndGameManager : MonoBehaviourPunCallbacks
         Application.Quit();
     }
 
-    private void ShowEndGameForPlayers()
-    {
-        if (endGamePanel != null)
-            endGamePanel.SetActive(true);
-        if (openResultsButton != null)
-            openResultsButton.gameObject.SetActive(true);
-    }
+    private void ShowEndGameForPlayers() { }
 }

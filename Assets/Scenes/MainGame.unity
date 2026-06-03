@@ -376,8 +376,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 15.5522, y: -21.6003}
-  m_SizeDelta: {x: 1793.4656, y: 955.3729}
+  m_AnchoredPosition: {x: 14.1066, y: -44.7303}
+  m_SizeDelta: {x: 1796.3567, y: 909.1129}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &25172925
 MonoBehaviour:
@@ -398,7 +398,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 2.07
   m_Viewport: {fileID: 25172924}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
@@ -1329,10 +1329,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 25172924}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.8640137, y: 0.0006713867}
-  m_SizeDelta: {x: -67.92749, y: -15.311829}
+  m_AnchorMin: {x: 0.014497072, y: 0}
+  m_AnchorMax: {x: 0.9855029, y: 0.94543946}
+  m_AnchoredPosition: {x: -3.755188, y: 24.800926}
+  m_SizeDelta: {x: -10.145, y: -38.4843}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &124173305
 MonoBehaviour:
@@ -2109,6 +2109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerName: {fileID: 0}
   endGameManager: {fileID: 1927927857}
+  endTurnButton: {fileID: 1530947693}
   checksPlayer: {fileID: 0}
 --- !u!114 &287228866
 MonoBehaviour:
@@ -2519,18 +2520,6 @@ MonoBehaviour:
       - m_Target: {fileID: 1927927857}
         m_TargetAssemblyTypeName: EndGameManager, Assembly-CSharp
         m_MethodName: OnClickOpenEndGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 287228865}
-        m_TargetAssemblyTypeName: GameMasterActions, Assembly-CSharp
-        m_MethodName: ShowResults
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7623,6 +7612,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1039789256}
+  - component: {fileID: 1039789257}
   m_Layer: 5
   m_Name: Container
   m_TagString: Untagged
@@ -7644,11 +7634,35 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1021095756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.052, y: 0.1422963}
-  m_AnchorMax: {x: 0.9232916, y: 0.8463334}
-  m_AnchoredPosition: {x: 0.23718262, y: -0.48080444}
-  m_SizeDelta: {x: 0.9824219, y: 3.3569946}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -23.262817, y: -6.480835}
+  m_SizeDelta: {x: -246.01758, y: -316.643}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1039789257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039789255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 300, y: 297}
+  m_Spacing: {x: 69.98, y: 65}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &1043602829
 GameObject:
   m_ObjectHideFlags: 0
@@ -10998,7 +11012,7 @@ GameObject:
   - component: {fileID: 1530947696}
   - component: {fileID: 1530947695}
   m_Layer: 5
-  m_Name: End Instruments Round (1)
+  m_Name: EndTurnButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11782,7 +11796,7 @@ GameObject:
   - component: {fileID: 1653072574}
   - component: {fileID: 1653072573}
   m_Layer: 5
-  m_Name: Skip Player Turn
+  m_Name: Show all actions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12010,10 +12024,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 414040405}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.42834708, y: 0.08961884}
-  m_AnchorMax: {x: 0.5643265, y: 0.193}
-  m_AnchoredPosition: {x: 5.523201, y: 13.424988}
-  m_SizeDelta: {x: 0.98864746, y: 26.849792}
+  m_AnchorMin: {x: 0.39636764, y: 0.11344695}
+  m_AnchorMax: {x: 0.6173573, y: 0.20234379}
+  m_AnchoredPosition: {x: -9.970001, y: -2}
+  m_SizeDelta: {x: 42.532715, y: 5.8832016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1673902833
 MonoBehaviour:
@@ -12091,9 +12105,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -520744957580201110, guid: 0648d2e68b6c5c9418349e94b0ddc63b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0648d2e68b6c5c9418349e94b0ddc63b, type: 3}
   m_Type: 0
-  m_PreserveAspect: 1
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

@@ -13,16 +13,27 @@ public class GameLogUI : MonoBehaviour
     [SerializeField] private ScrollRect   scrollRect;
     [SerializeField] private TextMeshProUGUI logText;
 
+    private bool _subscribed = false;
+
     private void OnEnable()
     {
         Discover();
+        // Clear any stale text (e.g. hardcoded editor text) before subscribing.
+        if (logText != null) logText.text = string.Empty;
+        TrySubscribe();
+    }
 
-        if (GameLog.Instance == null)
-        {
-            Debug.LogError("[GameLogUI] GameLog component not found in the scene. " +
-                           "Make sure there is a GameObject with a GameLog component in the scene.");
-            return;
-        }
+    private void Start()
+    {
+        // Fallback: if OnEnable ran before GameLog.Awake (null instance), subscribe now.
+        TrySubscribe();
+    }
+
+    private void TrySubscribe()
+    {
+        if (_subscribed) return;
+
+        if (GameLog.Instance == null) return;
 
         if (logText == null)
         {
@@ -41,14 +52,17 @@ public class GameLogUI : MonoBehaviour
         ScrollToBottom();
 
         GameLog.Instance.OnEntryAdded.AddListener(OnEntryAdded);
-        Debug.Log($"[GameLogUI] OK — logText='{logText.gameObject.name}', " +
+        _subscribed = true;
+        Debug.Log($"[GameLogUI] Subscribed — logText='{logText.gameObject.name}', " +
                   $"scrollRect='{(scrollRect ? scrollRect.gameObject.name : "none")}', " +
                   $"entries replayed={GameLog.Instance.Entries.Count}");
     }
 
     private void OnDisable()
     {
-        GameLog.Instance?.OnEntryAdded.RemoveListener(OnEntryAdded);
+        if (_subscribed)
+            GameLog.Instance?.OnEntryAdded.RemoveListener(OnEntryAdded);
+        _subscribed = false;
     }
 
     private void OnEntryAdded(string entry)

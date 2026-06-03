@@ -53,34 +53,35 @@ public class PlayedCardsSpawner : MonoBehaviourPun
         if (PhotonNetwork.IsMasterClient)
             photonView.RPC(nameof(RPC_SpawnPlayerCards), RpcTarget.All);
         else
+        {
+            CloseOtherSpawners();
             SpawnPlayerCards();
+        }
     }
 
     [PunRPC]
     public void RPC_SpawnPlayerCards()
     {
         OpenPanel();
-        // fecha todos os outros spawners imediatamente
+        CloseOtherSpawners();
+        ActivateActionHandButton.SetAllActive(false);
+        SpawnPlayerCards();
+    }
+
+    private void CloseOtherSpawners()
+    {
         foreach (var spawner in FindObjectsOfType<PlayedCardsSpawner>())
         {
-            if (spawner != this)
+            if (spawner == this) continue;
+            foreach (var card in spawner.spawnedCards)
+                Destroy(card);
+            spawner.spawnedCards.Clear();
+            if (spawner.parent != null)
             {
-                // destrói cartas imediatamente
-                foreach (var card in spawner.spawnedCards)
-                    Destroy(card);
-                spawner.spawnedCards.Clear();
-            
-                // fecha painel imediatamente sem animação
-                if (spawner.parent != null)
-                {
-                    LeanTween.cancel(spawner.parent);
-                    spawner.parent.SetActive(false);
-                }
+                LeanTween.cancel(spawner.parent);
+                spawner.parent.SetActive(false);
             }
         }
-
-        SpawnPlayerCards();
-       
     }
 
     public void OnClickClosePanel()
@@ -148,7 +149,13 @@ public class PlayedCardsSpawner : MonoBehaviourPun
             }
 
             CollaborateButton collab = card.GetComponent<CollaborateButton>();
-            if (collab != null) collab.Setup(actorNumber, i);
+            if (collab != null)
+            {
+                collab.Setup(actorNumber, i);
+                if (ColaborationManager.Instance != null)
+                    foreach (int collaboratorActor in ColaborationManager.Instance.GetCollaborators(actorNumber, i))
+                        collab.ShowCollab(collaboratorActor);
+            }
 
             spawnedCards.Add(card);
         }
@@ -166,8 +173,7 @@ public class PlayedCardsSpawner : MonoBehaviourPun
     public void ClosePanel()
     {
         if (parent == null || !parent.activeSelf) return;
-        
-        // parent.GetComponent<RectTransform>().localScale = Vector3.one;
         parent.SetActive(false);
+        ActivateActionHandButton.SetAllActive(true);
     }
 }

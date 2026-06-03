@@ -23,6 +23,7 @@ public class CardSummarySpawner : MonoBehaviourPun
     private void RPC_SpawnSummary()
     {
         summaryPanel.SetActive(true);
+        ActivateActionHandButton.SetAllActive(false);
 
         foreach (Transform child in container)
             Destroy(child.gameObject);

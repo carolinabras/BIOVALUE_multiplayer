@@ -1828,7 +1828,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Example: James Bond'
+  m_text: 'Example: James'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc510712785189a4a984bae52e2d2e2b, type: 2}
   m_sharedMaterial: {fileID: 1952610214321320256, guid: fc510712785189a4a984bae52e2d2e2b, type: 2}
@@ -2494,7 +2494,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Example: Secret Services MI6'
+  m_text: 'Example: Game Dev Association'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc510712785189a4a984bae52e2d2e2b, type: 2}
   m_sharedMaterial: {fileID: 1952610214321320256, guid: fc510712785189a4a984bae52e2d2e2b, type: 2}
@@ -3856,7 +3856,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Example: Investigate this city''s criminals and form collaborations'
+  m_text: 'Example: Help game dev studios in Portugal and form collaborations'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fc510712785189a4a984bae52e2d2e2b, type: 2}
   m_sharedMaterial: {fileID: 1952610214321320256, guid: fc510712785189a4a984bae52e2d2e2b, type: 2}

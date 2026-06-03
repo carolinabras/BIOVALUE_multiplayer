@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class GameMasterActions : MonoBehaviour
 {
     [SerializeField] public TMP_InputField playerName;
     [SerializeField] private EndGameManager endGameManager;
+    [SerializeField] private GameObject endTurnButton;
 
     public ChecksPlayer checksPlayer;
 
@@ -13,6 +15,7 @@ public class GameMasterActions : MonoBehaviour
     {
         if (!PhotonNetwork.IsMasterClient) return;
         GameState.Instance.SetGamePhase(GameState.GamePhase.ActionCardPlay);
+        endTurnButton?.SetActive(false);
     }
 
     public void EndTurn()
@@ -22,7 +25,8 @@ public class GameMasterActions : MonoBehaviour
 
     public void EndActionsRound()
     {
-        endGameManager?.OnClickOpenEndGame();
+        if (!PhotonNetwork.IsMasterClient) return;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "actionsRoundEnded", true } });
     }
 
     public void ShowResults()
