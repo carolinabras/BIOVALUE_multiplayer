@@ -20,6 +20,8 @@ public class ObjectsManager : MonoBehaviour
         {
             InstrumentSpawnerArea.SetActive(true);
             ActionCardSpawnerArea.SetActive(false);
+            // Turn-passing is GM-only (button now calls GameState.GMAdvanceTurn()) — never show it to players.
+            endTurnButton.SetActive(GameAuthority.IsGameMaster);
         }
         else
         {

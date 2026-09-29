@@ -205,7 +205,7 @@ public class UI_LobbyData : MonoBehaviour
     
     public void SaveLobbyObjectiveToRoom()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
 
         // Collect selected instrument IDs.
         var selectedIds = new System.Collections.Generic.List<int>();

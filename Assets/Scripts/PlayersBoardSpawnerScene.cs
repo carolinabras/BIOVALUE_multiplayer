@@ -21,7 +21,7 @@ public class PlayersBoardSpawnerScene : MonoBehaviourPunCallbacks
         if (!pv) { Debug.LogError("PlayersBoardSceneSpawner precisa de PhotonView."); return; }
 
         // Mesma lógica: 1 autoridade decide
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
 
         pv.RPC(nameof(RPC_SpawnBoard), RpcTarget.AllBuffered);
         // Buffered para quem entrar depois também receber e instanciar o board

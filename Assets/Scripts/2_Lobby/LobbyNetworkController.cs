@@ -140,7 +140,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
         
 
         
-        string role = (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        string role = (GameAuthority.IsGameMaster && PhotonNetwork.CurrentRoom.PlayerCount == 1)
                         ? "GM" : "Player";
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { ROLE_KEY, role } });

@@ -101,7 +101,7 @@ public class CreateJoin : MonoBehaviourPunCallbacks
                   $"({PhotonNetwork.CurrentRoom.PlayerCount}/{PhotonNetwork.CurrentRoom.MaxPlayers})");
 
 
-        string role = (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        string role = (GameAuthority.IsGameMaster && PhotonNetwork.CurrentRoom.PlayerCount == 1)
             ? "GM"
             : "Player";
         

@@ -78,6 +78,60 @@ public static class CanvasScalerFix
         }
     }
 
+    // ── Board Anchor ──────────────────────────────────────────────────────────
+
+    // The Board currently uses a full-stretch anchor (0,0)-(1,1) with a negative
+    // sizeDelta subtracted from its parent's rect. That makes its size depend on
+    // the parent canvas's rect, which itself varies with screen aspect ratio under
+    // CanvasScaler (constant only at the reference 16:9 ratio) — so the Board
+    // drifts relative to every other element (cells, buttons, spawners), which all
+    // use a fixed-size point anchor instead. This converts the Board to that same
+    // fixed-size point-anchor convention, preserving its exact current visual
+    // position/size (read live from the RectTransform) so nothing jumps.
+    [MenuItem("BioValue/Fix Board Anchor (Current Scene)")]
+    public static void FixBoardAnchor()
+    {
+        GameObject board = GameObject.Find("Board");
+        if (board == null)
+        {
+            Debug.LogError("[CanvasScalerFix] No GameObject named \"Board\" found in the active scene.");
+            return;
+        }
+
+        var rt = board.GetComponent<RectTransform>();
+        if (rt == null)
+        {
+            Debug.LogError("[CanvasScalerFix] \"Board\" has no RectTransform.");
+            return;
+        }
+
+        if (rt.pivot != new Vector2(0.5f, 0.5f))
+        {
+            Debug.LogError($"[CanvasScalerFix] \"Board\" pivot is {rt.pivot}, expected (0.5, 0.5) — " +
+                            "fix aborted so the position math below doesn't silently produce a wrong result.");
+            return;
+        }
+
+        Undo.RecordObject(rt, "Fix Board Anchor");
+
+        // Capture the board's current actual size/position before touching anchors.
+        float width  = rt.rect.width;
+        float height = rt.rect.height;
+        Vector3 worldCenter = rt.position; // valid because pivot is (0.5, 0.5)
+
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(width, height);
+        rt.position  = worldCenter; // restores the exact same visual placement
+
+        EditorUtility.SetDirty(rt);
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+
+        Debug.Log($"[CanvasScalerFix] Board re-anchored to a fixed point anchor: " +
+                  $"size=({width:F1}, {height:F1}), anchoredPosition={rt.anchoredPosition}. " +
+                  "Verify it still looks right, then save the scene.");
+    }
+
     private static int FixScalersInActiveScene()
     {
         int count = 0;

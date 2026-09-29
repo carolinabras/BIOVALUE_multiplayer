@@ -29,7 +29,7 @@ public class FinalPlayerCard : MonoBehaviourPunCallbacks
     public void Start()
     {
         if (panelRoot != null) panelRoot.SetActive(false);
-        if (PhotonNetwork.IsMasterClient) return;
+        if (GameAuthority.IsGameMaster) return;
 
         var me = PhotonNetwork.LocalPlayer;
         playerNameText.text = me.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var nameObj)
@@ -48,7 +48,7 @@ public class FinalPlayerCard : MonoBehaviourPunCallbacks
 
     public override void OnRoomPropertiesUpdate(Hashtable changedProps)
     {
-        if (PhotonNetwork.IsMasterClient) return;
+        if (GameAuthority.IsGameMaster) return;
         if (changedProps.ContainsKey(ActionsRoundEndedKey) || changedProps.ContainsKey(EndGameKey))
             ShowPanel();
     }

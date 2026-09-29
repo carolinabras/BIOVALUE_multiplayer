@@ -33,10 +33,7 @@ public class Role : MonoBehaviour
 
     public void Start()
     {
-        var me = PhotonNetwork.LocalPlayer;
-
-        
-        bool isGM = me.CustomProperties.TryGetValue("role", out var role) && (string)role == "GM";
+        bool isGM = GameAuthority.IsGameMaster;
 
         if (isGM)
         {

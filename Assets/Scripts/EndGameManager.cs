@@ -31,12 +31,12 @@ public class EndGameManager : MonoBehaviourPunCallbacks
         // Late-joiner: end-game was already triggered.
         if (props.TryGetValue(EndGameKey, out var ev) && ev is bool eb && eb)
         {
-            if (PhotonNetwork.IsMasterClient) OpenAllPlayersResults();
+            if (GameAuthority.IsGameMaster) OpenAllPlayersResults();
             else ShowEndGameForPlayers();
         }
 
         // Late-joiner: results were already broadcast — only show if GM explicitly sent them.
-        if (PhotonNetwork.IsMasterClient &&
+        if (GameAuthority.IsGameMaster &&
             props.TryGetValue(ShowResultsKey, out var sv) && sv is bool sb && sb)
             OpenAllPlayersResults();
     }
@@ -44,14 +44,14 @@ public class EndGameManager : MonoBehaviourPunCallbacks
     // Called by the GM's "End Game" button — marks the room as finished for all clients.
     public void OnClickOpenEndGame()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
         PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { EndGameKey, true } });
     }
 
     // Called by the GM's "Show Results to All" button — opens the results panel on every client.
     public void OnClickShowResultsToAll()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
         PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { ShowResultsKey, true } });
     }
 
@@ -61,7 +61,7 @@ public class EndGameManager : MonoBehaviourPunCallbacks
         if (changedProps.ContainsKey(EndGameKey))
         {
             ChatManager.Instance?.ClearChat();
-            if (PhotonNetwork.IsMasterClient)
+            if (GameAuthority.IsGameMaster)
                 OpenAllPlayersResults();
             else
                 ShowEndGameForPlayers();

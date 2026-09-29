@@ -21,7 +21,7 @@ public class GameMasterPanelUI : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        if (!PhotonNetwork.IsMasterClient){
+        if (!GameAuthority.IsGameMaster){
             parentPanel.gameObject.SetActive(false);
         }
         

@@ -48,7 +48,7 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
     private void AddOrUpdate(Player player)
     {
         
-        if (player.IsLocal && PhotonNetwork.IsMasterClient)
+        if (player.IsLocal && GameAuthority.IsGameMaster)
         {
             return; // dont show GM on the list
         }
@@ -69,7 +69,7 @@ public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
 
     public void GoNext()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
         PhotonNetwork.AutomaticallySyncScene = true;
         // Setting a room property fires OnRoomPropertiesUpdate on ALL clients,
         // including the master client itself — this is what was missing.

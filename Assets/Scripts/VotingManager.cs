@@ -126,7 +126,7 @@ public class VotingManager : MonoBehaviourPun
 
     public void EndTurn()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
 
         // Capture counts before the reset clears them.
         int approveSnapshot = _votesApprove;

@@ -92,6 +92,50 @@ public class InstrumentSpawner : MonoBehaviourPunCallbacks
         Populate();
     }
 
+    // Debug-only: spawns `count` test instruments directly, cycling through the
+    // full database, bypassing the lobby's selection flow entirely. GM-only,
+    // and inert outside the Editor/Development builds (never a release build).
+    public void DebugSpawnTestInstruments(int count)
+    {
+        if (!Debug.isDebugBuild) return;
+        if (!GameAuthority.IsGameMaster) return;
+        if (!photonView || !photonView.IsMine) return;
+
+        if (!instrumentPrefab)
+        {
+            Debug.LogError("[InstrumentSpawner] instrumentPrefab not assigned.");
+            return;
+        }
+        if (!parentOfInstruments) parentOfInstruments = gameObject;
+        if (instrumentsDatabase == null || instrumentsDatabase.instruments.Count == 0)
+        {
+            Debug.LogError("[InstrumentSpawner] No instruments in the database to spawn from.");
+            return;
+        }
+
+        var testInstruments = new List<Instrument>(count);
+        for (int i = 0; i < count; i++)
+            testInstruments.Add(instrumentsDatabase.instruments[i % instrumentsDatabase.instruments.Count]);
+
+        var spawned = UiUtils.FillContainerWithPrefab<InstrumentHook>(
+            parentOfInstruments,
+            instrumentPrefab,
+            testInstruments.Count,
+            (hook, i) =>
+            {
+                hook.SetInstrumentInNetwork(testInstruments[i]);
+                RectTransform rt = hook.GetComponent<RectTransform>();
+                if (rt) rt.localPosition = new Vector3(50, 50);
+                return true;
+            },
+            false,
+            true // PhotonNetwork.Instantiate
+        );
+
+        injectionStepHooks.AddRange(spawned);
+        Debug.Log($"[InstrumentSpawner] DEBUG: spawned {spawned.Count} test instruments.");
+    }
+
     public void SpawnInstrumentById(int id)
     {
         var instrument = instrumentsDatabase.GetInstrumentById(id);

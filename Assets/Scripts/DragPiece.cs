@@ -325,14 +325,12 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnPlayerTurnIndexChanged(int index)
     {
-        if (_gameState.IsMyTurn())
-        {
-            canDrag = true;
-        }
-        else
-        {
-            canDrag = false;
-        }
+        // Debug/Editor only: let the GM drag pieces regardless of whose turn it
+        // is, so drag/board behavior can be tested solo without other players.
+        // Never true in a release build.
+        bool debugGmOverride = Debug.isDebugBuild && GameAuthority.IsGameMaster;
+
+        canDrag = _gameState.IsMyTurn() || debugGmOverride;
     }
 
 
@@ -476,11 +474,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
             if (photonView != null && photonView.IsMine)
             {
                 photonView.RPC(nameof(RPC_SnapToCellByIndex), RpcTarget.Others, newIndex, oldIndex);
-                GiveOwner(GameState.Instance.localPlayerIndex);
-                VotingManager.Instance.StartVote(photonView.ViewID, newIndex, oldIndex);
-
-
-
+                BoardPlacementService.RegisterPlacement(this, newIndex, oldIndex);
             }
         }
         else

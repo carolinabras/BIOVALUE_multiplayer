@@ -50,7 +50,7 @@ public class PlayedCardsSpawner : MonoBehaviourPun
 
     public void OnClickSpawnCards()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (GameAuthority.IsGameMaster)
             photonView.RPC(nameof(RPC_SpawnPlayerCards), RpcTarget.All);
         else
         {
@@ -86,7 +86,7 @@ public class PlayedCardsSpawner : MonoBehaviourPun
 
     public void OnClickClosePanel()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (GameAuthority.IsGameMaster)
             photonView.RPC(nameof(RPC_ClosePanel), RpcTarget.All);
         else
             ClosePanel();

@@ -9,11 +9,9 @@ public class GameMasterActions : MonoBehaviour
     [SerializeField] private EndGameManager endGameManager;
     [SerializeField] private GameObject endTurnButton;
 
-    public ChecksPlayer checksPlayer;
-
     public void EndInstrumentPhase()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
         GameState.Instance.SetGamePhase(GameState.GamePhase.ActionCardPlay);
         endTurnButton?.SetActive(false);
     }
@@ -25,7 +23,7 @@ public class GameMasterActions : MonoBehaviour
 
     public void EndActionsRound()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (!GameAuthority.IsGameMaster) return;
         PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "actionsRoundEnded", true } });
     }
 
@@ -44,8 +42,10 @@ public class GameMasterActions : MonoBehaviour
     }
 
     [PunRPC]
-    public void RPC_KickPlayer(string cardName)
+    public void RPC_KickPlayer(string cardName, PhotonMessageInfo info)
     {
+        if (!GameAuthority.SenderIsGameMaster(info)) return;
+
         foreach (var player in PhotonNetwork.PlayerList)
         {
             string nameOnCard = "";
