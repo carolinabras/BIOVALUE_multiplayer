@@ -76,7 +76,14 @@ public class ActionDeck : MonoBehaviour
             panelMenuMaster.SetActive(true);
             panelMenu.SetActive(true);
             buttonPlayCards.SetActive(true);
-            LeanTween.scale(panelMenu.GetComponent<RectTransform>(), Vector3.one, animationTime).setEaseOutBack();
+
+            float targetScale = 1f;
+            if (panelMenu.TryGetComponent(out FitGridToViewport fit))
+            {
+                fit.Recalculate();
+                targetScale = fit.FitScale;
+            }
+            LeanTween.scale(panelMenu.GetComponent<RectTransform>(), new Vector3(targetScale, targetScale, 1f), animationTime).setEaseOutBack();
         }
     }
     

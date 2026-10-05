@@ -41,5 +41,6 @@ public class SetPhotonParentOnInstantiation : MonoBehaviour, IPunInstantiateMagi
         }
         
         transform.SetParent(parent.transform);
+        transform.localScale = Vector3.one; // SetParent (worldPositionStays: true) can rescale on reparent
     }
 }

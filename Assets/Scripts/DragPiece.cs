@@ -387,6 +387,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         // mete a peça como filha do grid para alinhar com as células
         //rectTransform.SetParent(gridParent, worldPositionStays: false);
         this.transform.SetParent(gridParent.transform);
+        this.transform.localScale = Vector3.one; // SetParent (worldPositionStays: true) can rescale on reparent
         this.transform.SetAsLastSibling();
         Debug.LogWarning("the parent of this object is " + this.transform.parent.name);
         isDragging = true;
@@ -465,6 +466,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
             // move visualmente a peça
             rectTransform.SetParent(gridParent, worldPositionStays: false);
             rectTransform.anchoredPosition = closestCellRT.anchoredPosition;
+            MatchCellSize(closestCellRT);
 
             // mostra botão de fechar só para o dono da peça
             if (closeInstrumentButton && photonView != null && photonView.IsMine)
@@ -513,11 +515,27 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         rectTransform.SetParent(gridParent, worldPositionStays: false);
 
         rectTransform.anchoredPosition = targetRT.anchoredPosition;
+        MatchCellSize(targetRT);
 
         targetCell.SetOccupied(true);
         currentCell = targetCell;
         currentCellIndex = newIndex;
 
+    }
+
+    // Forces this piece's anchor/pivot/size to exactly match the cell it's being
+    // placed in. The piece can pick up a different anchor/size on its way here
+    // (the spawner's GridLayoutGroup controls both while it's in the spawn list,
+    // and reparenting mid-drag can carry that mismatch along) — snapping it back
+    // to the cell's own values guarantees it always reads as "one piece, one cell"
+    // regardless of what size/anchor state it arrived with.
+    private void MatchCellSize(RectTransform cellRT)
+    {
+        rectTransform.localScale = Vector3.one;
+        rectTransform.anchorMin = cellRT.anchorMin;
+        rectTransform.anchorMax = cellRT.anchorMax;
+        rectTransform.pivot = cellRT.pivot;
+        rectTransform.sizeDelta = cellRT.sizeDelta;
     }
 
     // ── Revert ──────────────────────────────────────────────────────────────
@@ -569,6 +587,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
         rectTransform.SetParent(gridParent, worldPositionStays: false);
         rectTransform.anchoredPosition = oldRT.anchoredPosition;
+        MatchCellSize(oldRT);
         oldCell.SetOccupied(true);
         currentCell = oldCell;
         currentCellIndex = oldCellIndex;

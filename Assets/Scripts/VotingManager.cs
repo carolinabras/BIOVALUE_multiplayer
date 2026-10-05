@@ -76,7 +76,12 @@ public class VotingManager : MonoBehaviourPun
 
         if (resultText) resultText.gameObject.SetActive(false);
 
-        if (!isGM && !isWhoPlaced)
+        // Debug/Editor only: force the voting panel visible for the GM too, since by
+        // design it never shows for the GM or whoever placed the piece — making it
+        // impossible to preview solo. Never true in a release build.
+        bool debugForceShow = Debug.isDebugBuild && GameAuthority.IsGameMaster;
+
+        if ((!isGM && !isWhoPlaced) || debugForceShow)
         {
             votingPanel.SetActive(true);
             if (currentVoteLabel) currentVoteLabel.text = "";

@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 public class DebugInstrumentSpawner : MonoBehaviour
 {
     private const int SpawnCount = 20;
+    private bool _gmPanelReactivated;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Bootstrap()
@@ -45,10 +46,37 @@ public class DebugInstrumentSpawner : MonoBehaviour
 
         if (!GameAuthority.IsGameMaster) return;
 
-        var spawner = FindFirstObjectByType<InstrumentSpawner>();
-        if (spawner == null) return;
+        ReactivateGmPanelIfNeeded();
 
-        if (GUI.Button(new Rect(10, 10, 240, 30), $"DEBUG: Spawn {SpawnCount} instruments"))
+        var spawner = FindFirstObjectByType<InstrumentSpawner>();
+        if (spawner != null &&
+            GUI.Button(new Rect(10, 10, 240, 30), $"DEBUG: Spawn {SpawnCount} instruments"))
             spawner.DebugSpawnTestInstruments(SpawnCount);
+
+        // The GM panel is a slide-out drawer normally opened by clicking its own
+        // in-scene button — this gives a guaranteed way to open/close it for
+        // testing regardless of where that button ends up at the current resolution.
+        var gmPanel = FindFirstObjectByType<GameMasterPanelUI>();
+        if (gmPanel != null &&
+            GUI.Button(new Rect(10, 50, 240, 30), "DEBUG: Toggle GM Panel"))
+            gmPanel.TogglePanel();
+    }
+
+    // GameMasterPanelUI.Start() deactivates its own GameObject if you weren't GM
+    // yet at scene-load time — which is always true in the offline-solo-room debug
+    // flow, since becoming GM happens later via a button click, not before Start()
+    // runs. Reactivate it now that GM status is actually known, so it (and anything
+    // that searches for it, like the button above) works again.
+    private void ReactivateGmPanelIfNeeded()
+    {
+        if (_gmPanelReactivated) return;
+        _gmPanelReactivated = true;
+
+        var gmPanel = FindFirstObjectByType<GameMasterPanelUI>(FindObjectsInactive.Include);
+        if (gmPanel != null && !gmPanel.gameObject.activeSelf)
+        {
+            gmPanel.gameObject.SetActive(true);
+            Debug.Log("[DebugInstrumentSpawner] Reactivated GameMasterPanelUI (was deactivated before GM status was known).");
+        }
     }
 }

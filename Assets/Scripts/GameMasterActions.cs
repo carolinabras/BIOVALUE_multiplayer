@@ -9,6 +9,25 @@ public class GameMasterActions : MonoBehaviour
     [SerializeField] private EndGameManager endGameManager;
     [SerializeField] private GameObject endTurnButton;
 
+    private void Start()
+    {
+        // The "End Instruments Round" button may change the phase directly via GameState,
+        // so react to the phase itself rather than to EndInstrumentPhase() being called.
+        GameState.Instance.onGamePhaseChanged.AddListener(OnGamePhaseChanged);
+        var current = GameState.Instance.GetCurrentGamePhase();
+        OnGamePhaseChanged(current != GameState.GamePhase.None ? current : GameState.GamePhase.InstrumentSelection);
+    }
+
+    private void OnDestroy()
+    {
+        if (GameState.Instance) GameState.Instance.onGamePhaseChanged.RemoveListener(OnGamePhaseChanged);
+    }
+
+    private void OnGamePhaseChanged(GameState.GamePhase gamePhase)
+    {
+        if (endTurnButton) endTurnButton.SetActive(gamePhase == GameState.GamePhase.InstrumentSelection);
+    }
+
     public void EndInstrumentPhase()
     {
         if (!GameAuthority.IsGameMaster) return;

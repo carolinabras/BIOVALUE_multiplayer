@@ -19,6 +19,12 @@ public class InstrumentSpawner : MonoBehaviourPunCallbacks
     private void Awake()
     {
         instrumentsDatabase = InstrumentDatabaseSession.Instance.SessionDb;
+
+        // Make sure the instrument grid shrinks to fit the scroll area on any screen size,
+        // so instruments are never clipped by the AreaScroll mask.
+        var container = parentOfInstruments ? parentOfInstruments : gameObject;
+        if (container.GetComponent<UnityEngine.UI.GridLayoutGroup>() && !container.GetComponent<FitGridToViewport>())
+            container.AddComponent<FitGridToViewport>();
     }
 
     private void Start()
