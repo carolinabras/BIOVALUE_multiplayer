@@ -1976,7 +1976,7 @@ public static class MainHudBuilder
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     // Tick drawn from two rounded bars, centred in the parent (scale 1 fits a ~50 px circle).
-    private static RectTransform Tick(RectTransform parent, Color color, float scale)
+    internal static RectTransform Tick(RectTransform parent, Color color, float scale)
     {
         var icon = Stretch(NewRect("Tick", parent));
         Bar(icon, color, new Vector2(-6, -2) * scale, new Vector2(12, 5) * scale, -45f);

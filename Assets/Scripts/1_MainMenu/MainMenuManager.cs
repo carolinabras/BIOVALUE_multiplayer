@@ -10,6 +10,9 @@ public class MainMenuManager : MonoBehaviour
     public Button startButton;
     public Image startFill;
     public TMP_Text startLabel;
+    public GameObject startArrow;    // swapped for the spinner once pressed
+    public GameObject startSpinner;
+    public CanvasGroup quitGroup;    // dims once Start game is pressed
     public TMP_Text versionLabel;
 
     private static readonly Color Connecting = new Color32(0xC9, 0x3A, 0x84, 0xFF);
@@ -27,6 +30,13 @@ public class MainMenuManager : MonoBehaviour
         if (startLabel) startLabel.text = "Connecting…";
         if (startFill) startFill.color = Connecting;
         if (startButton) startButton.interactable = false;
+        if (startArrow) startArrow.SetActive(false);
+        if (startSpinner) startSpinner.SetActive(true);
+        if (quitGroup)
+        {
+            quitGroup.alpha = 0.35f;
+            quitGroup.interactable = false;
+        }
         StartCoroutine(StartGameCoroutine());
         //copy instruments database to database copy
 
