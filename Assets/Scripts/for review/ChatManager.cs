@@ -54,7 +54,7 @@ public class ChatManager : MonoBehaviourPun
         }
         if (photonView == null)
         {
-            Debug.LogError("[Chat] Falta o PhotonView no ChatManager (é obrigatório).");
+            Debug.LogError("[Chat] ChatManager is missing its PhotonView (required).");
             return;
         }
 
@@ -75,7 +75,7 @@ public class ChatManager : MonoBehaviourPun
 
         var label = go.GetComponentInChildren<TMP_Text>(true);
         if (label != null) label.text = $"<b>{sender}:</b> {message}";
-        else Debug.LogError("[Chat] O Message Prefab não tem TMP_Text (nem nos filhos).");
+        else Debug.LogError("[Chat] The Message Prefab has no TMP_Text (nor in its children).");
 
         if (scrollRect != null)
         {

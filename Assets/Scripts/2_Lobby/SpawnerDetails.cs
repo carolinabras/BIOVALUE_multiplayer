@@ -33,7 +33,7 @@ public class SpawnerDetails: MonoBehaviour, IPointerDownHandler, IPointerUpHandl
             {
                 var anyCanvas = FindFirstObjectByType<Canvas>(); // Unity 6
                 if (anyCanvas != null) detailsParent = anyCanvas.transform;
-                else Debug.LogError("[SpawnerDetails] Não encontrei nenhum Canvas na cena.");
+                else Debug.LogError("[SpawnerDetails] No Canvas found in the scene.");
             }
         }
     }
@@ -76,7 +76,14 @@ public class SpawnerDetails: MonoBehaviour, IPointerDownHandler, IPointerUpHandl
             Debug.LogError("InstrumentHook reference is not assigned.");
             return;
         }
-        
+
+        // Main game: the scene has its own details window.
+        if (InstrumentDetailsPanel.Instance)
+        {
+            InstrumentDetailsPanel.Instance.Open(instrumentHook);
+            return;
+        }
+
         /*GameObject parent = GameObject.FindWithTag("DetailsParent");
         if (!parent)
         {

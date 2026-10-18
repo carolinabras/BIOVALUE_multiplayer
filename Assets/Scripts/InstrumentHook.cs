@@ -18,6 +18,7 @@ public class InstrumentHook : MonoBehaviourPun
     [SerializeField] private DragPiece dragPiece;
 
     [SerializeField] private Image iconImage;
+    [SerializeField] private InstrumentPieceView pieceView;
     [SerializeField] private IconDatabase iconDatabase;
     
     
@@ -45,14 +46,15 @@ public class InstrumentHook : MonoBehaviourPun
         get => instrument != null ? instrument.typeOne.ToString() : string.Empty;
         set
         {
-            if (instrument != null && Enum.TryParse(value, out InstrumentType type))
+            bool parsed = Enum.TryParse(value, out InstrumentType type);
+            if (instrument != null && parsed)
             {
                 instrument.typeOne = type;
             }
 
             if (typeOne)
             {
-                typeOne.text = value;
+                typeOne.text = parsed ? type.DisplayName() : value;
             }
         }
     }
@@ -62,14 +64,15 @@ public class InstrumentHook : MonoBehaviourPun
         get => instrument != null ? instrument.typeTwo.ToString() : string.Empty;
         set
         {
-            if (instrument != null && Enum.TryParse(value, out InstrumentType type))
+            bool parsed = Enum.TryParse(value, out InstrumentType type);
+            if (instrument != null && parsed)
             {
                 instrument.typeTwo = type;
             }
 
             if (typeTwo)
             {
-                typeTwo.text = value;
+                typeTwo.text = parsed ? type.DisplayName() : value;
             }
         }
     }
@@ -208,6 +211,15 @@ public class InstrumentHook : MonoBehaviourPun
            
         }
         
+        // New hexagon visuals (front/back). The root image is then only an invisible drag area,
+        // so it must stay enabled even when there is no icon sprite.
+        if (!pieceView) pieceView = GetComponent<InstrumentPieceView>();
+        if (pieceView)
+        {
+            pieceView.Apply(instr);
+            if (iconImage != null) iconImage.enabled = true;
+        }
+
         /* var sprite = iconDatabase.GetIcon(instr.typeOne, instr.typeTwo);
         if (iconImage != null)
         {

@@ -51,7 +51,10 @@ public class DebugInstrumentSpawner : MonoBehaviour
         var spawner = FindFirstObjectByType<InstrumentSpawner>();
         if (spawner != null &&
             GUI.Button(new Rect(10, 10, 240, 30), $"DEBUG: Spawn {SpawnCount} instruments"))
+        {
             spawner.DebugSpawnTestInstruments(SpawnCount);
+            if (PhaseIntro.Instance) PhaseIntro.Instance.Replay(GameState.GamePhase.InstrumentSelection);
+        }
 
         // The GM panel is a slide-out drawer normally opened by clicking its own
         // in-scene button — this gives a guaranteed way to open/close it for

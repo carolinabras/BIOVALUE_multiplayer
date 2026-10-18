@@ -47,7 +47,7 @@ public class InstrumentSpawnerLocal : MonoBehaviour
         var session = InstrumentDatabaseSession.Instance;
         if (session == null || session.SessionDb == null)
         {
-            Debug.LogError("Session DB ainda não existe. Garante que o Session object é criado antes desta cena.");
+            Debug.LogError("Session DB doesn't exist yet. Make sure the Session object is created before this scene.");
             return;
         }
 
@@ -67,7 +67,7 @@ public class InstrumentSpawnerLocal : MonoBehaviour
     {
         if (instrumentsDatabase == null)
         {
-            Debug.LogError("Populate chamado mas instrumentsDatabase é null.");
+            Debug.LogError("Populate called but instrumentsDatabase is null.");
             return;
         }
         Debug.Log("Populate called. Count = " + instrumentsDatabase.instruments.Count);

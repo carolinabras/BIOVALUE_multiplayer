@@ -56,6 +56,18 @@ public class TurnAuthority
         return next?.ActorNumber ?? -1;
     }
 
+    // Who ResolveNextActor would pick, without changing anything (for "Next: ..." in the UI).
+    public int PeekNextActor(int fromActorNumber)
+    {
+        var sorted = PhotonNetwork.PlayerList.OrderBy(p => p.ActorNumber).ToArray();
+        if (sorted.Length <= 1) return -1;
+        HashSet<int> skipSet = GetSkipActors();
+        Player next = sorted.Skip(1)
+            .FirstOrDefault(p => p.ActorNumber > fromActorNumber && !skipSet.Contains(p.ActorNumber))
+            ?? sorted.Skip(1).FirstOrDefault();
+        return next?.ActorNumber ?? -1;
+    }
+
     // Defers a rejoining player's turn until the current cycle completes, so
     // they don't jump the queue ahead of players who were already waiting.
     public void DeferToEndOfCycle(int actorNumber)

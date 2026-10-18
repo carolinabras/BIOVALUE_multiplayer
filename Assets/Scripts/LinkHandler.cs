@@ -19,7 +19,7 @@ public class LinkHandler : MonoBehaviour
         {
             TMP_LinkInfo linkInfo = tmpText.textInfo.linkInfo[linkIndex];
             string url = linkInfo.GetLinkID();
-            Debug.Log($"Abrir URL: {url}");
+            Debug.Log($"Opening URL: {url}");
             Application.OpenURL(url);
         }
     }

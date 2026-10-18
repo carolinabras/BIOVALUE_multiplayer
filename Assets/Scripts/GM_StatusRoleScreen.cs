@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 public class GM_StatusRoleScreen : MonoBehaviourPunCallbacks
 {
     
-    [SerializeField] private Transform content;            // o content do ScrollView ou layout
+    [SerializeField] private Transform content;            // the ScrollView content or layout
     [SerializeField] private GameObject playerItemPrefab;  // o PlayerStatusItem prefab
 
     private readonly Dictionary<int, GameObject> itemsByActor = new();

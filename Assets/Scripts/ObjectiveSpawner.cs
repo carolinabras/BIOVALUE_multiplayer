@@ -24,7 +24,7 @@ public class ObjectiveSpawner : MonoBehaviourPunCallbacks
         
         if (!objectivePrefab)
         {
-            Debug.LogError("[ObjectiveSpawner] objectivePrefab não está atribuído.");
+            Debug.LogError("[ObjectiveSpawner] objectivePrefab is not assigned.");
             return;
         }
 
@@ -55,7 +55,7 @@ public class ObjectiveSpawner : MonoBehaviourPunCallbacks
                 true
             );
 
-        Debug.Log($"[ObjectiveSpawner] Spawn objective com: '{objective}'");
+        Debug.Log($"[ObjectiveSpawner] Spawning objective: '{objective}'");
     }
 
     public override void OnRoomPropertiesUpdate(Hashtable changedProps)

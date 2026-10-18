@@ -67,7 +67,12 @@ public class GameMetricsExporter : MonoBehaviour
             {
                 var inst = db?.GetInstrumentById(id);
                 if (inst != null)
-                    sb.AppendLine($"  [{id}] {inst.name}  ({inst.typeOne} / {inst.typeTwo})");
+                {
+                    string types = inst.typeTwo != InstrumentType.None && inst.typeTwo != inst.typeOne
+                        ? $"{inst.typeOne.DisplayName()} / {inst.typeTwo.DisplayName()}"
+                        : inst.typeOne.DisplayName();
+                    sb.AppendLine($"  [{id}] {inst.name}  ({types})");
+                }
                 else
                     sb.AppendLine($"  [{id}] Unknown");
             }
@@ -118,8 +123,17 @@ public class GameMetricsExporter : MonoBehaviour
         {
             int idx = kvp.Key;
             string name = idx < sorted.Length ? PlayerName(sorted[idx].ActorNumber) : $"Player {idx}";
-            var cardNames = kvp.Value.Select(id => db.GetActionCardById(id)?.cardName ?? $"Card {id}");
-            sb.AppendLine($"  {name}: {string.Join(", ", cardNames)}");
+            sb.AppendLine($"  {name}:");
+            foreach (int id in kvp.Value)
+            {
+                string text = gs.GetActionCardDescription(idx, id);
+                if (string.IsNullOrEmpty(text)) text = db.GetActionCardById(id)?.descriptionGeneral ?? $"Card {id}";
+                int[] links = gs.GetActionCardLinks(idx, id);
+                string linked = links.Length > 0 ? $"  [instruments: {string.Join(", ", links)}]" : "";
+                sb.AppendLine($"    - {text}{linked}");
+                string how = gs.GetActionCardDescriptionHow(idx, id);
+                if (!string.IsNullOrEmpty(how)) sb.AppendLine($"      How: {how}");
+            }
         }
         sb.AppendLine();
     }
@@ -206,9 +220,10 @@ public class GameMetricsExporter : MonoBehaviour
             int collabsReceived = cm?.GetCollaborationsReceived(player.ActorNumber) ?? 0;
             int disagrees       = vm?.GetDisagreeCount(player.ActorNumber)          ?? 0;
 
-            string score = (hasMain && hasPersonal)
-                ? (meanG * meanP + 2f * actionCards + collabsDone + collabsReceived + disagrees).ToString("F1")
-                : "-";
+            // Same formula as the results card (ScoreFormula), with the same averages.
+            ScoreFormula.Averages(out float avgG, out float avgP, out _);
+            float? scoreValue = ScoreFormula.Score(player, avgG, avgP);
+            string score = scoreValue.HasValue ? scoreValue.Value.ToString("F1") : "-";
 
             sb.AppendLine($"  {name}");
             sb.AppendLine($"    General Rating:    {(hasMain     ? mainRaw.ToString()     : "-")}");

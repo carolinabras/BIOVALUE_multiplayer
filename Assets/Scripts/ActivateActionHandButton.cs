@@ -13,9 +13,10 @@ public class ActivateActionHandButton : MonoBehaviour
     private void OnEnable()  { All.Add(this); }
     private void OnDisable() { All.Remove(this); }
 
+    // The redesigned capsules have no button: their played cards open from the player details panel.
     private void Start()
     {
-        button.SetActive(false);
+        if (button) button.SetActive(false);
         GameState.Instance.onPlayerActionCardsSet.AddListener(OnCardsSet);
     }
 
@@ -29,14 +30,14 @@ public class ActivateActionHandButton : MonoBehaviour
         if (playerId == targetPlayerIndex)
         {
             _cardActivated = true;
-            button.SetActive(true);
+            if (button) button.SetActive(true);
         }
     }
 
     public static void SetAllActive(bool active)
     {
         foreach (var b in All)
-            if (b._cardActivated)
+            if (b._cardActivated && b.button)
                 b.button.SetActive(active);
     }
 }

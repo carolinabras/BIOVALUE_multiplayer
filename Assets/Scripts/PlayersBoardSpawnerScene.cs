@@ -5,7 +5,7 @@ using Photon.Realtime;
 public class PlayersBoardSpawnerScene : MonoBehaviourPunCallbacks
 {
     [SerializeField] private GameObject playersBoardPrefab;  // prefab do PlayersBoard (UI)
-    [SerializeField] private Transform uiParent;             // Canvas / UI root onde queres o board
+    [SerializeField] private Transform uiParent;             // Canvas / UI root where the board goes
     [SerializeField] private PhotonView pv;
 
     private GameObject spawnedBoard;
@@ -20,11 +20,11 @@ public class PlayersBoardSpawnerScene : MonoBehaviourPunCallbacks
         if (!pv) pv = GetComponent<PhotonView>();
         if (!pv) { Debug.LogError("PlayersBoardSceneSpawner precisa de PhotonView."); return; }
 
-        // Mesma lógica: 1 autoridade decide
+        // Same logic: one authority decides
         if (!GameAuthority.IsGameMaster) return;
 
         pv.RPC(nameof(RPC_SpawnBoard), RpcTarget.AllBuffered);
-        // Buffered para quem entrar depois também receber e instanciar o board
+        // Buffered so players who join later also receive it and spawn the board
     }
 
     [PunRPC]
@@ -34,13 +34,13 @@ public class PlayersBoardSpawnerScene : MonoBehaviourPunCallbacks
 
         if (!playersBoardPrefab)
         {
-            Debug.LogError("playersBoardPrefab não atribuído.");
+            Debug.LogError("playersBoardPrefab not assigned.");
             return;
         }
 
         if (!uiParent)
         {
-            Debug.LogError("uiParent (Canvas/UI root) não atribuído.");
+            Debug.LogError("uiParent (Canvas/UI root) not assigned.");
             return;
         }
 

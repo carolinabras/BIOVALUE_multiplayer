@@ -68,6 +68,24 @@ public enum InstrumentType
     Planning = 6,
 }
 
+// Official category names (BioValue D4.4). The enum names are only code identifiers.
+public static class InstrumentTypeNames
+{
+    public static string DisplayName(this InstrumentType type)
+    {
+        switch (type)
+        {
+            case InstrumentType.Inspection:  return "Enforcement";
+            case InstrumentType.Regulation:  return "Regulation";
+            case InstrumentType.Agreement:   return "Agreement";
+            case InstrumentType.Information: return "Information";
+            case InstrumentType.Incentive:   return "Incentive";
+            case InstrumentType.Planning:    return "Planning & Project Design";
+            default:                         return "";
+        }
+    }
+}
+
 [Serializable]
 public class Objective
 {
@@ -142,6 +160,9 @@ public class ActionCard
     public bool isSelected = false;
     public bool isPlayed = false;
 
+    // Numbers (ids) of the instruments in play this action is linked to.
+    public System.Collections.Generic.List<int> linkedInstruments = new System.Collections.Generic.List<int>();
+
 
     public ActionCard()
     {
@@ -157,5 +178,6 @@ public class ActionCard
         this.id = card.id;
         this.isSelected = card.isSelected;
         this.isPlayed = card.isPlayed;
+        this.linkedInstruments = new System.Collections.Generic.List<int>(card.linkedInstruments);
     }
 }

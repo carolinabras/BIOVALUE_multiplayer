@@ -85,7 +85,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         // var hmc = HexMapController.Instance;
         // if (hmc == null)
         // {
-            // Debug.LogError("HexMapController não encontrado na cena.");
+            // Debug.LogError("HexMapController not found in the scene.");
             // rectTransform.anchoredPosition = originalPosition;
              //return;
          //}
@@ -94,7 +94,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
          //var gridParent = hmc.GridParent;
          //if (gridParent == null)
         // {
-            // Debug.Log("GridParent não está atribuído no HexMapController (arrasta o MapGrid no Inspector).");
+            // Debug.Log("GridParent is not assigned on the HexMapController (drag the MapGrid in the Inspector).");
             // rectTransform.anchoredPosition = originalPosition;
             // return;
          //}
@@ -260,7 +260,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
 
 
-    // ////////////////////////////////////////FUNCIONA ESTE
+    // ////////////////////////////////////////THIS ONE WORKS
     private Vector2 originalPosition;
     private Transform originalParent;
 
@@ -277,13 +277,13 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
     public GameState _gameState;
 
-    // célula onde a peça está atualmente
+    // cell the piece is currently in
     private BoardCell currentCell;
     private int currentCellIndex = -1;
 
 
     public GameObject tempBoard;
-    public bool canDrag; // só pode arrastar quando estiver no seu turno
+    public bool canDrag; // can only drag during its owner's turn
 
 
     public RectTransform gridParent;
@@ -296,20 +296,17 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
         if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
 
-        if (!gridParent)
-        {
-            var board = GameObject.Find("Board");
-            if (board != null)
-            {
-                gridParent = board.GetComponent<RectTransform>();
-            }
+        if (!gridParent) gridParent = FindGrid();
+    }
 
-
-
-
-
-
-        }
+    // The board is the parent of the cells. Found through a cell rather than by the name "Board",
+    // which other UI objects can share.
+    private static RectTransform FindGrid()
+    {
+        var cell = FindFirstObjectByType<BoardCell>(FindObjectsInactive.Include);
+        if (cell && cell.transform.parent is RectTransform grid) return grid;
+        var board = GameObject.Find("Board");
+        return board ? board.GetComponent<RectTransform>() : null;
     }
 
     private void Start()
@@ -357,7 +354,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
             {
                 gridParent = board.GetComponent<RectTransform>();
             }
-            Debug.LogWarning("GridParent não atribuído no Inspector, tentando encontrar um GameObject chamado 'Board'... " + (gridParent ? "Encontrado!" : "Não encontrado!"));
+            Debug.LogWarning("GridParent not assigned in the Inspector, looking for a GameObject named 'Board'... " + (gridParent ? "Found!" : "Not found!"));
         }
     }*/
 
@@ -384,7 +381,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         originalPosition = rectTransform.anchoredPosition;
         originalParent = rectTransform.parent;
 
-        // mete a peça como filha do grid para alinhar com as células
+        // make the piece a child of the grid so it lines up with the cells
         //rectTransform.SetParent(gridParent, worldPositionStays: false);
         this.transform.SetParent(gridParent.transform);
         this.transform.localScale = Vector3.one; // SetParent (worldPositionStays: true) can rescale on reparent
@@ -424,17 +421,17 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
         Vector2 currentPos = rectTransform.anchoredPosition;
 
-        // procura a célula mais perto que esteja livre
+        // find the nearest free cell
         for (int i = 0; i < gridParent.childCount; i++)
         {
             var child = gridParent.GetChild(i);
             var cellRT = child as RectTransform;
-            if (!cellRT || cellRT == this.transform) continue; // ignora a própria peça
+            if (!cellRT || cellRT == this.transform) continue; // skip the piece itself
 
             var cell = child.GetComponent<BoardCell>();
             if (cell == null) continue;
 
-            // ignora células ocupadas
+            // skip occupied cells
             if (!cell.IsFree()) continue;
 
             float distance = Vector2.Distance(cellRT.anchoredPosition, currentPos);
@@ -448,31 +445,34 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
         if (closestCellRT != null && closestCellComponent != null)
         {
-            // índice antigo e novo (para limpar e ocupar nos outros clientes)
+            // old and new index (to free and occupy them on the other clients)
             int oldIndex = currentCellIndex;
             int newIndex = closestCellRT.GetSiblingIndex();
 
-            // limpa célula antiga localmente
+            // free the old cell locally
             if (currentCell != null)
             {
                 currentCell.SetOccupied(false);
             }
 
-            // ocupa célula nova localmente
+            // occupy the new cell locally
             closestCellComponent.SetOccupied(true);
             currentCell = closestCellComponent;
             currentCellIndex = newIndex;
 
-            // move visualmente a peça
+            // move the piece visually
             rectTransform.SetParent(gridParent, worldPositionStays: false);
             rectTransform.anchoredPosition = closestCellRT.anchoredPosition;
             MatchCellSize(closestCellRT);
 
-            // mostra botão de fechar só para o dono da peça
+            // coming from the hand → piece flip animation
+            if (oldIndex < 0) PlayPlacementFlip();
+
+            // show the close button only to the piece's owner
             if (closeInstrumentButton && photonView != null && photonView.IsMine)
                 closeInstrumentButton.SetActive(true);
 
-            // sincroniza com os outros
+            // sync with the others
             if (photonView != null && photonView.IsMine)
             {
                 photonView.RPC(nameof(RPC_SnapToCellByIndex), RpcTarget.Others, newIndex, oldIndex);
@@ -481,10 +481,46 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         }
         else
         {
-            // não encontrou célula válida → volta ao sítio original
+            // no valid cell found → go back to the original spot
             rectTransform.SetParent(originalParent, worldPositionStays: false);
             rectTransform.anchoredPosition = originalPosition;
         }
+    }
+
+    // Tap-to-place (InstrumentTrayView): the same as a drag that ends exactly on this cell.
+    // Ownership is requested first and the placement waits for it, so the result is synced
+    // like a normal drag (a drag usually has the ownership by the time it ends).
+    public IEnumerator PlaceAtCell(RectTransform cellRT)
+    {
+        if (!canDrag || !gridParent || !cellRT || isDragging) yield break;
+
+        if (photonView != null && !photonView.IsMine)
+        {
+            photonView.RequestOwnership();
+            float waited = 0f;
+            while (!photonView.IsMine && waited < 2f)
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            if (!photonView.IsMine)
+            {
+                Debug.LogWarning("[DragPiece] Tap-to-place: ownership not granted, piece not placed.");
+                yield break;
+            }
+        }
+
+        GetComponent<SpawnerDetails>()?.CancelLongPress();
+        if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
+
+        originalPosition = rectTransform.anchoredPosition;
+        originalParent = rectTransform.parent;
+
+        rectTransform.SetParent(gridParent, worldPositionStays: false);
+        rectTransform.SetAsLastSibling();
+        MatchCellSize(cellRT); // same anchors as the cell, so the nearest free cell is this one
+        rectTransform.anchoredPosition = cellRT.anchoredPosition;
+        SnapToClosestCell();
     }
 
     [PunRPC]
@@ -493,7 +529,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         if (!gridParent) return;
         if (newIndex < 0 || newIndex >= gridParent.childCount) return;
 
-        // limpa célula antiga neste cliente
+        // free the old cell on this client
         if (oldIndex >= 0 && oldIndex < gridParent.childCount)
         {
             var oldChild = gridParent.GetChild(oldIndex);
@@ -504,7 +540,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
             }
         }
 
-        // ocupa célula nova
+        // occupy the new cell
         var child = gridParent.GetChild(newIndex);
         var targetRT = child as RectTransform;
         var targetCell = child.GetComponent<BoardCell>();
@@ -521,6 +557,13 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         currentCell = targetCell;
         currentCellIndex = newIndex;
 
+        if (oldIndex < 0) PlayPlacementFlip();
+    }
+
+    private void PlayPlacementFlip()
+    {
+        var view = GetComponent<InstrumentPieceView>();
+        if (view) view.PlayPlacementFlip();
     }
 
     // Forces this piece's anchor/pivot/size to exactly match the cell it's being
@@ -535,7 +578,10 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         rectTransform.anchorMin = cellRT.anchorMin;
         rectTransform.anchorMax = cellRT.anchorMax;
         rectTransform.pivot = cellRT.pivot;
-        rectTransform.sizeDelta = cellRT.sizeDelta;
+        // Cells with the raised-tile look draw a smaller tile ("Top", centred) so tiles don't touch;
+        // the piece takes the tile's size so it sits exactly on it.
+        var tile = cellRT.Find("Top") as RectTransform;
+        rectTransform.sizeDelta = tile ? tile.rect.size : cellRT.sizeDelta;
     }
 
     // ── Revert ──────────────────────────────────────────────────────────────
@@ -644,7 +690,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         var instrument = GetComponent<InstrumentHook>()?.instrument;
         if (instrument == null)
         {
-            Debug.LogWarning("RPC_GiveOwner: Instrument não encontrado.");
+            Debug.LogWarning("RPC_GiveOwner: Instrument not found.");
             return;
         }
 

@@ -29,7 +29,7 @@ public class ObjectideDetails_Spawner :  MonoBehaviour,
             return;
         }
 
-        // fallback: tenta encontrar qualquer Canvas na cena
+        // fallback: try to find any Canvas in the scene
         canvas = FindFirstObjectByType<Canvas>();
         if (canvas != null)
         {
@@ -37,8 +37,8 @@ public class ObjectideDetails_Spawner :  MonoBehaviour,
             return;
         }
 
-        Debug.LogError($"[ObjectiveDetails_Spawner] Não encontrei nenhum Canvas. " +
-                       $"Mete o spawner dentro de um Canvas ou atribui detailsParent manualmente. Obj: {name}");
+        Debug.LogError($"[ObjectiveDetails_Spawner] No Canvas found. " +
+                       $"Put the spawner inside a Canvas or assign detailsParent manually. Obj: {name}");
     }
 
     private void Update()
@@ -75,11 +75,11 @@ public class ObjectideDetails_Spawner :  MonoBehaviour,
     {
         if (!detailsPrefab)
         {
-            Debug.LogError("[LongPressSpawnObjectiveDetails] detailsPrefab não atribuído.");
+            Debug.LogError("[LongPressSpawnObjectiveDetails] detailsPrefab not assigned.");
             return;
         }
 
-        // (opcional) garante que só existe 1 aberto
+        // (optional) make sure only one is open
         if (currentDetailsInstance) Destroy(currentDetailsInstance);
 
         currentDetailsInstance = Instantiate(detailsPrefab, detailsParent, false);
@@ -87,12 +87,12 @@ public class ObjectideDetails_Spawner :  MonoBehaviour,
         var hook = currentDetailsInstance.GetComponent<ObjectiveDetails>();
         if (!hook)
         {
-            Debug.LogError("[LongPressSpawnObjectiveDetails] ObjectiveDetailsHook não existe no prefab.");
+            Debug.LogError("[LongPressSpawnObjectiveDetails] ObjectiveDetailsHook is missing from the prefab.");
             return;
         }
 
-        // Aqui vais buscar o objetivo como quiseres:
-        // Opção A) Se o objective está guardado na Room Property:
+        // Get the objective here however you prefer:
+        // Option A) If the objective is stored in the Room Property:
         string objective = "";
         if (Photon.Pun.PhotonNetwork.CurrentRoom != null &&
             Photon.Pun.PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(BiovalueStatics.GameObjectiveKey, out var v))
@@ -100,7 +100,7 @@ public class ObjectideDetails_Spawner :  MonoBehaviour,
             objective = v as string ?? "";
         }
 
-        // Opção B) Se queres ler do ObjectiveHook (se ele guardar o texto ou tiver getter):
+        // Option B) To read it from the ObjectiveHook (if it stores the text or has a getter):
         // string objective = objectiveHook != null ? objectiveHook.GetText() : "";
 
         hook.SetObjective(objective);

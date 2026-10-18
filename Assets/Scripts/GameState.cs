@@ -137,8 +137,19 @@ public class GameState : MonoBehaviourPunCallbacks
     private void RPC_SetGamePhase(GamePhase gamePhase, PhotonMessageInfo info)
     {
         if (!GameAuthority.SenderIsGameMaster(info)) return;
+        // Everyone starts the collaboration round not done.
+        if (gamePhase == GamePhase.Collaboration && ColaborationManager.IsDone(PhotonNetwork.LocalPlayer))
+            ColaborationManager.SetMyDone(false);
         if (!_phaseAuthority.TrySet(gamePhase)) return;
         onGamePhaseChanged.Invoke(_phaseAuthority.Current);
+
+        // Divider in the game log (collaboration is part of the action cards round).
+        if (gamePhase == GamePhase.InstrumentSelection)
+            GameLog.Instance?.AddEntryLocal(GameLog.Kind.Round, "INSTRUMENTS ROUND");
+        else if (gamePhase == GamePhase.ActionCardPlay)
+            GameLog.Instance?.AddEntryLocal(GameLog.Kind.Round, "ACTION CARDS ROUND");
+        else if (gamePhase == GamePhase.Collaboration)
+            GameLog.Instance?.AddEntryLocal(GameLog.Kind.Round, "COLLABORATION ROUND");
     }
 
     public void DebugGamePhaseChanged(GamePhase gamePhase) =>
@@ -199,10 +210,13 @@ public class GameState : MonoBehaviourPunCallbacks
 
         _turnAuthority.SetCurrentActor(actorNumber);
         onPlayerTurnIndexChanged.Invoke(actorNumber);
-        GameLog.Instance?.AddEntryLocal($"It's {GameLog.GetPlayerName(actorNumber)}'s turn");
+        GameLog.Instance?.AddEntryLocal(GameLog.Kind.Turn, $"It’s {GameLog.B(GameLog.GetPlayerName(actorNumber))}’s turn");
     }
 
     public int GetCurrentPlayerTurnIndex() => _turnAuthority.CurrentActorNumber;
+
+    // Actor number of the player who plays after the current one (-1 if none). Changes nothing.
+    public int PeekNextTurnActor() => _turnAuthority.PeekNextActor(_turnAuthority.CurrentActorNumber);
 
     public Player GetCurrentPlayer()
     {
@@ -300,7 +314,9 @@ public class GameState : MonoBehaviourPunCallbacks
         string playerName = GameLog.GetPlayerNameByIndex(playerId);
         var cardNames = actionCardIds
             .Select(id => actionCardsDatabase.GetActionCardById(id)?.cardName ?? "Unknown Card");
-        GameLog.Instance?.AddEntryLocal($"{playerName} played: {string.Join(", ", cardNames)}");
+        int count = actionCardIds.Length;
+        GameLog.Instance?.AddEntryLocal(GameLog.Kind.Cards,
+            $"{GameLog.B(playerName)} played {count} action card{(count == 1 ? "" : "s")}", string.Join(" · ", cardNames));
     }
 
     #endregion
@@ -365,6 +381,25 @@ public class GameState : MonoBehaviourPunCallbacks
 
     public string GetActionCardDescriptionHow(int playerId, int cardId) =>
         _actionCards.GetDescriptionHow(playerId, cardId);
+
+    // Instruments (by number) a played action card is linked to.
+    public void SetActionCardLinks(int playerId, int cardId, int[] instrumentIds)
+    {
+        photonView.RPC(nameof(RPC_SetActionCardLinks), RpcTarget.All, playerId, cardId, instrumentIds ?? new int[0]);
+    }
+
+    [PunRPC]
+    private void RPC_SetActionCardLinks(int playerId, int cardId, int[] instrumentIds)
+    {
+        _actionCards.SetLinks(playerId, cardId, instrumentIds);
+        onActionCardDescriptionChanged.Invoke(cardId);
+    }
+
+    public int[] GetActionCardLinks(int playerId, int cardId) =>
+        _actionCards.GetLinks(playerId, cardId);
+
+    public List<(int playerId, int cardId)> GetActionCardsLinking(int instrumentId) =>
+        _actionCards.CardsLinking(instrumentId);
 
     #endregion
 }

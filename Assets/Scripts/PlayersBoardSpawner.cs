@@ -60,7 +60,7 @@ public class PlayersBoardSpawner : MonoBehaviourPunCallbacks
                 continue;
             }
             
-            playerCapsulesHooks[i].SetPlayerInfo(names[playerIndex], actorNumbers[playerIndex]);
+            playerCapsulesHooks[i].SetPlayerInfo(names[playerIndex], actorNumbers[playerIndex], playerIndex);
         }
     }
 }

@@ -47,7 +47,7 @@ public class GameLogUI : MonoBehaviour
             Debug.LogWarning("[GameLogUI] No ScrollRect found — log will not auto-scroll.");
 
         logText.text = GameLog.Instance.Entries.Count > 0
-            ? string.Join("\n", GameLog.Instance.Entries)
+            ? string.Join("\n", GameLog.Instance.Entries.Select(e => e.Plain))
             : string.Empty;
         ScrollToBottom();
 

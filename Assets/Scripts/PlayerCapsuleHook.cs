@@ -12,11 +12,34 @@ public class PlayerCapsuleHook : MonoBehaviourPun
     [SerializeField] private Image _notMyTurnOverlay;
     [SerializeField] private Image _capsuleImage;
 
+    [Header("Redesigned capsule (BioValue/Build Player Capsules)")]
+    [SerializeField] private Image _badge;          // round avatar background, in the player's colour
+    [SerializeField] private GameObject _turnGlow;  // pink outline shown on this player's turn
+    [SerializeField] private RectTransform _nextTag; // "NEXT" on the player who plays after the current one
+    [SerializeField] private Component[] _playerColored; // graphics/outlines also drawn in the player's colour
+
     [Header("Vote indicators (optional — auto-created if left empty)")]
     [SerializeField] private GameObject _approveIndicator; // green GO — shown when this player voted Yes
     [SerializeField] private GameObject _rejectIndicator;  // red GO   — shown when this player voted No
 
     public int _id;
+
+    // 1-based player number (the GM is 0 and has no capsule). Instruments use it as their ownerId.
+    public int PlayerNumber { get; private set; }
+    public string PlayerName { get; private set; } = "";
+    public Color PlayerColor => ColorFor(PlayerNumber);
+    public PlayedCardsSpawner CardSpawner => cardSpawner ? cardSpawner : GetComponent<PlayedCardsSpawner>();
+
+    public static readonly Color[] PlayerColors =
+    {
+        new Color32(0x7A, 0x5B, 0xA6, 0xFF), new Color32(0x2F, 0x6F, 0xB0, 0xFF),
+        new Color32(0xD9, 0x57, 0x7C, 0xFF), new Color32(0x3E, 0x9C, 0x8F, 0xFF),
+        new Color32(0xC2, 0x55, 0x2B, 0xFF), new Color32(0x5B, 0x6B, 0xD6, 0xFF),
+        new Color32(0x9C, 0x6B, 0x3E, 0xFF), new Color32(0x6E, 0x8F, 0x2E, 0xFF),
+    };
+
+    public static Color ColorFor(int playerNumber) =>
+        PlayerColors[((playerNumber - 1) % PlayerColors.Length + PlayerColors.Length) % PlayerColors.Length];
 
     [SerializeField] private PlayedCardsSpawner cardSpawner;
 
@@ -38,13 +61,27 @@ public class PlayerCapsuleHook : MonoBehaviourPun
         SubscribeToVoting();
     }
 
-    public void SetPlayerInfo(string playerName, int playerID)
+    public void SetPlayerInfo(string playerName, int playerID) => SetPlayerInfo(playerName, playerID, playerID - 1);
+
+    public void SetPlayerInfo(string playerName, int playerID, int playerNumber)
     {
         _id = playerID;
+        PlayerNumber = playerNumber;
+        PlayerName = playerName ?? "";
         if (_playerName) _playerName.text = playerName;
-        if (_playerID)   _playerID.text   = (_id - 1).ToString();
+        if (_playerID)   _playerID.text   = PlayerNumber.ToString();
+        if (_badge)      _badge.color     = PlayerColor;
+        if (_playerColored != null)
+            foreach (var c in _playerColored)
+            {
+                if (c is Graphic g) g.color = PlayerColor;
+                else if (c is Shadow s) s.effectColor = PlayerColor; // Outline is a Shadow
+            }
 
+        GameState.Instance.onPlayerTurnIndexChanged.RemoveListener(OnPlayerIndexChanged);
         GameState.Instance.onPlayerTurnIndexChanged.AddListener(OnPlayerIndexChanged);
+        GameState.Instance.onGamePhaseChanged.RemoveListener(OnGamePhaseChanged);
+        GameState.Instance.onGamePhaseChanged.AddListener(OnGamePhaseChanged);
         OnPlayerIndexChanged(GameState.Instance.GetCurrentPlayerTurnIndex());
 
         if (cardSpawner != null)
@@ -67,11 +104,49 @@ public class PlayerCapsuleHook : MonoBehaviourPun
         if (_notMyTurnOverlay != null)
             _notMyTurnOverlay.gameObject.SetActive(!isMyTurn);
 
-        if (_playerName != null)
-            _playerName.color = isMyTurn ? Color.white : Color.black;
+        if (_turnGlow != null)
+            _turnGlow.SetActive(isMyTurn);
 
+        RefreshNextTag();
+
+        // Old look: the whole capsule turns orange with white text.
         if (_capsuleImage != null)
+        {
             _capsuleImage.color = isMyTurn ? ActiveTurnColor : _capsuleDefaultColor;
+            if (_playerName != null)
+                _playerName.color = isMyTurn ? Color.white : Color.black;
+        }
+    }
+
+    private void OnGamePhaseChanged(GameState.GamePhase phase) => RefreshNextTag();
+
+    // Shown only while instruments are being placed, which is when turns matter.
+    private void RefreshNextTag()
+    {
+        if (!_nextTag || GameState.Instance == null) return;
+        var phase = GameState.Instance.GetCurrentGamePhase();
+        bool placing = phase == GameState.GamePhase.InstrumentSelection || phase == GameState.GamePhase.None;
+        bool show = placing && _id > 0 && GameState.Instance.PeekNextTurnActor() == _id
+                    && GameState.Instance.GetCurrentPlayerTurnIndex() != _id;
+        _nextTag.gameObject.SetActive(show);
+        if (!show) return;
+
+        // Above the capsules at the bottom of the screen, below the ones at the top.
+        var canvas = GetComponentInParent<Canvas>();
+        bool atTop = canvas && transform.position.y > canvas.rootCanvas.transform.position.y;
+        float y = atTop ? 0f : 1f;
+        _nextTag.anchorMin = _nextTag.anchorMax = new Vector2(0.5f, y);
+        _nextTag.pivot = new Vector2(0.5f, 1f - y);
+        _nextTag.anchoredPosition = new Vector2(0f, atTop ? -6f : 6f);
+    }
+
+    // ── Click ─────────────────────────────────────────────────────────────────
+
+    // Opens the player details window; without one in the scene, opens their played cards as before.
+    public void OpenDetails()
+    {
+        if (PlayerDetailsPanel.Instance != null) PlayerDetailsPanel.Instance.Open(this);
+        else if (cardSpawner != null) cardSpawner.OnClickSpawnCards();
     }
 
     // ── Vote indicator ────────────────────────────────────────────────────────
@@ -124,6 +199,7 @@ public class PlayerCapsuleHook : MonoBehaviourPun
             // Use the manually-wired GameObjects.
             if (_approveIndicator) _approveIndicator.SetActive(approved);
             if (_rejectIndicator)  _rejectIndicator.SetActive(!approved);
+            Pop(approved ? _approveIndicator : _rejectIndicator); // also when a player changes their vote
             return;
         }
 
@@ -138,6 +214,14 @@ public class PlayerCapsuleHook : MonoBehaviourPun
         }
     }
 
+    private static void Pop(GameObject token)
+    {
+        if (!token) return;
+        LeanTween.cancel(token);
+        token.transform.localScale = Vector3.one * 0.4f;
+        LeanTween.scale(token, Vector3.one, 0.3f).setEaseOutBack().setIgnoreTimeScale(true);
+    }
+
     private void HideVoteIndicator()
     {
         if (_approveIndicator) _approveIndicator.SetActive(false);
@@ -147,6 +231,11 @@ public class PlayerCapsuleHook : MonoBehaviourPun
 
     private void OnDestroy()
     {
+        if (GameState.Instance != null)
+        {
+            GameState.Instance.onPlayerTurnIndexChanged.RemoveListener(OnPlayerIndexChanged);
+            GameState.Instance.onGamePhaseChanged.RemoveListener(OnGamePhaseChanged);
+        }
         if (VotingManager.Instance == null) return;
         VotingManager.Instance.OnVoteStarted.RemoveListener(HideVoteIndicator);
         VotingManager.Instance.OnPlayerVoted.RemoveListener(OnPlayerVoted);

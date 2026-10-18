@@ -40,4 +40,26 @@ public class ActionCardSyncService
 
     public string GetDescriptionHow(int playerId, int cardId) =>
         DescriptionsHow.TryGetValue($"{playerId}_{cardId}", out string desc) ? desc : string.Empty;
+
+    public readonly Dictionary<string, int[]> Links = new Dictionary<string, int[]>();
+
+    public void SetLinks(int playerId, int cardId, int[] instrumentIds) =>
+        Links[$"{playerId}_{cardId}"] = instrumentIds ?? new int[0];
+
+    public int[] GetLinks(int playerId, int cardId) =>
+        Links.TryGetValue($"{playerId}_{cardId}", out int[] ids) ? ids : new int[0];
+
+    // Played cards (player index, card id) linked to the instrument with this number.
+    public List<(int playerId, int cardId)> CardsLinking(int instrumentId)
+    {
+        var result = new List<(int, int)>();
+        foreach (var kv in Links)
+        {
+            if (!kv.Value.Contains(instrumentId)) continue;
+            var parts = kv.Key.Split('_');
+            if (parts.Length == 2 && int.TryParse(parts[0], out int p) && int.TryParse(parts[1], out int c))
+                result.Add((p, c));
+        }
+        return result;
+    }
 }

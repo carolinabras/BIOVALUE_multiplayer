@@ -13,7 +13,8 @@ public class ActionCardsDatabaseSession : MonoBehaviour
     {
         if (Instance != null)
         {
-            Destroy(gameObject);
+            // Only this duplicate: it shares the MenuManager object with MainMenuManager, which must stay.
+            Destroy(this);
             return;
         }
 

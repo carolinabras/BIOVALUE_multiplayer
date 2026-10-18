@@ -17,14 +17,17 @@ public class SelectInstrument : MonoBehaviour
 
          if (button == null)
          {
-             Debug.LogError("Button não encontrado!");
+             Debug.LogError("Button not found!");
              return;
          }
 
-         // ESTE é o Image que aparece no ecrã
+         // THIS is the Image shown on screen
          visualImage = button.GetComponent<Image>();
 
-         // impedir o Button de sobrescrever a cor
+         // On the hexagon pieces the only button is the delete button: don't tint it.
+         if (GetComponent<InstrumentPieceView>() != null) visualImage = null;
+
+         // stop the Button from overriding the colour
          //button.transition = Selectable.Transition.None;
 
          backgroundImage = GetComponent<Image>();
@@ -46,17 +49,17 @@ public class SelectInstrument : MonoBehaviour
        var db = InstrumentDatabaseSession.Instance.SessionDb;
        if (db == null)
        {
-           Debug.LogError("Session InstrumentsDatabase não inicializada.");
+           Debug.LogError("Session InstrumentsDatabase not initialised.");
            return;
        }
 
        
-       Instrument uiInstrument = instrumentHook.instrument;   // cópia
+       Instrument uiInstrument = instrumentHook.instrument;   // copy
        Instrument realInstrument = db.GetInstrumentById(uiInstrument.id);
 
        if (realInstrument == null)
        {
-           Debug.LogError($"Instrumento com id {uiInstrument.id} não encontrado na database.");
+           Debug.LogError($"Instrument with id {uiInstrument.id} not found in the database.");
            return;
        }
 
@@ -93,7 +96,9 @@ public class SelectInstrument : MonoBehaviour
        Image backgroundImage = GetComponent<Image>();
        if (backgroundImage != null)
        {
-           backgroundImage.color = instrumentHook.instrument.isSelected ? Color.green : Color.white;
+           var c = instrumentHook.instrument.isSelected ? Color.green : Color.white;
+           c.a = backgroundImage.color.a; // keeps an invisible hit area invisible
+           backgroundImage.color = c;
        }
    }
 

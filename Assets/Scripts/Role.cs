@@ -63,32 +63,32 @@ public class Role : MonoBehaviour
         var me = PhotonNetwork.LocalPlayer;
         if (me == null)
         {
-            Debug.LogWarning("[Role] Ainda não estou ligado a uma room (LocalPlayer é null).");
+            Debug.LogWarning("[Role] Not connected to a room yet (LocalPlayer is null).");
             return;
         }
 
-        Debug.Log($"[Role] A carregar dados para jogador ID={me.ActorNumber}...");
+        Debug.Log($"[Role] Loading data for player ID={me.ActorNumber}...");
 
         if (me.CustomProperties.TryGetValue(BiovalueStatics.PlayerCompanyKey, out var c))
         {
             company.text = c as string ?? "";
             Debug.Log($"[Role] Empresa carregada: {company.text}");
         }
-        else Debug.Log("[Role] Empresa não encontrada nas propriedades.");
+        else Debug.Log("[Role] Company not found in the properties.");
 
         if (me.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n))
         {
             name.text = n as string ?? "";
             Debug.Log($"[Role] Nome carregado: {name.text}");
         }
-        else Debug.Log("[Role] Nome não encontrado nas propriedades.");
+        else Debug.Log("[Role] Name not found in the properties.");
 
         if (me.CustomProperties.TryGetValue(BiovalueStatics.PlayerObjectiveKey, out var o))
         {
             personalObjective.text = o as string ?? "";
             Debug.Log($"[Role] Objetivo carregado: {personalObjective.text}");
         }
-        else Debug.Log("[Role] Objetivo não encontrado nas propriedades.");
+        else Debug.Log("[Role] Objective not found in the properties.");
     }
 
     public void SaveRole()
@@ -106,7 +106,7 @@ public class Role : MonoBehaviour
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
 
-        Debug.Log("[Role] Dados guardados nas Custom Properties:");
+        Debug.Log("[Role] Data saved in the Custom Properties:");
         Debug.Log($"[Role] -> Empresa: {companyText}");
         Debug.Log($"[Role] -> Nome: {nameText}");
         Debug.Log($"[Role] -> Objetivo: {objectiveText}");
@@ -131,7 +131,7 @@ public class Role : MonoBehaviour
         if (readyButton != null) readyButton.color = Color.white;
         if (readyStatusText != null) readyStatusText.text = "";
 
-        Debug.Log("[Role] Estado PRONTO removido (entrou em modo edição)");
+        Debug.Log("[Role] READY state removed (entered edit mode)");
     }
     
     public void CloseGmePanel()
@@ -152,7 +152,7 @@ public class Role : MonoBehaviour
         if (readyButton != null) readyButton.color = isReady ? new Color(0xBB / 255f, 0xFF / 255f, 0xC1 / 255f) : Color.white;
         if (readyStatusText != null) readyStatusText.text = isReady ? "Wait for the GM to start the game" : "";
        
-        Debug.Log($"[Ready] Jogador {(isReady ? "PRONTO " : "NÃO PRONTO ")}.");
+        Debug.Log($"[Ready] Player {(isReady ? "READY" : "NOT READY")}.");
     }
     
 

@@ -46,7 +46,7 @@ MonoBehaviour:
     isSelected: 0
     isPlayed: 0
   - cardName: Card 5
-    descriptionGeneral: "5.\tSharing my land for biodiversity projects"
+    descriptionGeneral: Sharing my land for biodiversity projects
     descriptionHow: 
     type: 1
     icon: {fileID: 6467533833453201443, guid: dd3243363b78e8948b5b1cfd05393e37, type: 3}

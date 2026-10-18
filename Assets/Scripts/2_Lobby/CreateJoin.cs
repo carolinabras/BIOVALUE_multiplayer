@@ -71,12 +71,12 @@ public class CreateJoin : MonoBehaviourPunCallbacks
             LeanTween.scale(lobbyConfig.GetComponent<RectTransform>(), Vector3.one, 0.25f)
                 .setEaseOutBack()
                 .setIgnoreTimeScale(true);
-            Debug.Log("[Photon] Tentando criar a sala: " + createInputField.text);
+            Debug.Log("[Photon] Trying to create room: " + createInputField.text);
            
         }
         else
         {
-            Debug.LogWarning("[Photon] Nome da sala inválido.");
+            Debug.LogWarning("[Photon] Invalid room name.");
         }
 
         Debug.Log("INPUT TEXT: " + createInputField.text);
@@ -87,17 +87,17 @@ public class CreateJoin : MonoBehaviourPunCallbacks
         if (joinInputField.text != "" )
         {
             PhotonNetwork.JoinRoom(joinInputField.text);
-            Debug.Log("[Photon] Tentando entrar na sala: " + joinInputField.text);
+            Debug.Log("[Photon] Trying to join room: " + joinInputField.text);
         }
         else
         {
-            Debug.LogWarning("[Photon] Nome da sala inválido.");
+            Debug.LogWarning("[Photon] Invalid room name.");
         }
     }
 
     public override void OnJoinedRoom()
     {
-        Debug.Log($"[Photon] Entrei na sala {PhotonNetwork.CurrentRoom.Name} " +
+        Debug.Log($"[Photon] Joined room {PhotonNetwork.CurrentRoom.Name} " +
                   $"({PhotonNetwork.CurrentRoom.PlayerCount}/{PhotonNetwork.CurrentRoom.MaxPlayers})");
 
 
@@ -112,7 +112,7 @@ public class CreateJoin : MonoBehaviourPunCallbacks
         
         
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { ROLE_KEY, role } });
-        Debug.Log($"[Photon] Papel atribuído: {role}");
+        Debug.Log($"[Photon] Role assigned: {role}");
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)

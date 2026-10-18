@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,14 +9,8 @@ public class VotingManager : MonoBehaviourPun
 {
     public static VotingManager Instance;
 
-    [SerializeField] private GameObject votingPanel;
-
-    // Shown on all clients after the GM ends the voting session.
-    [SerializeField] private TMP_Text resultText;
-    [SerializeField] private float resultDisplaySeconds = 4f;
-
-    // Optional: label showing the player's current vote selection.
-    [SerializeField] private TMP_Text currentVoteLabel;
+    // The vote is shown by VoteBubble (next to the piece), the player capsules (vote tokens), the turn
+    // ribbon (vote dots) and the result stamp on the piece.
 
     private int _votesApprove = 0;
     private int _votesReject  = 0;
@@ -41,12 +34,44 @@ public class VotingManager : MonoBehaviourPun
     public UnityEvent<int, bool>  OnPlayerVoted = new UnityEvent<int, bool>();
     public UnityEvent             OnVoteEnded   = new UnityEvent();
 
+    // The outcome, on every client, as the vote closes (the turn ribbon and the stamp on the piece show it).
+    public class VoteResult
+    {
+        public bool approved;
+        public int yes, no;
+        public List<bool> votes = new List<bool>();
+        public string instrumentName;
+        public RectTransform piece;   // still on the cell it was voted on
+    }
+    public UnityEvent<VoteResult> OnVoteResult = new UnityEvent<VoteResult>();
+
+    // A rejected piece stays on its cell this long before going back, so the result can play on it.
+    [SerializeField] private float rejectedReturnDelay = 1.1f;
+
     private void Awake()
     {
         Instance = this;
-        votingPanel.SetActive(false);
-        if (resultText) resultText.gameObject.SetActive(false);
     }
+
+    // ── State for the vote bubble (VoteBubble) ───────────────────────────────
+
+    public bool IsVoting => _pendingPiecePhotonViewId >= 0;
+    public int PendingPlacer => _pendingPlacerActorNumber;
+    public bool LocalCanVote { get; private set; }
+
+    // The piece being voted on, on its cell.
+    public RectTransform PendingPiece
+    {
+        get
+        {
+            var view = _pendingPiecePhotonViewId >= 0 ? PhotonView.Find(_pendingPiecePhotonViewId) : null;
+            return view ? view.transform as RectTransform : null;
+        }
+    }
+
+    // This client's current vote: null before voting.
+    public bool? MyVote =>
+        _playerVotes.TryGetValue(PhotonNetwork.LocalPlayer.ActorNumber, out bool v) ? v : (bool?)null;
 
     // ── Start Vote ────────────────────────────────────────────────────────────
 
@@ -74,29 +99,22 @@ public class VotingManager : MonoBehaviourPun
 
         OnVoteStarted.Invoke();
 
-        if (resultText) resultText.gameObject.SetActive(false);
-
-        // Debug/Editor only: force the voting panel visible for the GM too, since by
-        // design it never shows for the GM or whoever placed the piece — making it
-        // impossible to preview solo. Never true in a release build.
+        // Debug/Editor only: the GM can vote too, since by design neither the GM nor whoever placed
+        // the piece votes, which makes a solo preview impossible. Never true in a release build.
         bool debugForceShow = Debug.isDebugBuild && GameAuthority.IsGameMaster;
 
-        if ((!isGM && !isWhoPlaced) || debugForceShow)
-        {
-            votingPanel.SetActive(true);
-            if (currentVoteLabel) currentVoteLabel.text = "";
-        }
+        LocalCanVote = (!isGM && !isWhoPlaced) || debugForceShow;
 
         string instrName  = piece?.GetComponent<InstrumentHook>()?.instrument?.name ?? "instrument";
         string placerName = GameLog.GetPlayerName(_pendingPlacerActorNumber);
-        GameLog.Instance?.AddEntryLocal($"{placerName} placed \"{instrName}\" on the board");
+        GameLog.Instance?.AddEntryLocal(GameLog.Kind.Placed, $"{GameLog.B(placerName)} placed {GameLog.B(instrName)}");
     }
 
     // ── Player votes ──────────────────────────────────────────────────────────
 
     public void OnClickApprove()
     {
-        // Panel stays open — player can still change their mind.
+        // The player can still change their mind until the GM ends the vote.
         photonView.RPC(nameof(RPC_SubmitVote), RpcTarget.All, true);
     }
 
@@ -121,10 +139,6 @@ public class VotingManager : MonoBehaviourPun
         }
 
         OnPlayerVoted.Invoke(info.Sender.ActorNumber, approved);
-
-        // Show the local player's current selection.
-        if (info.Sender.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber && currentVoteLabel)
-            currentVoteLabel.text = approved ? "Your vote: Approve" : "Your vote: Reject";
     }
 
     // ── GM ends voting + advances turn ────────────────────────────────────────
@@ -146,31 +160,34 @@ public class VotingManager : MonoBehaviourPun
     [PunRPC]
     private void RPC_EndVoteSession(int approveCount, int rejectCount)
     {
-        votingPanel.SetActive(false);
-
         bool approved = approveCount > rejectCount;
 
-        // If rejected, send the instrument back to where it came from.
-        if (!approved)
+        var pieceView = _pendingPiecePhotonViewId >= 0 ? PhotonView.Find(_pendingPiecePhotonViewId) : null;
+        if (pieceView != null)
         {
-            var pieceView = PhotonView.Find(_pendingPiecePhotonViewId);
-            pieceView?.GetComponent<DragPiece>()?.RevertToCell(_pendingOldCellIndex);
+            var result = new VoteResult
+            {
+                approved = approved,
+                yes = approveCount,
+                no = rejectCount,
+                votes = new List<bool>(_playerVotes.Values),
+                instrumentName = pieceView.GetComponent<InstrumentHook>()?.instrument?.name ?? "The instrument",
+                piece = pieceView.transform as RectTransform
+            };
+            OnVoteResult.Invoke(result);
         }
 
-        // Show result text on every client.
-        if (resultText != null)
-        {
-            string verdict = approved ? "approved" : "disapproved";
-            resultText.text = $"Instrument {verdict} — {approveCount} yes / {rejectCount} no";
-            resultText.gameObject.SetActive(true);
-            StartCoroutine(HideResultAfterDelay());
-        }
+        // If rejected, send the instrument back to where it came from (after the result has played on it).
+        if (!approved && pieceView != null)
+            StartCoroutine(RevertAfterDelay(pieceView.GetComponent<DragPiece>(), _pendingOldCellIndex));
 
         // Log the outcome.
-        if (approveCount > rejectCount)
-            GameLog.Instance?.AddEntryLocal($"Vote ended: instrument approved ({approveCount} yes, {rejectCount} no)");
+        string votedName = GameLog.B(pieceView ? pieceView.GetComponent<InstrumentHook>()?.instrument?.name ?? "The instrument" : "The instrument");
+        string tally = $"{approveCount} yes · {rejectCount} no";
+        if (approved)
+            GameLog.Instance?.AddEntryLocal(GameLog.Kind.VotePassed, $"{votedName} approved", tally);
         else
-            GameLog.Instance?.AddEntryLocal($"Vote ended: instrument disapproved ({approveCount} yes, {rejectCount} no)");
+            GameLog.Instance?.AddEntryLocal(GameLog.Kind.VoteFailed, $"{votedName} rejected, back to the tray", tally);
 
         // Accumulate per-player disagrees before the round data is cleared.
         foreach (var kvp in _playerVotes)
@@ -184,10 +201,10 @@ public class VotingManager : MonoBehaviourPun
         ResetVote();
     }
 
-    private IEnumerator HideResultAfterDelay()
+    private IEnumerator RevertAfterDelay(DragPiece piece, int oldCellIndex)
     {
-        yield return new WaitForSeconds(resultDisplaySeconds);
-        if (resultText) resultText.gameObject.SetActive(false);
+        if (rejectedReturnDelay > 0f) yield return new WaitForSecondsRealtime(rejectedReturnDelay);
+        if (piece) piece.RevertToCell(oldCellIndex);
     }
 
     // ── Reset ─────────────────────────────────────────────────────────────────
@@ -199,6 +216,7 @@ public class VotingManager : MonoBehaviourPun
         _playerVotes.Clear();
         _pendingPiecePhotonViewId = -1;
         _pendingPlacerActorNumber = -1;
+        LocalCanVote = false;
 
         OnVoteEnded.Invoke();
     }

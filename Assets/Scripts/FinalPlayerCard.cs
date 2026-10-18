@@ -70,6 +70,7 @@ public class FinalPlayerCard : MonoBehaviourPunCallbacks
 
     public void ShowPanel()
     {
+        if (PlayerEndCard.Instance != null) return; // the new end card replaces this panel
         if (panelRoot != null) panelRoot.SetActive(true);
     }
 

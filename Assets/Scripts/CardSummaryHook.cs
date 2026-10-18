@@ -30,7 +30,7 @@ public class CardSummaryHook : MonoBehaviourPun
             }
         }
 
-        // colaborações
+        // collaborations
         List<int> collaborators = ColaborationManager.Instance.GetCollaborators(actorNumber, cardIndex);
         foreach (int collaboratorActorNumber in collaborators)
         {

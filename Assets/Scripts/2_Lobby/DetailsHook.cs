@@ -31,24 +31,8 @@ public class DetailsHook : MonoBehaviour
         
         
         
-        if (instrument.typeOne.ToString() != "None")
-        {
-            typeTextOne.text = instrument.typeOne.ToString();
-        }
-        else
-        {
-            typeTextOne.text = "";
-        }
-        
-        
-        if (instrument.typeTwo.ToString() != "None")
-        {
-            typeTextTwo.text = instrument.typeTwo.ToString();
-        }
-        else
-        {
-            typeTextTwo.text = "";
-        }
+        typeTextOne.text = instrument.typeOne.DisplayName();
+        typeTextTwo.text = instrument.typeTwo.DisplayName();
         
         if (innerInstrumentHook)
         {

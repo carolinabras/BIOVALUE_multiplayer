@@ -76,6 +76,7 @@ MonoBehaviour:
   - RPC_SyncStateToRejoiner
   - RPC_EndVoteSession
   - RPC_BeginDrag
+  - RPC_SetActionCardLinks
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

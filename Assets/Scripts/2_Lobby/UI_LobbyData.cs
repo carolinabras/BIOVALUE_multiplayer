@@ -107,7 +107,7 @@ public class UI_LobbyData : MonoBehaviour
         //var instrumentsDb = GameKnowledge.Instance?.instrumentsDatabase;
        // if (instrumentsDb == null)
         //{
-            //Debug.LogError("InstrumentsDatabase não encontrada em GameKnowledge.");
+            //Debug.LogError("InstrumentsDatabase not found in GameKnowledge.");
            // return false;
         //}
         
@@ -116,7 +116,7 @@ public class UI_LobbyData : MonoBehaviour
         
         if (selectedInstruments < requiredInstruments)
         {
-            //Debug.Log($"Número insuficiente de instrumentos selecionados. Selecionados: {selectedInstruments}, Necessários: {requiredInstruments}");
+            //Debug.Log($"Not enough instruments selected. Selected: {selectedInstruments}, required: {requiredInstruments}");
             errorCode = 1;
             return false;
         }

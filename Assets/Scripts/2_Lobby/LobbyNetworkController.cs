@@ -19,7 +19,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
     
     
     
-    private bool _createAfterLeaving = false; // flag para criar sala após sair da atual
+    private bool _createAfterLeaving = false; // flag to create a room after leaving the current one
 
     public string CurrentRoomCode { get; private set; } = "";
 
@@ -33,19 +33,19 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
     // ===== API =====
     public void CreateLobby()
     {
-        // cria no master
+        // create on the master server
         if (PhotonNetwork.NetworkClientState != ClientState.ConnectedToMasterServer)
         {
-            Debug.LogWarning($"CreateLobby: ainda não estou no Master (state={PhotonNetwork.NetworkClientState}).");
+            Debug.LogWarning($"CreateLobby: not on the Master server yet (state={PhotonNetwork.NetworkClientState}).");
             return;
         }
 
         // roomcheck
         if (PhotonNetwork.InRoom)
         {
-            Debug.Log("CreateLobby: estou numa sala; vou sair e criar a seguir.");
+            Debug.Log("CreateLobby: already in a room; leaving it and creating afterwards.");
             _createAfterLeaving = true;
-            PhotonNetwork.LeaveRoom(); // vai chamar OnLeftRoom
+            PhotonNetwork.LeaveRoom(); // will call OnLeftRoom
             return;
         }
 
@@ -69,22 +69,22 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
 
     public void JoinLobbyByCode(string codeRaw)
     {
-        // garante estado certo
+        // make sure we are in the right state
         if (PhotonNetwork.NetworkClientState != ClientState.ConnectedToMasterServer)
         {
-            Debug.LogWarning($"JoinLobbyByCode: ainda não no Master ({PhotonNetwork.NetworkClientState}).");
+            Debug.LogWarning($"JoinLobbyByCode: not on the Master server yet ({PhotonNetwork.NetworkClientState}).");
             return;
         }
         if (PhotonNetwork.InRoom)
         {
-            Debug.LogWarning("JoinLobbyByCode: já estás numa sala.");
+            Debug.LogWarning("JoinLobbyByCode: already in a room.");
             return;
         }
 
         string code = NormalizeCode(codeRaw);
         if (code == null)
         {
-            Debug.LogWarning($"Código inválido: '{codeRaw}'");
+            Debug.LogWarning($"Invalid code: '{codeRaw}'");
             return;
         }
 
@@ -103,7 +103,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
 
     public override void OnCreatedRoom()
     {
-        Debug.Log($"[Photon] Sala criada: {PhotonNetwork.CurrentRoom.Name}");
+        Debug.Log($"[Photon] Room created: {PhotonNetwork.CurrentRoom.Name}");
         
     }
 
@@ -135,7 +135,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log($"[Photon] Entrei na sala {PhotonNetwork.CurrentRoom.Name} " +
+        Debug.Log($"[Photon] Joined room {PhotonNetwork.CurrentRoom.Name} " +
                   $"({PhotonNetwork.CurrentRoom.PlayerCount}/{PhotonNetwork.CurrentRoom.MaxPlayers})");
         
 
@@ -144,7 +144,7 @@ public class LobbyNetworkController : MonoBehaviourPunCallbacks
                         ? "GM" : "Player";
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { ROLE_KEY, role } });
-        Debug.Log($"[Photon] Papel atribuído: {role}");
+        Debug.Log($"[Photon] Role assigned: {role}");
         
     }
 

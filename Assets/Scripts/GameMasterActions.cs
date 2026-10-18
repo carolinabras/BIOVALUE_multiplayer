@@ -60,6 +60,19 @@ public class GameMasterActions : MonoBehaviour
         }
     }
 
+    // Used by the GM panel's player list. The GM is the master client, so it can close the connection itself.
+    public void KickActor(int actorNumber)
+    {
+        if (!GameAuthority.IsGameMaster) return;
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.ActorNumber != actorNumber || player.IsLocal) continue;
+            PhotonNetwork.CloseConnection(player);
+            Debug.Log("Kicking player: " + GameLog.GetPlayerName(actorNumber));
+            break;
+        }
+    }
+
     [PunRPC]
     public void RPC_KickPlayer(string cardName, PhotonMessageInfo info)
     {
