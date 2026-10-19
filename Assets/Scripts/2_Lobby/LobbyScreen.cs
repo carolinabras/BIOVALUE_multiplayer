@@ -48,6 +48,7 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
     private static readonly Color PinkText = new Color32(0x8A, 0x14, 0x50, 0xFF);
     private static readonly Color PinkTile = new Color32(0xFF, 0xF6, 0xFA, 0xFF);
     private static readonly Color Error = new Color32(0xC0, 0x26, 0x3E, 0xFF);
+    private static readonly Color Body = new Color32(0x4A, 0x44, 0x60, 0xFF);
 
     // Category colours (ring, text), as on the instrument tray. Index = InstrumentType.
     private static readonly Color[] TypeRing =
@@ -61,6 +62,12 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         new Color32(0x6B, 0x65, 0x84, 0xFF), new Color32(0x8A, 0x6A, 0x00, 0xFF), new Color32(0x40, 0x40, 0x40, 0xFF),
         new Color32(0x9A, 0x5B, 0x00, 0xFF), new Color32(0x1E, 0x7A, 0x2C, 0xFF), new Color32(0xC0, 0x00, 0x00, 0xFF),
         new Color32(0x17, 0x68, 0x7A, 0xFF)
+    };
+    private static readonly Color[] TypeFill =
+    {
+        new Color32(0xEE, 0xEA, 0xF5, 0xFF), new Color32(0xFA, 0xF7, 0xD2, 0xFF), new Color32(0xE8, 0xE8, 0xE8, 0xFF),
+        new Color32(0xF9, 0xE5, 0xCB, 0xFF), new Color32(0xD9, 0xF2, 0xD0, 0xFF), new Color32(0xFC, 0xD4, 0xD4, 0xFF),
+        new Color32(0xD0, 0xEA, 0xF0, 0xFF)
     };
     // Filter / new-instrument order: Planning, Information, Incentive, Agreement, Regulation, Enforcement.
     public static readonly InstrumentType[] TypeOrder =
@@ -113,11 +120,33 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
     public RectTransform instGrid;
     public GameObject instTileTemplate;
     public Button addInstrumentButton;
+    public Button[] viewButtons;          // Cards, List with descriptions
+    public GameObject instCardsView;
+    public GameObject instListView;
+    public RectTransform instList;
+    public GameObject instRowTemplate;
     public GameObject addDialog;
     public TMP_InputField newName;
     public TMP_InputField newDescription;
     public Button[] newTypeButtons; // TypeOrder
     public Button addConfirm;
+
+    [Header("Instrument details (the i on a tile)")]
+    public GameObject detailsDialog;
+    public RectTransform detailsCard;
+    public Image detailsLeft;
+    public Image detailsRing;
+    public TMP_Text detailsNumber;
+    public GameObject[] detailsCategories; // chips: Dot, Label
+    public TMP_Text detailsPosition;
+    public TMP_Text detailsName;
+    public GameObject detailsSelected;
+    public TMP_Text detailsDescription;
+    public ScrollRect detailsScroll;
+    public Button detailsPrev;
+    public Button detailsNext;
+    public Button detailsSelect;
+    public Button[] detailsClose;          // backdrop, ×
 
     [Header("Action cards")]
     public Button[] limitButtons;
@@ -148,7 +177,9 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
     private InstrumentsDatabase _db;
     private int _tab, _players = 4, _limit = 3, _filter = -1, _newType;
     private ScoreFormula.Setup _formula = ScoreFormula.DefaultSetup();
-    private bool _leaving, _starting;
+    private bool _leaving, _starting, _listView;
+    private Instrument _details;
+    private readonly List<GameObject> _rows = new List<GameObject>();
     private string _pendingRoom = "";
     private readonly List<GameObject> _tiles = new List<GameObject>();
     private readonly List<GameObject> _slots = new List<GameObject>();
@@ -182,6 +213,16 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         for (int i = 0; i < newTypeButtons.Length; i++) { int t = i; newTypeButtons[i].onClick.AddListener(() => { _newType = t; RefreshAddDialog(); }); }
         newName.onValueChanged.AddListener(_ => RefreshAddDialog());
         addConfirm.onClick.AddListener(AddInstrument);
+        for (int i = 0; i < viewButtons.Length; i++) { bool list = i == 1; viewButtons[i].onClick.AddListener(() => { _listView = list; RefreshInstruments(); }); }
+        foreach (var b in detailsClose) b.onClick.AddListener(CloseDetails);
+        detailsPrev.onClick.AddListener(() => StepDetails(-1));
+        detailsNext.onClick.AddListener(() => StepDetails(1));
+        detailsSelect.onClick.AddListener(() =>
+        {
+            if (_details == null) return;
+            _details.isSelected = !_details.isSelected;
+            RefreshSetup();
+        });
 
         for (int i = 0; i < limitButtons.Length; i++) { int n = Limits[i]; limitButtons[i].onClick.AddListener(() => { _limit = n; RefreshCards(); }); }
 
@@ -199,7 +240,9 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         playerSlotTemplate.SetActive(false);
         waitingChipTemplate.SetActive(false);
         instTileTemplate.SetActive(false);
+        instRowTemplate.SetActive(false);
         addDialog.SetActive(false);
+        detailsDialog.SetActive(false);
 
         BuildTiles();
         ShowScreen(PhotonNetwork.InRoom ? (IsGm ? setupScreen : waitingScreen) : startScreen);
@@ -432,35 +475,78 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         }
     }
 
-    // Instruments: one tile per instrument in the session database, filtered by category.
+    // Instruments: one tile (cards view) and one row (list view) per instrument in the session database.
     private void BuildTiles()
     {
         foreach (var t in _tiles) Destroy(t);
+        foreach (var r in _rows) Destroy(r);
         _tiles.Clear();
+        _rows.Clear();
         if (!_db) return;
         foreach (var inst in _db.instruments)
         {
-            var tile = Instantiate(instTileTemplate, instGrid);
-            tile.name = "Instrument " + inst.id;
             var captured = inst;
-            tile.GetComponent<Button>().onClick.AddListener(() =>
+            UnityEngine.Events.UnityAction toggle = () =>
             {
                 captured.isSelected = !captured.isSelected;
                 RefreshSetup();
-            });
+            };
             int type = Mathf.Clamp((int)inst.typeOne, 0, TypeRing.Length - 1);
+
+            var tile = Instantiate(instTileTemplate, instGrid);
+            tile.name = "Instrument " + inst.id;
+            tile.GetComponent<Button>().onClick.AddListener(toggle);
+            var info = tile.transform.Find("Info");
+            if (info) info.GetComponent<Button>().onClick.AddListener(() => OpenDetails(captured));
             SetColor(tile.transform, "Bar", TypeRing[type]);
             SetText(tile.transform, "Type", inst.typeOne == InstrumentType.None ? "Other" : inst.typeOne.DisplayName(), TypeText[type]);
             SetText(tile.transform, "Name", inst.name, Ink);
             _tiles.Add(tile);
+
+            var row = Instantiate(instRowTemplate, instList);
+            row.name = "Instrument " + inst.id;
+            row.GetComponent<Button>().onClick.AddListener(toggle);
+            SetColor(row.transform, "Bar", TypeRing[type]);
+            string categories = string.Join("<color=#A9A3BC>  ·  </color>",
+                TypesOf(inst).Select(t => $"<color=#{ColorUtility.ToHtmlStringRGB(TypeText[(int)t])}>{t.DisplayName()}</color>"));
+            SetText(row.transform, "Head", inst.name + (categories.Length > 0 ? "   <size=75%>" + categories + "</size>" : ""), Ink);
+            bool described = !string.IsNullOrWhiteSpace(inst.description);
+            SetText(row.transform, "Description", described ? inst.description : "No description yet.", described ? Body : Faint);
+            _rows.Add(row);
         }
         addInstrumentButton.transform.SetAsLastSibling();
+    }
+
+    // The instrument's categories (one or two), in order.
+    private static List<InstrumentType> TypesOf(Instrument inst)
+    {
+        var types = new List<InstrumentType>();
+        if (inst.typeOne != InstrumentType.None) types.Add(inst.typeOne);
+        if (inst.typeTwo != InstrumentType.None && inst.typeTwo != inst.typeOne) types.Add(inst.typeTwo);
+        return types;
+    }
+
+    private bool Shown(Instrument inst) => _filter < 0 || inst.typeOne == TypeOrder[_filter];
+
+    // Selected: pink border and fill, ticked check box. Same for tiles and rows.
+    private static void LookSelected(Transform t, bool on)
+    {
+        SetColor(t, "", on ? Pink : Line);
+        SetColor(t, "Fill", on ? PinkTile : Color.white);
+        SetColor(t, "Check", on ? Pink : Line);
+        SetColor(t, "Check/Fill", on ? Pink : Color.white);
+        SetActive(t, "Check/Tick", on);
     }
 
     private void RefreshInstruments()
     {
         int min = _players * 2, count = SelectedCount;
-        instHint.text = $"At least {min}: 2 for each player.";
+        instHint.text = _listView
+            ? $"At least {min}: 2 for each player. Click an instrument to select it."
+            : $"At least {min}: 2 for each player. Click to select · i for the details.";
+        instCardsView.SetActive(!_listView);
+        instListView.SetActive(_listView);
+        for (int i = 0; i < viewButtons.Length; i++) Segment(viewButtons[i], (i == 1) == _listView);
         instCount.text = count + " selected";
         instCount.color = count >= min ? OkText : PinkText;
         SetColor(instCount.transform.parent, "", count >= min ? OkBg : PinkBg);
@@ -477,17 +563,85 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         for (int i = 0; i < _tiles.Count && i < _db.instruments.Count; i++)
         {
             var inst = _db.instruments[i];
-            bool show = _filter < 0 || inst.typeOne == TypeOrder[_filter];
+            bool show = Shown(inst);
             _tiles[i].SetActive(show);
+            if (i < _rows.Count) _rows[i].SetActive(show);
             if (!show) continue;
-            var t = _tiles[i].transform;
-            SetColor(t, "", inst.isSelected ? Pink : Line);
-            SetColor(t, "Fill", inst.isSelected ? PinkTile : Color.white);
-            SetColor(t, "Check", inst.isSelected ? Pink : Line);
-            SetColor(t, "Check/Fill", inst.isSelected ? Pink : Color.white);
-            SetActive(t, "Check/Tick", inst.isSelected);
+            LookSelected(_tiles[i].transform, inst.isSelected);
+            if (i < _rows.Count) LookSelected(_rows[i].transform, inst.isSelected);
         }
         addInstrumentButton.gameObject.SetActive(_filter < 0);
+        if (detailsDialog.activeSelf) RefreshDetails(false);
+    }
+
+    // ── Instrument details ───────────────────────────────────────────────────
+
+    private void Update()
+    {
+        if (detailsDialog && detailsDialog.activeSelf && Input.GetKeyDown(KeyCode.Escape)) CloseDetails();
+    }
+
+    private void OpenDetails(Instrument inst)
+    {
+        _details = inst;
+        detailsDialog.SetActive(true);
+        detailsDialog.transform.SetAsLastSibling();
+        RefreshDetails(true);
+        LeanTween.cancel(detailsCard.gameObject);
+        detailsCard.localScale = Vector3.one * 0.92f;
+        LeanTween.scale(detailsCard.gameObject, Vector3.one, 0.22f).setEaseOutBack();
+    }
+
+    private void CloseDetails()
+    {
+        detailsDialog.SetActive(false);
+        _details = null;
+    }
+
+    // The arrows browse the instruments shown by the current filter.
+    private void StepDetails(int by)
+    {
+        if (!_db) return;
+        var shown = _db.instruments.Where(Shown).ToList();
+        if (shown.Count == 0) return;
+        int at = shown.IndexOf(_details);
+        _details = shown[at < 0 ? 0 : (at + by + shown.Count) % shown.Count];
+        RefreshDetails(true);
+    }
+
+    private void RefreshDetails(bool fresh)
+    {
+        var inst = _details;
+        if (inst == null || !_db) return;
+        int type = Mathf.Clamp((int)inst.typeOne, 0, TypeRing.Length - 1);
+        detailsLeft.color = TypeFill[type];
+        detailsRing.color = TypeRing[type];
+        detailsNumber.text = inst.id.ToString();
+        var types = TypesOf(inst);
+        for (int i = 0; i < detailsCategories.Length; i++)
+        {
+            bool on = i < types.Count;
+            detailsCategories[i].SetActive(on);
+            if (!on) continue;
+            int t = (int)types[i];
+            SetColor(detailsCategories[i].transform, "Dot", TypeRing[t]);
+            SetText(detailsCategories[i].transform, "Label", types[i].DisplayName(), TypeText[t]);
+        }
+
+        var shown = _db.instruments.Where(Shown).ToList();
+        int at = shown.IndexOf(inst);
+        detailsPosition.text = at < 0 ? "INSTRUMENT" : $"INSTRUMENT · {at + 1} OF {shown.Count}";
+        detailsName.text = inst.name;
+        detailsSelected.SetActive(inst.isSelected);
+        bool described = !string.IsNullOrWhiteSpace(inst.description);
+        detailsDescription.text = described ? inst.description : "No description yet.";
+        detailsDescription.color = described ? Body : Faint;
+        if (fresh) detailsScroll.verticalNormalizedPosition = 1f;
+        detailsPrev.interactable = detailsNext.interactable = shown.Count > 1;
+
+        Fill(detailsSelect, inst.isSelected ? Disabled : Pink, inst.isSelected ? Ink : Color.white);
+        SetText(detailsSelect.transform, "Label", inst.isSelected ? "Remove from the game" : "Select for this game",
+                inst.isSelected ? Ink : Color.white);
     }
 
     private void OpenAddDialog()

@@ -2029,7 +2029,7 @@ public static class MainHudBuilder
         return icon;
     }
 
-    private static RectTransform Cross(RectTransform parent, Color color, float scale)
+    internal static RectTransform Cross(RectTransform parent, Color color, float scale)
     {
         var icon = Stretch(NewRect("Cross", parent));
         Bar(icon, color, Vector2.zero, new Vector2(22, 5) * scale, 45f);
@@ -2037,7 +2037,7 @@ public static class MainHudBuilder
         return icon;
     }
 
-    private static void Bar(RectTransform parent, Color color, Vector2 pos, Vector2 size, float angle)
+    internal static void Bar(RectTransform parent, Color color, Vector2 pos, Vector2 size, float angle)
     {
         var bar = NewRect("Bar", parent);
         bar.anchorMin = bar.anchorMax = bar.pivot = new Vector2(0.5f, 0.5f);

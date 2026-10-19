@@ -30,6 +30,8 @@ public static class LobbyBuilder
     private static readonly Color FooterBg = new Color32(0xFC, 0xFB, 0xFE, 0xFF);
     private static readonly Color StepperBg = new Color32(0xF1, 0xEC, 0xFB, 0xFF);
     private static readonly Color SegmentBg = new Color32(0xED, 0xE8, 0xF6, 0xFF);
+    private static readonly Color Body = new Color32(0x4A, 0x44, 0x60, 0xFF);
+    private static readonly Color PinkText = new Color32(0x8A, 0x14, 0x50, 0xFF);
 
     [MenuItem("BioValue/Build Lobby")]
     public static void Build()
@@ -79,6 +81,7 @@ public static class LobbyBuilder
         BuildStart(root, s);
         BuildSetup(root, s);
         BuildWaiting(root, s);
+        BuildInstrumentDetails(root, s);
         BuildAddDialog(root, s);
 
         EditorUtility.SetDirty(s);
@@ -259,14 +262,41 @@ public static class LobbyBuilder
 
     private static void BuildInstrumentsPage(RectTransform page, LobbyScreen s)
     {
-        Label(page, "Title", bold, 23, Ink, 0, 0, 900, 32).text = "Choose the instruments for this game";
-        s.instHint = Label(page, "Hint", regular, 20, Muted, 0, 32, 900, 28);
+        Label(page, "Title", bold, 23, Ink, 0, 0, 640, 32).text = "Choose the instruments for this game";
+        s.instHint = Label(page, "Hint", regular, 20, Muted, 0, 32, 640, 28);
+        s.instHint.enableAutoSizing = true;
+        s.instHint.fontSizeMin = 15;
+        s.instHint.fontSizeMax = 20;
+        s.instHint.textWrappingMode = TextWrappingModes.NoWrap;
         var count = NewRect("Count", page);
         count.anchorMin = count.anchorMax = count.pivot = new Vector2(1, 1);
         count.anchoredPosition = new Vector2(0, -6);
         count.sizeDelta = new Vector2(220, 46);
         Round(count, OkBg, 23);
         s.instCount = Txt(Stretch(NewRect("Label", count)), bold, 22, OkText, TextAlignmentOptions.Center);
+
+        // Cards | List with descriptions
+        var views = NewRect("View", page);
+        views.anchorMin = views.anchorMax = views.pivot = new Vector2(1, 1);
+        views.anchoredPosition = new Vector2(-236, -6);
+        views.sizeDelta = new Vector2(390, 46);
+        Round(views, Disabled, 23);
+        string[] viewNames = { "Cards", "List with descriptions" };
+        float[] viewWidths = { 110, 272 };
+        s.viewButtons = new Button[2];
+        float vx = 4;
+        for (int i = 0; i < 2; i++)
+        {
+            var v = Place(NewRect("View " + viewNames[i], views), vx, 4, viewWidths[i], 38);
+            vx += viewWidths[i];
+            var vImg = Round(v, Color.clear, 19);
+            vImg.raycastTarget = true;
+            var vb = v.gameObject.AddComponent<Button>();
+            vb.targetGraphic = vImg;
+            MainMenuBuilder.Tints(vb);
+            Txt(Stretch(NewRect("Label", v)), bold, 19, Muted, TextAlignmentOptions.Center).text = viewNames[i];
+            s.viewButtons[i] = vb;
+        }
 
         // Filters: All + the 6 categories
         var filters = Place(NewRect("Filters", page), 0, 78, 1282, 44);
@@ -310,8 +340,9 @@ public static class LobbyBuilder
         sr.movementType = ScrollRect.MovementType.Clamped;
         sr.scrollSensitivity = 40;
         s.instGrid = content;
+        s.instCardsView = scroll.gameObject;
 
-        // Tile template: category bar, category, name, check box
+        // Tile template: category bar, category, name, check box, "i" for the details
         var tile = NewRect("InstrumentTile", content);
         var border = Round(tile, Line, 19);
         border.raycastTarget = true;
@@ -321,19 +352,93 @@ public static class LobbyBuilder
         Inset(tile, "Fill", Color.white, 17, 2.5f);
         var bar = Place(NewRect("Bar", tile), 11, 11, 11, 76);
         Round(bar, Line, 5.5f);
-        Label(tile, "Type", bold, 17, Muted, 34, 10, 314, 24);
-        var name = Label(tile, "Name", bold, 21, Ink, 34, 34, 314, 56);
+        Label(tile, "Type", bold, 17, Muted, 34, 10, 270, 24);
+        var name = Label(tile, "Name", bold, 21, Ink, 34, 34, 270, 56);
         name.overflowMode = TextOverflowModes.Ellipsis;
         name.lineSpacing = -12;
         var check = NewRect("Check", tile);
         check.anchorMin = check.anchorMax = check.pivot = new Vector2(1, 0.5f);
-        check.anchoredPosition = new Vector2(-14, 0);
+        check.anchoredPosition = new Vector2(-62, 0);
         check.sizeDelta = new Vector2(37, 37);
         Round(check, Line, 10);
         Inset(check, "Fill", Color.white, 8, 2.5f);
         var tick = Stretch(NewRect("Tick", check));
         MainHudBuilder.Tick(tick, Color.white, 0.75f);
+        var info = NewRect("Info", tile);
+        info.anchorMin = info.anchorMax = info.pivot = new Vector2(1, 0.5f);
+        info.anchoredPosition = new Vector2(-12, 0);
+        info.sizeDelta = new Vector2(42, 42);
+        var infoImg = Round(info, Line, 21);
+        infoImg.raycastTarget = true;
+        Inset(info, "Fill", Color.white, 18.5f, 2.5f);
+        Txt(Stretch(NewRect("Label", info)), bold, 25, Purple, TextAlignmentOptions.Center).text = "i";
+        var infoButton = info.gameObject.AddComponent<Button>();
+        infoButton.targetGraphic = infoImg;
+        MainMenuBuilder.Tints(infoButton);
         s.instTileTemplate = tile.gameObject;
+
+        // List with descriptions: every instrument with its categories and full description
+        var listScroll = Place(NewRect("ListScroll", page), 0, 138, 1282, 552);
+        var listViewport = Stretch(NewRect("Viewport", listScroll));
+        listViewport.gameObject.AddComponent<RectMask2D>();
+        var listHit = listViewport.gameObject.AddComponent<Image>();
+        listHit.color = Color.clear;
+        var list = NewRect("List", listViewport);
+        list.anchorMin = new Vector2(0, 1);
+        list.anchorMax = new Vector2(1, 1);
+        list.pivot = new Vector2(0.5f, 1);
+        list.sizeDelta = Vector2.zero;
+        var listLayout = list.gameObject.AddComponent<VerticalLayoutGroup>();
+        listLayout.spacing = 11;
+        listLayout.padding = new RectOffset(0, 0, 0, 12);
+        listLayout.childControlWidth = listLayout.childForceExpandWidth = true;
+        listLayout.childControlHeight = true;
+        listLayout.childForceExpandHeight = false;
+        list.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var listSr = listScroll.gameObject.AddComponent<ScrollRect>();
+        listSr.viewport = listViewport;
+        listSr.content = list;
+        listSr.horizontal = false;
+        listSr.movementType = ScrollRect.MovementType.Clamped;
+        listSr.scrollSensitivity = 40;
+        s.instList = list;
+        s.instListView = listScroll.gameObject;
+        listScroll.gameObject.SetActive(false);
+
+        var item = NewRect("InstrumentRow", list);
+        var rowBorder = Round(item, Line, 19);
+        rowBorder.raycastTarget = true;
+        var rowButton = item.gameObject.AddComponent<Button>();
+        rowButton.targetGraphic = rowBorder;
+        MainMenuBuilder.Tints(rowButton);
+        Inset(item, "Fill", Color.white, 17, 2.5f);
+        var rowLayout = item.gameObject.AddComponent<VerticalLayoutGroup>();
+        rowLayout.padding = new RectOffset(100, 28, 14, 16);
+        rowLayout.spacing = 2;
+        rowLayout.childControlWidth = rowLayout.childForceExpandWidth = true;
+        rowLayout.childControlHeight = true;
+        rowLayout.childForceExpandHeight = false;
+        item.gameObject.AddComponent<LayoutElement>().minHeight = 70;
+        var rowBar = NewRect("Bar", item);
+        rowBar.anchorMin = new Vector2(0, 0);
+        rowBar.anchorMax = new Vector2(0, 1);
+        rowBar.pivot = new Vector2(0, 0.5f);
+        rowBar.offsetMin = new Vector2(14, 14);
+        rowBar.offsetMax = new Vector2(25, -14);
+        rowBar.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+        Round(rowBar, Line, 5.5f);
+        var rowCheck = NewRect("Check", item);
+        rowCheck.anchorMin = rowCheck.anchorMax = rowCheck.pivot = new Vector2(0, 1);
+        rowCheck.anchoredPosition = new Vector2(44, -16);
+        rowCheck.sizeDelta = new Vector2(37, 37);
+        rowCheck.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+        Round(rowCheck, Line, 10);
+        Inset(rowCheck, "Fill", Color.white, 8, 2.5f);
+        MainHudBuilder.Tick(Stretch(NewRect("Tick", rowCheck)), Color.white, 0.75f);
+        var head = Txt(NewRect("Head", item), bold, 23, Ink, TextAlignmentOptions.TopLeft);
+        head.richText = true;
+        Txt(NewRect("Description", item), regular, 20, Body, TextAlignmentOptions.TopLeft);
+        s.instRowTemplate = item.gameObject;
 
         // + Add a new instrument (stays last)
         var add = NewRect("AddInstrument", content);
@@ -471,6 +576,126 @@ public static class LobbyBuilder
         b.targetGraphic = img;
         MainMenuBuilder.Tints(b);
         Txt(Stretch(NewRect("Label", rt)), bold, 26, Muted, TextAlignmentOptions.Center).text = text;
+        return b;
+    }
+
+    // ── Instrument details (the "i" on a tile) ───────────────────────────────
+
+    // Left: the piece, big, on its category colour, and its categories. Right: position in the
+    // current filter, name, "Selected", the full description, browse arrows and Select / Remove.
+    private static void BuildInstrumentDetails(RectTransform root, LobbyScreen s)
+    {
+        var dialog = Stretch(NewRect("InstrumentDetails", root));
+        var dim = dialog.gameObject.AddComponent<Image>();
+        dim.color = new Color(0.08f, 0.05f, 0.16f, 0.6f);
+        var dimButton = dialog.gameObject.AddComponent<Button>();
+        dimButton.transition = Selectable.Transition.None;
+        dimButton.targetGraphic = dim;
+
+        var card = NewRect("Card", dialog);
+        card.anchorMin = card.anchorMax = card.pivot = new Vector2(0.5f, 0.5f);
+        card.sizeDelta = new Vector2(1200, 760);
+        var cardImg = Round(card, Color.white, 34);
+        cardImg.raycastTarget = true; // clicks on the card don't reach the backdrop
+        card.gameObject.AddComponent<Mask>(); // the left panel follows the rounded corners
+        s.detailsCard = card;
+
+        var left = Place(NewRect("Left", card), 0, 0, 360, 760);
+        s.detailsLeft = left.gameObject.AddComponent<Image>();
+        s.detailsLeft.raycastTarget = false;
+        var piece = Place(NewRect("Piece", left), 80, 160, 200, 230);
+        s.detailsRing = piece.gameObject.AddComponent<Image>();
+        s.detailsRing.sprite = hex;
+        s.detailsRing.raycastTarget = false;
+        var inner = Stretch(NewRect("Inner", piece));
+        inner.offsetMin = new Vector2(13, 15);
+        inner.offsetMax = new Vector2(-13, -15);
+        var innerImg = inner.gameObject.AddComponent<Image>();
+        innerImg.sprite = hex;
+        innerImg.raycastTarget = false;
+        s.detailsNumber = Txt(Stretch(NewRect("Number", piece)), bold, 60, Ink, TextAlignmentOptions.Center);
+        s.detailsCategories = new GameObject[2];
+        for (int i = 0; i < 2; i++)
+        {
+            var chip = Place(NewRect("Category " + (i + 1), left), 30, 425 + i * 58, 300, 46);
+            Round(chip, Color.white, 23);
+            Round(Place(NewRect("Dot", chip), 20, 16.5f, 13, 13), Line, 6.5f);
+            var label = Label(chip, "Label", bold, 19, Ink, 42, 0, 240, 46, TextAlignmentOptions.MidlineLeft);
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 14;
+            label.fontSizeMax = 19;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            s.detailsCategories[i] = chip.gameObject;
+        }
+
+        const float rx = 405, rw = 750;
+        s.detailsPosition = Label(card, "Eyebrow", bold, 19, Muted, rx, 36, 640, 30);
+        s.detailsPosition.characterSpacing = 10;
+        var close = NewRect("Close", card);
+        close.anchorMin = close.anchorMax = close.pivot = new Vector2(1, 1);
+        close.anchoredPosition = new Vector2(-36, -28);
+        close.sizeDelta = new Vector2(54, 54);
+        var closeImg = Round(close, Disabled, 27);
+        closeImg.raycastTarget = true;
+        var closeButton = close.gameObject.AddComponent<Button>();
+        closeButton.targetGraphic = closeImg;
+        MainMenuBuilder.Tints(closeButton);
+        MainHudBuilder.Cross(close, Ink, 0.9f);
+        s.detailsClose = new[] { dimButton, closeButton };
+
+        s.detailsName = Label(card, "Name", bold, 42, Ink, rx, 72, rw, 112);
+        s.detailsName.enableAutoSizing = true;
+        s.detailsName.fontSizeMin = 28;
+        s.detailsName.fontSizeMax = 42;
+        s.detailsName.lineSpacing = -14;
+
+        var badge = Place(NewRect("Selected", card), rx, 190, 300, 38);
+        Round(badge, PinkBg, 19);
+        MainHudBuilder.Tick(Place(NewRect("Tick", badge), 12, 4, 30, 30), PinkText, 0.6f);
+        Label(badge, "Label", bold, 19, PinkText, 44, 0, 250, 38, TextAlignmentOptions.MidlineLeft).text = "Selected for this game";
+        s.detailsSelected = badge.gameObject;
+
+        var scroll = Place(NewRect("Description", card), rx, 244, rw, 380);
+        var viewport = Stretch(NewRect("Viewport", scroll));
+        viewport.gameObject.AddComponent<RectMask2D>();
+        var hit = viewport.gameObject.AddComponent<Image>();
+        hit.color = Color.clear;
+        var text = NewRect("Text", viewport);
+        text.anchorMin = new Vector2(0, 1);
+        text.anchorMax = new Vector2(1, 1);
+        text.pivot = new Vector2(0.5f, 1);
+        text.sizeDelta = Vector2.zero;
+        s.detailsDescription = Txt(text, regular, 27, Body, TextAlignmentOptions.TopLeft);
+        text.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var sr = scroll.gameObject.AddComponent<ScrollRect>();
+        sr.viewport = viewport;
+        sr.content = text;
+        sr.horizontal = false;
+        sr.movementType = ScrollRect.MovementType.Clamped;
+        sr.scrollSensitivity = 40;
+        s.detailsScroll = sr;
+
+        s.detailsPrev = ArrowButton(card, "Previous", rx, 652, -1);
+        s.detailsNext = ArrowButton(card, "Next", rx + 82, 652, 1);
+        s.detailsSelect = PillButton(Place(NewRect("Select", card), 1200 - 45 - 380, 652, 380, 68), Pink, "Select for this game", 24, Color.white);
+
+        s.detailsDialog = dialog.gameObject;
+        dialog.gameObject.SetActive(false);
+    }
+
+    // Round outlined button with a chevron pointing left (-1) or right (1).
+    private static Button ArrowButton(RectTransform parent, string name, float x, float y, int dir)
+    {
+        var rt = Place(NewRect(name, parent), x, y, 68, 68);
+        var img = Round(rt, Line, 34);
+        img.raycastTarget = true;
+        Inset(rt, "Fill", Color.white, 31.5f, 2.5f);
+        var b = rt.gameObject.AddComponent<Button>();
+        b.targetGraphic = img;
+        MainMenuBuilder.Tints(b);
+        var icon = Stretch(NewRect("Chevron", rt));
+        MainHudBuilder.Bar(icon, Ink, new Vector2(0, 6), new Vector2(18, 5), dir < 0 ? 42f : -42f);
+        MainHudBuilder.Bar(icon, Ink, new Vector2(0, -6), new Vector2(18, 5), dir < 0 ? -42f : 42f);
         return b;
     }
 

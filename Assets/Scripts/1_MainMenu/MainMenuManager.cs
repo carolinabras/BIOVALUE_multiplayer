@@ -20,8 +20,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
-        if (versionLabel) versionLabel.text = "v" + Application.version;
-        if (WebBridge.IsWeb && quitGroup) quitGroup.gameObject.SetActive(false); // a browser tab can't quit
+        if (versionLabel) versionLabel.text = VersionLabel.Text;
     }
 
     public void StartGame()
@@ -49,9 +48,10 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(1); //Loading
     }
 
+    // A browser tab can't close itself: the web build leaves full screen and shows a goodbye screen.
     public void QuitGame()
     {
-        Application.Quit();
+        WebBridge.Quit();
     }
 
     //TODO

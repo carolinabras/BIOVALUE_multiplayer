@@ -374,7 +374,7 @@ public static class MainMenuBuilder
         version.anchoredPosition = new Vector2(-24 * K, 16 * K);
         version.sizeDelta = new Vector2(200, 28);
         var label = Txt(version, regular, 14 * K, new Color(1, 1, 1, .4f), TextAlignmentOptions.BottomRight);
-        label.text = "v" + PlayerSettings.bundleVersion;
+        label.text = "v" + PlayerSettings.bundleVersion; // kept in step at runtime by VersionLabel
         return label;
     }
 
