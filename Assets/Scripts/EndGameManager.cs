@@ -121,6 +121,14 @@ public class EndGameManager : MonoBehaviourPunCallbacks
             yield return new WaitForSecondsRealtime(0.5f); // let the message reach the players first
         }
         PhotonNetwork.Disconnect();
+        if (WebBridge.IsWeb)
+        {
+            // A browser tab can't quit: back to the main menu instead.
+            for (float t = 5f; PhotonNetwork.NetworkClientState != ClientState.Disconnected && t > 0f; t -= Time.unscaledDeltaTime)
+                yield return null;
+            SceneManager.LoadScene(MainMenuScene);
+            yield break;
+        }
         Application.Quit();
     }
 

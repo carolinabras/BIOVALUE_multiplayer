@@ -27,10 +27,14 @@ public class ActionCardsSpawner : MonoBehaviour
     public List<ActionCardsHook> spawnedHooks = new List<ActionCardsHook>();
 
     [Header("Rules")]
-    [Tooltip("Max action cards a player can play per round. 0 = no limit (the GM will set this in the Lobby later).")]
+    [Tooltip("Max action cards a player can play per round. 0 = no limit. Used when the room has no value from the Lobby.")]
     [SerializeField] private int maxCardsPerRound = 0;
-    public int MaxCardsPerRound => maxCardsPerRound;
-    public bool HasLimit => maxCardsPerRound > 0;
+    // Set by the GM in the Lobby (room property); this field is the fallback for testing without the Lobby.
+    public int MaxCardsPerRound =>
+        Photon.Pun.PhotonNetwork.InRoom &&
+        Photon.Pun.PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(BiovalueStatics.MaxActionCardsKey, out var v) && v is int n
+            ? n : maxCardsPerRound;
+    public bool HasLimit => MaxCardsPerRound > 0;
 
     [Header("Empty (player-written) cards")]
     [Tooltip("How many empty cards the player starts with.")]
@@ -138,7 +142,7 @@ public class ActionCardsSpawner : MonoBehaviour
         if (hook != null)
         {
             hook.ownerPlayerId = GameState.Instance.localPlayerIndex;
-            hook.canSelect = _ => !HasLimit || SelectedCount < maxCardsPerRound;
+            hook.canSelect = _ => !HasLimit || SelectedCount < MaxCardsPerRound;
             hook.Changed += OnCardChanged;
             hook.SetActionCard(card);
             spawnedHooks.Add(hook);
@@ -157,7 +161,7 @@ public class ActionCardsSpawner : MonoBehaviour
 
     private void UpdateLimits()
     {
-        bool full = HasLimit && SelectedCount >= maxCardsPerRound;
+        bool full = HasLimit && SelectedCount >= MaxCardsPerRound;
         foreach (var h in spawnedHooks)
             if (h) h.SetLimitReached(full);
         // Links can be made before selecting, so every card in the hand counts.

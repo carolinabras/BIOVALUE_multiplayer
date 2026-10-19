@@ -21,6 +21,7 @@ public class MainMenuManager : MonoBehaviour
     private void Start()
     {
         if (versionLabel) versionLabel.text = "v" + Application.version;
+        if (WebBridge.IsWeb && quitGroup) quitGroup.gameObject.SetActive(false); // a browser tab can't quit
     }
 
     public void StartGame()

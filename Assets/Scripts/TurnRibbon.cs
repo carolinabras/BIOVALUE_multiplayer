@@ -55,6 +55,7 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
     public GameObject doneButton;       // players: "I'm done" / "Done · Undo"
     public Image doneButtonImage;
     public TMP_Text doneLabel;
+    public GameObject doneGlow;         // pulses around "I'm done" when there is nothing left to collaborate on
 
     [Header("Vote result")]
     public float resultSeconds = 3.5f;
@@ -194,7 +195,8 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         else if (voting)
         {
             eyebrow = "VOTE";
-            text = turn == me ? "On your instrument" : turn > 0 ? $"On {GameLog.GetPlayerName(turn)}’s instrument" : "On the new instrument";
+            bool gmPlaced = VotingManager.Instance != null && VotingManager.Instance.PlacedByGm;
+            text = gmPlaced ? "GM made a special action" : turn == me ? "On your instrument" : turn > 0 ? $"On {GameLog.GetPlayerName(turn)}’s instrument" : "On the new instrument";
         }
         else if (turn == me)
         {
@@ -395,6 +397,7 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
             doneLabel.color = meDone ? DoneInk : Color.white;
         }
         if (doneButtonImage) doneButtonImage.color = meDone ? DoneSoft : Pink;
+        if (doneGlow) doneGlow.SetActive(!meDone && CollaborationRound.NothingLeftToCollaborate());
     }
 
     private void ShowDots(int count, System.Func<int, Color> color)

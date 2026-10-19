@@ -13,6 +13,7 @@ using UnityEngine.UI;
 //  - the game objective and the player's own objective, each rated 0-10 with 11 number buttons
 //    (red → green, the chosen one fills in, with a word: "7 · Mostly");
 //  - "Did your personal objective change during the game? How?" (optional text);
+//  - "Show your objective to everyone on the results?" Show it / Keep it private (private by default);
 //  - "Send my answers" (grey until both ratings are picked) saves the same player properties as the old
 //    FinalPlayerCard, so the GM's results and the export keep working;
 //  - then "Thanks, <name>!" with who has answered, and "Change my answers" until the GM shows the results.
@@ -43,6 +44,8 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
 
     [Header("Change and send")]
     public TMP_InputField changeInput;
+    public Button shareShow;
+    public Button shareHide;
     public TextMeshProUGUI hint;
     public Button sendButton;
     public TextMeshProUGUI sendLabel;
@@ -69,8 +72,10 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
     private static readonly Color Pink = new Color32(0xFE, 0x46, 0xA5, 0xFF);
     private static readonly Color Off = new Color32(0xE4, 0xE1, 0xEC, 0xFF);
     private static readonly Color OffText = new Color32(0x9A, 0x92, 0xAC, 0xFF);
+    private static readonly Color Purple = new Color32(0x46, 0x32, 0x7F, 0xFF);
 
     private int? _game, _mine;
+    private bool _share;
     private readonly List<GameObject> _dots = new List<GameObject>();
 
     private void Awake()
@@ -97,6 +102,8 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
             int n = i;
             myScale[i].onClick.AddListener(() => { _mine = n; RefreshForm(); });
         }
+        if (shareShow) shareShow.onClick.AddListener(() => { _share = true; RefreshForm(); });
+        if (shareHide) shareHide.onClick.AddListener(() => { _share = false; RefreshForm(); });
         if (sendButton) sendButton.onClick.AddListener(Send);
         if (changeButton) changeButton.onClick.AddListener(() => ShowForm(true));
 
@@ -108,6 +115,7 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
             if (me.CustomProperties.TryGetValue(BiovalueStatics.PersonalObjectiveRatingKey, out var p) && p is int pi) _mine = pi;
             if (changeInput && me.CustomProperties.TryGetValue(BiovalueStatics.PersonalObjectiveChangeKey, out var c) && c is string cs)
                 changeInput.text = cs;
+            if (me.CustomProperties.TryGetValue(BiovalueStatics.ShareObjectiveKey, out var sh) && sh is bool share) _share = share;
         }
         UpdateVisibility(sentAlready: _game.HasValue && _mine.HasValue);
     }
@@ -196,6 +204,8 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
     {
         Scale(gameScale, gameWord, _game);
         Scale(myScale, myWord, _mine);
+        Choice(shareShow, _share);
+        Choice(shareHide, !_share);
         bool ready = _game.HasValue && _mine.HasValue;
         if (hint) hint.text = ready
             ? "You can change your answers until the game master shows the results."
@@ -206,6 +216,15 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
             if (sendButton.targetGraphic) sendButton.targetGraphic.color = ready ? Pink : Off;
         }
         if (sendLabel) sendLabel.color = ready ? Color.white : OffText;
+    }
+
+    // The picked one in purple, the other light.
+    private static void Choice(Button b, bool on)
+    {
+        if (!b) return;
+        if (b.targetGraphic) b.targetGraphic.color = on ? Purple : Idle;
+        var label = b.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (label) label.color = on ? Color.white : IdleText;
     }
 
     // Red → amber → green along 0..10.
@@ -243,6 +262,7 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
             [BiovalueStatics.MainObjectiveRatingKey] = _game.Value,
             [BiovalueStatics.PersonalObjectiveRatingKey] = _mine.Value,
             [BiovalueStatics.PersonalObjectiveChangeKey] = changeInput ? changeInput.text.Trim() : string.Empty,
+            [BiovalueStatics.ShareObjectiveKey] = _share,
         });
         ShowForm(false);
     }

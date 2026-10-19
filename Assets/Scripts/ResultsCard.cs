@@ -275,12 +275,22 @@ public class ResultsCard : MonoBehaviourPunCallbacks
                     changeText.text = has ? $"“<noparse>{change.Trim()}</noparse>”" : done ? "No answer." : "Still answering.";
                     changeText.color = has ? Ink : Muted;
                 }
+                // Their objective, only if they chose to show it on their end card.
+                var objectiveText = details.Find("Change/ObjectiveText")?.GetComponent<TMP_Text>();
+                if (objectiveText)
+                {
+                    bool shared = player.CustomProperties.TryGetValue(BiovalueStatics.ShareObjectiveKey, out var sh) && sh is bool b && b;
+                    string mine = player.CustomProperties.TryGetValue(BiovalueStatics.PlayerObjectiveKey, out var ob) ? ob as string : null;
+                    bool has = shared && !string.IsNullOrWhiteSpace(mine);
+                    objectiveText.text = has ? $"“<noparse>{mine.Trim()}</noparse>”" : "Kept private.";
+                    objectiveText.color = has ? Ink : Muted;
+                }
                 var labels = new List<string>();
                 var values = new List<string>();
                 foreach (var term in terms)
                 {
                     float raw = ScoreFormula.Value(term.item, player, avgGame, avgOwn);
-                    string what = term.item == ScoreFormula.Item.Objectives ? $"{avgGame:0.0} × {avgOwn:0.0}" : raw.ToString("0");
+                    string what = term.item == ScoreFormula.Item.Objectives ? $"{avgGame:0.0} × {avgOwn:0.0}" : raw.ToString("0.#");
                     float a = Mathf.Abs(term.weight);
                     labels.Add($"{ScoreFormula.Label(term.item)} · {what}{(Mathf.Approximately(a, 1f) ? "" : " × " + a.ToString("0.#"))}");
                     float pts = term.weight * raw;

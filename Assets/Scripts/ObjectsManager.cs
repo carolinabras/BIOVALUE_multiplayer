@@ -20,14 +20,14 @@ public class ObjectsManager : MonoBehaviour
         {
             InstrumentSpawnerArea.SetActive(true);
             ActionCardSpawnerArea.SetActive(false);
-            // Turn-passing is GM-only (button now calls GameState.GMAdvanceTurn()) — never show it to players.
-            endTurnButton.SetActive(GameAuthority.IsGameMaster);
+            // The old End Turn button stays hidden: the GM ends turns from the turn ribbon now.
+            if (endTurnButton) endTurnButton.SetActive(false);
         }
         else
         {
             InstrumentSpawnerArea.SetActive(false);
             ActionCardSpawnerArea.SetActive(true);
-            endTurnButton.SetActive(false);
+            if (endTurnButton) endTurnButton.SetActive(false);
         }
     }
 }

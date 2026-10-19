@@ -107,17 +107,7 @@ public class ActionDeck : MonoBehaviour
         hasPlayed = true;
 
         CloseMenu();
-
-        playedCardsText.text = playedCardIds.Count == 1
-            ? "You played 1 action card"
-            : $"You played {playedCardIds.Count} action cards";
-        Invoke(nameof(ClearPlayedCardsText), 5f);
-    }
-
-    public void ClearPlayedCardsText()
-    {
-        Vector2 target = new Vector2(playedCardsText.rectTransform.anchoredPosition.x + 1000000, playedCardsText.rectTransform.anchoredPosition.y);
-        LeanTween.move(playedCardsText.GameObject(), target, 0.25f).setEaseOutCubic();
+        if (playedCardsText) playedCardsText.gameObject.SetActive(false); // no "You played N action cards" text
     }
 
     public void OpenMenu()

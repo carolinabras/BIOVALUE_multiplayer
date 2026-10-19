@@ -33,8 +33,7 @@ public class GameMetricsExporter : MonoBehaviour
         WriteFinalResults(sb);
 
         string filename = $"BioValue_Metrics_{now:yyyyMMdd_HHmmss}.txt";
-        string path = Path.Combine(Application.persistentDataPath, filename);
-        File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
+        string path = WebBridge.SaveText(filename, sb.ToString()); // web build: the browser downloads it
 
         Debug.Log($"[GameMetricsExporter] Saved to: {path}");
     }

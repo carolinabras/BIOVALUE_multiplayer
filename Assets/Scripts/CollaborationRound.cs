@@ -114,6 +114,24 @@ public class CollaborationRound : MonoBehaviour
     private static List<Player> Players() =>
         PhotonNetwork.PlayerList.Where(p => !p.IsMasterClient).OrderBy(p => p.ActorNumber).ToList();
 
+    // This player has nothing left to ask for: no tokens, or every other player's card is already
+    // asked for (pending, collaborating or declined). The ribbon's "I'm done" glows then.
+    public static bool NothingLeftToCollaborate()
+    {
+        var collab = ColaborationManager.Instance;
+        var me = PhotonNetwork.LocalPlayer;
+        if (!collab || me == null || GameAuthority.IsGameMaster) return false;
+        if (ColaborationManager.MyTokens() <= 0) return true;
+        foreach (var p in Players())
+        {
+            if (p.IsLocal) continue;
+            int count = CardsOf(p.ActorNumber).Count;
+            for (int i = 0; i < count; i++)
+                if (collab.MyState(p.ActorNumber, i) == ColaborationManager.RequestState.None) return false;
+        }
+        return true;
+    }
+
     private static List<int> CardsOf(int actor)
     {
         var state = GameState.Instance;

@@ -25,6 +25,21 @@ public class VotingManager : MonoBehaviourPun
     public int GetDisagreeCount(int actorNumber) =>
         _cumulativeDisagrees.TryGetValue(actorNumber, out int c) ? c : 0;
 
+    // Per placer (actor number), for the score formula: instruments put on the board, and how their votes ended.
+    private readonly Dictionary<int, int> _placed   = new Dictionary<int, int>();
+    private readonly Dictionary<int, int> _accepted = new Dictionary<int, int>();
+    private readonly Dictionary<int, int> _rejected = new Dictionary<int, int>();
+
+    public int GetPlacedCount(int actorNumber)   => _placed.TryGetValue(actorNumber, out int c) ? c : 0;
+    public int GetAcceptedCount(int actorNumber) => _accepted.TryGetValue(actorNumber, out int c) ? c : 0;
+    public int GetRejectedCount(int actorNumber) => _rejected.TryGetValue(actorNumber, out int c) ? c : 0;
+
+    private static void Count(Dictionary<int, int> counts, int actorNumber)
+    {
+        if (actorNumber < 0) return;
+        counts[actorNumber] = (counts.TryGetValue(actorNumber, out int c) ? c : 0) + 1;
+    }
+
     private int _pendingPiecePhotonViewId = -1;
     private int _pendingPlacerActorNumber = -1;
     private int _pendingOldCellIndex      = -1;
@@ -57,6 +72,8 @@ public class VotingManager : MonoBehaviourPun
 
     public bool IsVoting => _pendingPiecePhotonViewId >= 0;
     public int PendingPlacer => _pendingPlacerActorNumber;
+    // The piece being voted on was placed by the game master (a special action, not a player's turn).
+    public bool PlacedByGm => PhotonNetwork.MasterClient != null && _pendingPlacerActorNumber == PhotonNetwork.MasterClient.ActorNumber;
     public bool LocalCanVote { get; private set; }
 
     // The piece being voted on, on its cell.
@@ -96,6 +113,7 @@ public class VotingManager : MonoBehaviourPun
         bool isWhoPlaced = piece != null && piece.IsMine;
 
         _pendingPlacerActorNumber = piece?.Owner?.ActorNumber ?? -1;
+        Count(_placed, _pendingPlacerActorNumber);
 
         OnVoteStarted.Invoke();
 
@@ -106,8 +124,10 @@ public class VotingManager : MonoBehaviourPun
         LocalCanVote = (!isGM && !isWhoPlaced) || debugForceShow;
 
         string instrName  = piece?.GetComponent<InstrumentHook>()?.instrument?.name ?? "instrument";
-        string placerName = GameLog.GetPlayerName(_pendingPlacerActorNumber);
-        GameLog.Instance?.AddEntryLocal(GameLog.Kind.Placed, $"{GameLog.B(placerName)} placed {GameLog.B(instrName)}");
+        if (PlacedByGm)
+            GameLog.Instance?.AddEntryLocal(GameLog.Kind.Placed, $"{GameLog.B("GM")} made a special action: placed {GameLog.B(instrName)}");
+        else
+            GameLog.Instance?.AddEntryLocal(GameLog.Kind.Placed, $"{GameLog.B(GameLog.GetPlayerName(_pendingPlacerActorNumber))} placed {GameLog.B(instrName)}");
     }
 
     // ── Player votes ──────────────────────────────────────────────────────────
@@ -161,6 +181,7 @@ public class VotingManager : MonoBehaviourPun
     private void RPC_EndVoteSession(int approveCount, int rejectCount)
     {
         bool approved = approveCount > rejectCount;
+        Count(approved ? _accepted : _rejected, _pendingPlacerActorNumber);
 
         var pieceView = _pendingPiecePhotonViewId >= 0 ? PhotonView.Find(_pendingPiecePhotonViewId) : null;
         if (pieceView != null)

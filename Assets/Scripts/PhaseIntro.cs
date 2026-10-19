@@ -46,6 +46,7 @@ public class PhaseIntro : MonoBehaviour
     private bool subscribed;
     private bool skip;
     private Coroutine playing;
+    public bool IsPlaying => playing != null;
 
     private void Start()
     {

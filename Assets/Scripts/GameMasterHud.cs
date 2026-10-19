@@ -99,7 +99,8 @@ public class GameMasterHud : MonoBehaviourPunCallbacks
         else
         {
             Photon.Pun.PhotonNetwork.Disconnect();
-            Application.Quit();
+            if (WebBridge.IsWeb) UnityEngine.SceneManagement.SceneManager.LoadScene(0); // a browser tab can't quit
+            else Application.Quit();
         }
     }
 

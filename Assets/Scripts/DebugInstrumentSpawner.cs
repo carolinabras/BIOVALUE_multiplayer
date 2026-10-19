@@ -54,6 +54,7 @@ public class DebugInstrumentSpawner : MonoBehaviour
         {
             spawner.DebugSpawnTestInstruments(SpawnCount);
             if (PhaseIntro.Instance) PhaseIntro.Instance.Replay(GameState.GamePhase.InstrumentSelection);
+            LandObjective();
         }
 
         // The GM panel is a slide-out drawer normally opened by clicking its own
@@ -63,6 +64,25 @@ public class DebugInstrumentSpawner : MonoBehaviour
         if (gmPanel != null &&
             GUI.Button(new Rect(10, 50, 240, 30), "DEBUG: Toggle GM Panel"))
             gmPanel.TogglePanel();
+    }
+
+    // The objective piece lands in the middle of the board (after the intro). In an offline debug room
+    // it was never spawned (ObjectiveSpawner runs before the room exists), so spawn it first, with a
+    // sample objective if the room has none.
+    private static void LandObjective()
+    {
+        if (FindFirstObjectByType<ObjectiveHook>() == null)
+        {
+            var objectiveSpawner = FindFirstObjectByType<ObjectiveSpawner>();
+            if (objectiveSpawner == null) return;
+            var room = PhotonNetwork.CurrentRoom;
+            if (room != null && !(room.CustomProperties.TryGetValue(BiovalueStatics.GameObjectiveKey, out var o) && o is string s && s.Length > 0))
+                room.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+                    { [BiovalueStatics.GameObjectiveKey] = "Bring nature back to the river banks of the city centre" });
+            objectiveSpawner.Populate(); // the piece plays its landing when it appears
+            return;
+        }
+        ObjectivePieceFx.LandAll();
     }
 
     // GameMasterPanelUI.Start() deactivates its own GameObject if you weren't GM

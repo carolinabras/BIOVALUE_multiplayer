@@ -21,7 +21,9 @@ public class CardSummaryHook : MonoBehaviourPun
             {
                 if (player.ActorNumber == actorNumber)
                 {
-                    if (player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var nameObj))
+                    if (player.IsMasterClient)
+                        ownerText.text = "GM made a special action";
+                    else if (player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var nameObj))
                         ownerText.text = nameObj as string;
                     else
                         ownerText.text = $"Player {actorNumber}";

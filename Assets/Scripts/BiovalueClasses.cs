@@ -15,6 +15,7 @@ public class BiovalueStatics
     public const string MainObjectiveRatingKey = "mainObjectiveRating";
     public const string PersonalObjectiveRatingKey = "personalObjectiveRating";
     public const string PersonalObjectiveChangeKey = "personalObjectiveChange";
+    public const string ShareObjectiveKey = "shareObjective"; // bool: the player shows their objective on the results
 
     // Room custom property keys — persisted server-side for reconnecting players
     public const string TurnActorKey = "turn_actor";       // int: actor number of current turn holder
@@ -22,6 +23,9 @@ public class BiovalueStatics
     public const string ActionCardsKeyPrefix = "ac_";      // "ac_" + playerId → int[]
     public const string SkipActorsKey = "skip_actors";     // int[]: actors deferred to end of turn cycle after rejoin
     public const string SelectedInstrumentsKey = "selected_instruments"; // int[]: IDs of instruments selected in lobby
+    public const string LobbyPlayersKey = "lobby_players";     // int: how many players the GM expects (not counting the GM)
+    public const string MaxActionCardsKey = "max_action_cards"; // int: action cards a player can play per round, 0 = no limit
+    public const string ScoreFormulaKey = "score_formula";     // string: ScoreFormula.Encode(...)
 }
 
 public class BiovaluePlayer

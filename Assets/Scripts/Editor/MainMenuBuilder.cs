@@ -279,7 +279,7 @@ public static class MainMenuBuilder
 
     // ── Shared ───────────────────────────────────────────────────────────────
 
-    private static bool Ready(string title)
+    internal static bool Ready(string title)
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode)
         {
@@ -295,7 +295,7 @@ public static class MainMenuBuilder
         return true;
     }
 
-    private static bool Open(string path, out Scene scene)
+    internal static bool Open(string path, out Scene scene)
     {
         scene = EditorSceneManager.GetActiveScene();
         if (scene.path == path) return true;
@@ -304,7 +304,7 @@ public static class MainMenuBuilder
         return true;
     }
 
-    private static Canvas FindCanvas(Scene scene)
+    internal static Canvas FindCanvas(Scene scene)
     {
         foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             if (c.gameObject.scene == scene && c.name == "Canvas") return c;
@@ -312,7 +312,7 @@ public static class MainMenuBuilder
     }
 
     // A fresh root under the Canvas (replaces the last build); everything else there is switched off.
-    private static RectTransform NewRoot(Canvas canvas, string name)
+    internal static RectTransform NewRoot(Canvas canvas, string name)
     {
         var canvasT = (RectTransform)canvas.transform;
         var old = canvasT.Find(name);
@@ -323,7 +323,7 @@ public static class MainMenuBuilder
         return root;
     }
 
-    private static void Save(Scene scene, string what)
+    internal static void Save(Scene scene, string what)
     {
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
@@ -331,7 +331,8 @@ public static class MainMenuBuilder
     }
 
     // Radial purple and the floating hexes: the same in both scenes.
-    private static void Backdrop(RectTransform root)
+    // `faint`: the Lobby's fewer, paler hexes, so its white cards read well.
+    internal static void Backdrop(RectTransform root, bool faint = false)
     {
         var bg = Stretch(NewRect("Background", root)).gameObject.AddComponent<Image>();
         bg.sprite = Gradient();
@@ -339,6 +340,15 @@ public static class MainMenuBuilder
 
         // x, y, width in mockup units; colour, opacity, rotation, delay.
         var hexes = Stretch(NewRect("Hexes", root));
+        if (faint)
+        {
+            Hex(hexes, 60, 150, 90, Pink, .35f, -12, 0f);
+            Hex(hexes, 150, 640, 60, Orange, .35f, 8, 1.2f);
+            Hex(hexes, 1310, 110, 80, Blue, .35f, 14, .6f);
+            Hex(hexes, 1290, 600, 110, Orange, .3f, -6, 1.8f);
+            Hex(hexes, 1180, 700, 44, Pink, .35f, 10, 2.6f);
+            return;
+        }
         Hex(hexes, 140, 120, 110, Pink, .9f, -12, 0f);
         Hex(hexes, 250, 560, 70, Orange, .9f, 8, 1.2f);
         Hex(hexes, 80, 400, 44, Blue, .8f, 0, 2.1f);
@@ -349,7 +359,7 @@ public static class MainMenuBuilder
     }
 
     // Official horizontal logo (size and place set by the caller).
-    private static RectTransform Logo(RectTransform root)
+    internal static RectTransform Logo(RectTransform root)
     {
         var logo = NewRect("Logo", root);
         LogoPart(logo, "Symbol", Single(SymbolPath, SymbolSource), 0, SymbolW / LogoW);
@@ -357,7 +367,7 @@ public static class MainMenuBuilder
         return logo;
     }
 
-    private static TextMeshProUGUI Version(RectTransform root)
+    internal static TextMeshProUGUI Version(RectTransform root)
     {
         var version = NewRect("Version", root);
         version.anchorMin = version.anchorMax = version.pivot = new Vector2(1, 0);
@@ -369,7 +379,7 @@ public static class MainMenuBuilder
     }
 
     // Transparent pill with a white outline, clickable everywhere.
-    private static Button OutlinedButton(RectTransform rt, string text, float fontSize, float height)
+    internal static Button OutlinedButton(RectTransform rt, string text, float fontSize, float height)
     {
         var hit = rt.gameObject.AddComponent<Image>();
         hit.color = Color.clear;
@@ -387,7 +397,7 @@ public static class MainMenuBuilder
     }
 
     // Centred horizontally, `top` units from the top of the parent.
-    private static RectTransform Top(RectTransform rt, float top, float w, float h)
+    internal static RectTransform Top(RectTransform rt, float top, float w, float h)
     {
         rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 1f);
         rt.anchoredPosition = new Vector2(0, -top);
@@ -395,7 +405,7 @@ public static class MainMenuBuilder
         return rt;
     }
 
-    private static RectTransform Centered(RectTransform rt, float size)
+    internal static RectTransform Centered(RectTransform rt, float size)
     {
         rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = Vector2.zero;
@@ -418,7 +428,7 @@ public static class MainMenuBuilder
     }
 
     // Hexes on the left half stay with the left edge, the others with the right edge (wider screens).
-    private static void Hex(RectTransform parent, float x, float y, float w, Color color, float alpha, float rotation, float delay)
+    internal static void Hex(RectTransform parent, float x, float y, float w, Color color, float alpha, float rotation, float delay)
     {
         float width = w * K, height = w * 1.15f * K;
         float cx = x * K + width / 2, cy = y * K + height / 2;
@@ -439,7 +449,7 @@ public static class MainMenuBuilder
         drift.delay = delay;
     }
 
-    private static void Tints(Button button)
+    internal static void Tints(Button button)
     {
         var colors = button.colors;
         colors.normalColor = colors.selectedColor = colors.disabledColor = Color.white;
@@ -512,7 +522,7 @@ public static class MainMenuBuilder
     }
 
     // White rounded-rectangle outline (2 px at radius 24), 9-sliced.
-    private static Sprite RoundRing()
+    internal static Sprite RoundRing()
     {
         const int r = 24;
         return Generated("RoundRing.png", 96, 96, (x, y, size) =>
@@ -524,7 +534,7 @@ public static class MainMenuBuilder
     }
 
     // White circle outline: a step not reached yet (6 px of 64).
-    private static Sprite CircleRing() => Generated("CircleRing.png", 64, 64, (x, y, size) =>
+    internal static Sprite CircleRing() => Generated("CircleRing.png", 64, 64, (x, y, size) =>
     {
         float fromEdge = size / 2f - Vector2.Distance(new Vector2(x, y), new Vector2(size / 2f, size / 2f));
         return new Color(1, 1, 1, Mathf.Clamp01(fromEdge + 0.5f) * Mathf.Clamp01(6f - fromEdge + 0.5f));

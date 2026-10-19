@@ -129,6 +129,7 @@ public static class MainHudBuilder
         BuildPlayerEndCard(root).transform.SetAsLastSibling();
         BuildPhaseIntro(root).transform.SetAsLastSibling(); // over everything
         BuildGameNotice(root).transform.SetAsLastSibling(); // "The game master ended the game", over the intro too
+        CollabRequestBuilder.Build(); // the owner's "wants to collaborate" card (a prefab)
 
         if (oldPanel)
         {
@@ -370,6 +371,16 @@ public static class MainHudBuilder
         var done = PinkButton(pill, "Done", "I’m done", out var doneLabel);
         var doneButton = done.GetComponentInChildren<Button>();
         done.Find("Button/Arrow").gameObject.SetActive(false);
+        // Pink halo behind the button (the wrap pads it by 7 on top, right and bottom): breathes when
+        // the player has nothing left to collaborate on.
+        var glow = Stretch(NewRect("Glow", done));
+        glow.offsetMin = new Vector2(-6, 1);
+        glow.offsetMax = new Vector2(-1, -1);
+        glow.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+        glow.SetAsFirstSibling();
+        Round(glow, new Color(Pink.r, Pink.g, Pink.b, 0.6f), (RibbonH - 14) / 2f + 6);
+        glow.gameObject.AddComponent<PlayerTurnGlow>().minAlpha = 0.15f;
+        glow.gameObject.SetActive(false);
         UnityEventTools.AddPersistentListener(doneButton.onClick, new UnityAction(ribbon.ToggleDone));
         done.gameObject.SetActive(false);
 
@@ -439,6 +450,7 @@ public static class MainHudBuilder
         ribbon.doneButton = done.gameObject;
         ribbon.doneButtonImage = doneButton.GetComponent<Image>();
         ribbon.doneLabel = doneLabel;
+        ribbon.doneGlow = glow.gameObject;
         EditorUtility.SetDirty(ribbon);
         return ribbon;
     }
@@ -1130,6 +1142,11 @@ public static class MainHudBuilder
         var change = NewRect("Change", details);
         Column(change, 2, new RectOffset(0, 0, 0, 0));
         change.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var objectiveEye = Label(change, "ObjectiveEyebrow", bold, 15, EndEyebrow, "THEIR OBJECTIVE");
+        objectiveEye.characterSpacing = 6;
+        var objectiveText = Label(change, "ObjectiveText", regular, 19, Ink, "Kept private.");
+        objectiveText.textWrappingMode = TextWrappingModes.Normal;
+        Fixed(Stretch(NewRect("Gap", change)), -1, 8);
         var changeEye = Label(change, "Eyebrow", bold, 15, EndEyebrow, "DID THEIR OBJECTIVE CHANGE?");
         changeEye.characterSpacing = 6;
         var changeText = Label(change, "Text", regular, 19, Ink, "No answer.");
@@ -1243,6 +1260,15 @@ public static class MainHudBuilder
         input.textComponent.color = Ink;
         Round(inputRT, Color.white, 16).raycastTarget = true;
 
+        var share = NewRect("Share", body);
+        var shareRow = Row(share, 10, new RectOffset(0, 0, 0, 0));
+        shareRow.childAlignment = TextAnchor.MiddleLeft;
+        var shareAsk = Label(share, "Ask", bold, 22, Ink, "Show your objective to everyone on the results?");
+        shareAsk.textWrappingMode = TextWrappingModes.Normal;
+        shareAsk.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var shareShow = ShareChoice(share, "Show", "Show it");
+        var shareHide = ShareChoice(share, "Hide", "Keep it private");
+
         var footer = NewRect("Footer", body);
         Row(footer, 16, new RectOffset(0, 0, 0, 0));
         var hint = Label(footer, "Hint", regular, 19, EndMuted, "Rate both objectives to send.");
@@ -1328,6 +1354,8 @@ public static class MainHudBuilder
         view.myScale = myScale;
         view.myWord = myWord;
         view.changeInput = input;
+        view.shareShow = shareShow;
+        view.shareHide = shareHide;
         view.hint = hint;
         view.sendButton = sendButton;
         view.sendLabel = sendLabel;
@@ -1338,6 +1366,22 @@ public static class MainHudBuilder
         view.changeButton = changeButton;
         EditorUtility.SetDirty(view);
         return view;
+    }
+
+    // "Show it" / "Keep it private" on the players' end card (PlayerEndCard colours it).
+    private static Button ShareChoice(RectTransform parent, string name, string text)
+    {
+        var rt = NewRect(name, parent);
+        Fixed(rt, text.Length > 8 ? 200 : 120, 50);
+        var img = Round(rt, EndIdle, 25);
+        img.raycastTarget = true;
+        var button = rt.gameObject.AddComponent<Button>();
+        button.targetGraphic = img;
+        SoftTransition(button);
+        var label = Txt(Stretch(NewRect("Label", rt)), bold, 20, EndBody, TextAlignmentOptions.Center);
+        label.textWrappingMode = TextWrappingModes.NoWrap;
+        label.text = text;
+        return button;
     }
 
     private static void CardLook(RectTransform card)
@@ -1809,9 +1853,10 @@ public static class MainHudBuilder
         lane.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
 
         var head = NewRect("Head", lane);
-        Fixed(head, -1, 52);
-        var headRow = Row(head, 12, new RectOffset(0, 0, 0, 0));
+        Fixed(head, -1, 56);
+        var headRow = Row(head, 12, new RectOffset(5, 0, 0, 0)); // the done ring reaches 4 outside the avatar
         headRow.childControlHeight = true;
+        headRow.childAlignment = TextAnchor.MiddleLeft;
         var avatar = NewRect("Avatar", head);
         Fixed(avatar, 46, 46);
         var doneRing = Stretch(NewRect("DoneRing", avatar));

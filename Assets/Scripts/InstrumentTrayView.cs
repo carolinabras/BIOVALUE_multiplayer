@@ -34,7 +34,8 @@ public class InstrumentTrayView : MonoBehaviour
 
     [Header("Tap to place")]
     public Sprite cellHighlightSprite;
-    public Color cellHighlightColor = new Color32(0xFE, 0x46, 0xA5, 0xB0);
+    // Free cells while placing: violet, so it isn't the pink of selection and votes or the objective's gold.
+    public Color freeCellColor = new Color32(0x8B, 0x6C, 0xFF, 0x9A);
 
     public bool IsOpen { get; private set; }
 
@@ -105,7 +106,7 @@ public class InstrumentTrayView : MonoBehaviour
             foreach (var img in highlights.Values)
             {
                 if (!img || !img.gameObject.activeSelf) continue;
-                var c = cellHighlightColor;
+                var c = freeCellColor;
                 c.a *= a;
                 img.color = c;
             }
@@ -409,10 +410,13 @@ public class InstrumentTrayView : MonoBehaviour
         rt.anchorMax = Vector2.one;
         rt.offsetMin = rt.offsetMax = Vector2.zero;
         var img = go.AddComponent<Image>();
-        var cellImage = cell.GetComponent<Image>();
-        img.sprite = cellImage && cellImage.sprite ? cellImage.sprite : cellHighlightSprite;
-        img.preserveAspect = cellImage ? cellImage.preserveAspect : true;
-        img.color = cellHighlightColor;
+        // The same shape as what it covers: the tile's sprite (exactly its size), else the cell's.
+        var under = tile ? tile.GetComponent<Image>() : null;
+        if (!under) under = cell.GetComponent<Image>();
+        img.sprite = under && under.sprite ? under.sprite : cellHighlightSprite;
+        img.type = under ? under.type : Image.Type.Simple;
+        img.preserveAspect = under ? under.preserveAspect : true;
+        img.color = freeCellColor;
         img.raycastTarget = true;
         go.AddComponent<TrayCellTap>().tray = this;
         return img;
