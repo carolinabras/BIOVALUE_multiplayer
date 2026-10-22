@@ -102,9 +102,15 @@ public static class MainMenuBuilder
         spinner.gameObject.SetActive(false);
         UnityEventTools.AddPersistentListener(startButton.onClick, manager.StartGame);
 
-        // Quit: outlined pill.
+        // How to play: outlined pill.
         y += startH + 14 * K;
         float quitH = 48 * K;
+        var help = Top(NewRect("HelpButton", root), y, 220, quitH);
+        var helpButton = OutlinedButton(help, "How to play", 19 * K, quitH);
+        UnityEventTools.AddPersistentListener(helpButton.onClick, manager.OpenHelp);
+
+        // Quit: outlined pill.
+        y += quitH + 12 * K;
         var quit = Top(NewRect("QuitButton", root), y, 140, quitH);
         var quitButton = OutlinedButton(quit, "Quit", 19 * K, quitH);
         var quitGroup = quit.gameObject.AddComponent<CanvasGroup>();
@@ -509,7 +515,7 @@ public static class MainMenuBuilder
     }
 
     // radial-gradient(120% 90% at 50% 40%, #5434C8 0%, #3F27A0 45%, #241A5E 100%)
-    private static Sprite Gradient()
+    internal static Sprite Gradient()
     {
         Color a = new Color32(0x54, 0x34, 0xC8, 0xFF), b = new Color32(0x3F, 0x27, 0xA0, 0xFF), c = new Color32(0x24, 0x1A, 0x5E, 0xFF);
         const int w = 480, h = 270;

@@ -64,6 +64,17 @@ public class HandFan : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (countText) countText.text = max > 0 ? $"{count}/{max}" : count.ToString();
     }
 
+    // Shows or hides the count bubble next to the label; the pill shrinks to fit the label alone.
+    private float pillWidth = -1f;
+    public void ShowCount(bool show)
+    {
+        if (!countText || !(countText.transform.parent is RectTransform bubble)) return;
+        bubble.gameObject.SetActive(show);
+        if (!(bubble.parent is RectTransform pill)) return;
+        if (pillWidth < 0f) pillWidth = pill.sizeDelta.x;
+        pill.sizeDelta = new Vector2(show ? pillWidth : pillWidth - bubble.sizeDelta.x - 6f, pill.sizeDelta.y);
+    }
+
     // Slides off the edge while the drawer is open.
     public void SetShown(bool shown, bool instant = false)
     {

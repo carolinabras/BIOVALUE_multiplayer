@@ -77,6 +77,7 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
     };
     public static readonly int[] Counts = { 2, 3, 4, 5, 6, 7, 8 };
     public static readonly int[] Limits = { 1, 2, 3, 4, 5, 0 };
+    public static readonly int[] TokenCounts = { 1, 2, 3, 4, 5, 6, 8, 10 };
 
     [Header("Screens")]
     public GameObject startScreen;
@@ -151,6 +152,8 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
     [Header("Action cards")]
     public Button[] limitButtons;
     public TMP_Text limitText;
+    public Button[] tokenButtons;   // TokenCounts
+    public TMP_Text tokenText;
 
     [Header("Scoring")]
     public TMP_Text formulaText;
@@ -175,7 +178,7 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
     public TMP_Text waitingSub;
 
     private InstrumentsDatabase _db;
-    private int _tab, _players = 4, _limit = 3, _filter = -1, _newType;
+    private int _tab, _players = 4, _limit = 3, _tokens = ColaborationManager.DefaultStartTokens, _filter = -1, _newType;
     private ScoreFormula.Setup _formula = ScoreFormula.DefaultSetup();
     private bool _leaving, _starting, _listView;
     private Instrument _details;
@@ -225,6 +228,7 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         });
 
         for (int i = 0; i < limitButtons.Length; i++) { int n = Limits[i]; limitButtons[i].onClick.AddListener(() => { _limit = n; RefreshCards(); }); }
+        for (int i = 0; i < tokenButtons.Length; i++) { int n = TokenCounts[i]; tokenButtons[i].onClick.AddListener(() => { _tokens = n; RefreshCards(); }); }
 
         for (int i = 0; i < scoreRows.Length; i++)
         {
@@ -690,6 +694,8 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         limitText.text = _limit > 0
             ? $"Each player can play up to {_limit} action card{(_limit > 1 ? "s" : "")} per round. The card fan shows how many are left."
             : "Players can play as many action cards as they like each round.";
+        for (int i = 0; i < tokenButtons.Length; i++) Chip(tokenButtons[i], TokenCounts[i] == _tokens);
+        tokenText.text = $"Each player gets {_tokens} token{(_tokens > 1 ? "s" : "")}: collaborating on someone else's action costs 1.";
     }
 
     // Scoring: switch items on, set their points (− takes points away), multiply or add the two averages.
@@ -767,6 +773,7 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
             { BiovalueStatics.SelectedInstrumentsKey, selected },
             { BiovalueStatics.LobbyPlayersKey, _players },
             { BiovalueStatics.MaxActionCardsKey, _limit },
+            { BiovalueStatics.StartTokensKey, _tokens },
             { BiovalueStatics.ScoreFormulaKey, ScoreFormula.Encode(_formula) },
         });
         PhotonNetwork.CurrentRoom.IsOpen = false; // nobody joins a game that has started

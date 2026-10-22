@@ -364,6 +364,15 @@ public static class MainHudBuilder
         UnityEventTools.AddPersistentListener(endTurn.GetComponentInChildren<Button>().onClick, new UnityAction(ribbon.EndTurn));
         var endActions = PinkButton(pill, "EndActions", "End actions round", out _);
         WireStartCollaboration(endActions.GetComponentInChildren<Button>(), gameState);
+        // Breathes once every player has played their cards: the GM can move on.
+        var endGlow = Stretch(NewRect("Glow", endActions));
+        endGlow.offsetMin = new Vector2(-6, 1);
+        endGlow.offsetMax = new Vector2(-1, -1);
+        endGlow.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+        endGlow.SetAsFirstSibling();
+        Round(endGlow, new Color(Pink.r, Pink.g, Pink.b, 0.6f), (RibbonH - 14) / 2f + 6);
+        endGlow.gameObject.AddComponent<PlayerTurnGlow>().minAlpha = 0.15f;
+        endGlow.gameObject.SetActive(false);
         endActions.gameObject.SetActive(false);
         var endCollab = PinkButton(pill, "EndCollaboration", "End collaboration", out _);
         CopyOnClick(oldEndActions, endCollab.GetComponentInChildren<Button>());
@@ -451,6 +460,7 @@ public static class MainHudBuilder
         ribbon.doneButtonImage = doneButton.GetComponent<Image>();
         ribbon.doneLabel = doneLabel;
         ribbon.doneGlow = glow.gameObject;
+        ribbon.endActionsGlow = endGlow.gameObject;
         EditorUtility.SetDirty(ribbon);
         return ribbon;
     }
@@ -631,8 +641,6 @@ public static class MainHudBuilder
         var resultsRow = Row(results, 10, new RectOffset(0, 0, 0, 0));
         resultsRow.childForceExpandWidth = true;
         Fixed(results, -1, 50);
-        var showResults = WideButton(results, "ShowResults", "Show to everyone", Lilac, Purple);
-        CopyOnClick(oldShowResults, showResults);
         var saveResults = WideButton(results, "SaveResults", "Save results", Lilac, Purple);
         CopyOnClick(oldSaveResults, saveResults);
 
@@ -993,6 +1001,8 @@ public static class MainHudBuilder
 
         content.gameObject.SetActive(false);
 
+        BuildResultsWaiting(holder, view, endGame);
+
         view.content = content.gameObject;
         view.eyebrow = eyebrow;
         view.subtitle = subtitle;
@@ -1012,6 +1022,118 @@ public static class MainHudBuilder
         view.leaveButton = leave.gameObject;
         EditorUtility.SetDirty(view);
         return view;
+    }
+
+    // GM only, after "End collaboration": who has rated the game yet, then "See results".
+    private static void BuildResultsWaiting(RectTransform holder, ResultsCard view, EndGameManager endGame)
+    {
+        var waiting = Stretch(NewRect("Waiting", holder));
+        var dim = waiting.gameObject.AddComponent<Image>();
+        dim.color = new Color(0.08f, 0.05f, 0.16f, 0.62f);
+        dim.raycastTarget = true;
+
+        var card = NewRect("Card", waiting);
+        card.anchorMin = card.anchorMax = card.pivot = new Vector2(0.5f, 0.5f);
+        card.sizeDelta = new Vector2(760, 640);
+        CardLook(card);
+
+        var header = NewRect("Header", card);
+        header.anchorMin = new Vector2(0, 1); header.anchorMax = new Vector2(1, 1);
+        header.pivot = new Vector2(0.5f, 1);
+        header.sizeDelta = new Vector2(0, 150);
+        header.anchoredPosition = Vector2.zero;
+        Round(header, EndPurple, 36);
+        var square = NewRect("SquareBottom", header);
+        square.anchorMin = Vector2.zero; square.anchorMax = new Vector2(1, 0);
+        square.pivot = new Vector2(0.5f, 0);
+        square.sizeDelta = new Vector2(0, 40);
+        var squareImg = square.gameObject.AddComponent<Image>();
+        squareImg.color = EndPurple;
+        squareImg.raycastTarget = false;
+        var titles = Stretch(NewRect("Titles", header));
+        Column(titles, -4, new RectOffset(36, 36, 26, 20));
+        var eye = Label(titles, "Eyebrow", bold, 17, new Color(1, 1, 1, 0.8f), "END OF THE GAME · ONLY YOU SEE THIS");
+        eye.characterSpacing = 10;
+        Label(titles, "Title", bold, 40, Color.white, "Players are rating the game");
+        var count = Label(titles, "Count", regular, 20, new Color(1, 1, 1, 0.85f), "0 of 0 players have answered");
+
+        var body = NewRect("Body", card);
+        Stretch(body);
+        body.offsetMin = new Vector2(36, 112);
+        body.offsetMax = new Vector2(-36, -172);
+        var hint = Label(body, "Hint", regular, 19, EndBody,
+            "Each player is rating the game objective and their own objective. The score comes from these answers, so wait for everyone before opening the results.");
+        hint.textWrappingMode = TextWrappingModes.Normal;
+        hint.rectTransform.anchorMin = new Vector2(0, 1); hint.rectTransform.anchorMax = new Vector2(1, 1);
+        hint.rectTransform.pivot = new Vector2(0.5f, 1);
+        hint.rectTransform.sizeDelta = new Vector2(0, 56);
+        hint.rectTransform.anchoredPosition = Vector2.zero;
+
+        var scroll = NewRect("Scroll", body);
+        Stretch(scroll);
+        scroll.offsetMax = new Vector2(0, -70);
+        var viewport = Stretch(NewRect("Viewport", scroll));
+        viewport.gameObject.AddComponent<RectMask2D>();
+        viewport.gameObject.AddComponent<Image>().color = new Color(1, 1, 1, 0);
+        var rows = NewRect("Rows", viewport);
+        rows.anchorMin = new Vector2(0, 1); rows.anchorMax = new Vector2(1, 1);
+        rows.pivot = new Vector2(0.5f, 1);
+        rows.sizeDelta = Vector2.zero;
+        Column(rows, 8, new RectOffset(0, 8, 0, 4)).childForceExpandWidth = true;
+        rows.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var sr = scroll.gameObject.AddComponent<ScrollRect>();
+        sr.content = rows;
+        sr.viewport = viewport;
+        sr.horizontal = false;
+        sr.movementType = ScrollRect.MovementType.Clamped;
+        sr.scrollSensitivity = 40;
+
+        // Row template: avatar, name, status pill.
+        var row = NewRect("Row", rows);
+        Fixed(row, -1, 56);
+        Round(row, new Color32(0xF7, 0xF4, 0xFC, 0xFF), 16);
+        Row(row, 14, new RectOffset(10, 12, 8, 8)).childAlignment = TextAnchor.MiddleLeft;
+        var avatar = NewRect("Avatar", row);
+        Fixed(avatar, 40, 40);
+        Round(avatar, Pink, 20);
+        var number = Txt(Stretch(NewRect("Number", avatar)), bold, 18, Color.white, TextAlignmentOptions.Center);
+        number.text = "1";
+        var name = Label(row, "Name", bold, 20, Ink, "Player");
+        name.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var status = NewRect("Status", row);
+        Fixed(status, 150, 34);
+        Round(status, Lilac, 17);
+        var statusLabel = Txt(Stretch(NewRect("Label", status)), bold, 16, EndMuted, TextAlignmentOptions.Center);
+        statusLabel.text = "Answering…";
+
+        // Footer
+        var footer = NewRect("Footer", card);
+        footer.anchorMin = Vector2.zero; footer.anchorMax = new Vector2(1, 0);
+        footer.pivot = new Vector2(0.5f, 0);
+        footer.sizeDelta = new Vector2(0, 96);
+        footer.anchoredPosition = Vector2.zero;
+        var line = NewRect("Line", footer);
+        line.anchorMin = new Vector2(0, 1); line.anchorMax = new Vector2(1, 1);
+        line.pivot = new Vector2(0.5f, 1);
+        line.sizeDelta = new Vector2(0, 2);
+        line.gameObject.AddComponent<Image>().color = EndIdle;
+        var footRow = Stretch(NewRect("Row", footer));
+        Row(footRow, 14, new RectOffset(36, 36, 18, 18)).childAlignment = TextAnchor.MiddleRight;
+        NewRect("Spacer", footRow).gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var leave = WideButton(footRow, "QuitGame", "Quit game", Lilac, VoteNo);
+        Fixed((RectTransform)leave.transform, 170, 60);
+        if (endGame) UnityEventTools.AddPersistentListener(leave.onClick, new UnityAction(endGame.QuitGame));
+        var see = WideButton(footRow, "SeeResults", "See results now", Lilac, Purple);
+        Fixed((RectTransform)see.transform, 240, 60);
+        SoftTransition(see);
+
+        waiting.gameObject.SetActive(false);
+        view.waiting = waiting.gameObject;
+        view.waitingCount = count;
+        view.waitingRows = rows;
+        view.waitingRowTemplate = row.gameObject;
+        view.seeResultsButton = see;
+        view.seeResultsLabel = see.GetComponentInChildren<TextMeshProUGUI>();
     }
 
     // Average tile: label, big number "/ 10", thin bar.
@@ -1787,6 +1909,9 @@ public static class MainHudBuilder
         var lanes = new CollaborationRound.Lane[4];
         for (int i = 0; i < lanes.Length; i++) lanes[i] = BuildLane(lanesRT, i);
 
+        var sheet = BuildInstrumentSheet(panel);
+        var peek = BuildBoardPeek(holder, top);
+
         var card = BuildRoundCard(panel);
         var avatar = NewRect("AvatarTemplate", panel);
         Fixed(avatar, 34, 34);
@@ -1812,8 +1937,245 @@ public static class MainHudBuilder
         round.lanes = lanes;
         round.cardTemplate = card;
         round.avatarTemplate = avatar.gameObject;
+        round.lanesArea = lanesRT;
+        round.sheet = sheet;
+        round.boardPeek = peek.gameObject;
+        round.backToCardsButton = peek.GetComponentInChildren<Button>(true);
         EditorUtility.SetDirty(round);
         return round;
+    }
+
+    // Instrument sheet on the right of the panel, under the header (CollabInstrumentSheet).
+    private static CollabInstrumentSheet BuildInstrumentSheet(RectTransform panel)
+    {
+        const float sheetW = 440f, footerH = 78f;
+        var holder = NewRect("InstrumentSheet", panel);
+        var sheet = holder.gameObject.AddComponent<CollabInstrumentSheet>();
+        var root = NewRect("Root", holder);
+        holder.anchorMin = Vector2.zero; holder.anchorMax = Vector2.one;
+        holder.offsetMin = holder.offsetMax = Vector2.zero;
+        root.anchorMin = new Vector2(1, 0); root.anchorMax = new Vector2(1, 1);
+        root.pivot = new Vector2(1, 0.5f);
+        root.offsetMin = new Vector2(-28 - sheetW, 20);
+        root.offsetMax = new Vector2(-28, -84);
+        root.gameObject.AddComponent<CanvasGroup>();
+        var rootImg = Round(root, Color.white, 24);
+        rootImg.raycastTarget = true;
+        var shadow = root.gameObject.AddComponent<Shadow>();
+        shadow.effectColor = new Color(0.04f, 0.02f, 0.16f, 0.45f);
+        shadow.effectDistance = new Vector2(0, -10);
+        root.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+
+        // Header in the category colour: eyebrow + close, big hexagon + name, categories.
+        var header = NewRect("Header", root);
+        header.anchorMin = new Vector2(0, 1); header.anchorMax = new Vector2(1, 1);
+        header.pivot = new Vector2(0.5f, 1);
+        header.sizeDelta = new Vector2(0, 200);
+        header.anchoredPosition = Vector2.zero;
+        var headerFill = header.gameObject.AddComponent<Image>();
+        headerFill.color = Purple;
+        headerFill.raycastTarget = false;
+        Column(header, 10, new RectOffset(20, 18, 16, 18)).childForceExpandWidth = true;
+        header.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        var topRow = NewRect("Top", header);
+        Fixed(topRow, -1, 36);
+        Row(topRow, 8, new RectOffset(0, 0, 0, 0)).childControlHeight = true;
+        var eyebrow = Label(topRow, "Eyebrow", bold, 13, new Color(1, 1, 1, 0.92f), "INSTRUMENT 1 OF 2 ON THIS CARD");
+        eyebrow.characterSpacing = 8;
+        var eyebrowSize = eyebrow.gameObject.AddComponent<LayoutElement>();
+        eyebrowSize.flexibleWidth = 1;
+        eyebrowSize.minWidth = 0;
+        var close = NewRect("Close", topRow);
+        Fixed(close, 36, 36);
+        var closeImg = Round(close, new Color(1, 1, 1, 0.3f), 18);
+        closeImg.raycastTarget = true;
+        var closeButton = close.gameObject.AddComponent<Button>();
+        closeButton.targetGraphic = closeImg;
+        foreach (var angle in new[] { 45f, -45f })
+        {
+            var bar = NewRect("Bar", close);
+            bar.anchorMin = bar.anchorMax = bar.pivot = new Vector2(0.5f, 0.5f);
+            bar.sizeDelta = new Vector2(16, 3.2f);
+            bar.localRotation = Quaternion.Euler(0, 0, angle);
+            Round(bar, Color.white, 1.6f);
+        }
+
+        var nameRow = NewRect("NameRow", header);
+        var nameRowLayout = Row(nameRow, 16, new RectOffset(0, 0, 0, 0));
+        nameRowLayout.childControlHeight = true;
+        nameRowLayout.childAlignment = TextAnchor.MiddleLeft;
+        var bigHex = NewRect("Hex", nameRow);
+        Fixed(bigHex, 74, 86);
+        PlayerCapsuleBuilder.Icon(bigHex, hex, Color.white).preserveAspect = false;
+        var bigNumber = Txt(Stretch(NewRect("Number", bigHex)), bold, 28, Purple, TextAlignmentOptions.Center);
+        bigNumber.textWrappingMode = TextWrappingModes.NoWrap;
+        bigNumber.text = "4";
+        var name = Txt(NewRect("Name", nameRow), bold, 25, Color.white, TextAlignmentOptions.MidlineLeft);
+        name.lineSpacing = -10;
+        name.text = "Land Use Zoning";
+        var nameSize = name.gameObject.AddComponent<LayoutElement>();
+        nameSize.flexibleWidth = 1;
+        nameSize.minWidth = 0;
+
+        var cats = NewRect("Categories", header);
+        cats.gameObject.AddComponent<FlowLayoutGroup>().spacingX = 6;
+        cats.GetComponent<FlowLayoutGroup>().spacingY = 6;
+        var cat = NewRect("CategoryTemplate", cats);
+        Fixed(cat, -1, 26);
+        Round(cat, new Color(1, 1, 1, 0.92f), 13);
+        Row(cat, 0, new RectOffset(12, 12, 0, 0)).childControlHeight = true;
+        Label(cat, "Label", bold, 13, Ink, "Planning & Project Design");
+
+        // Body: placed by + vote, description, other cards using it.
+        var scroll = Stretch(NewRect("Scroll", root));
+        scroll.offsetMin = new Vector2(0, footerH);
+        scroll.offsetMax = new Vector2(0, -200);
+        var viewport = Stretch(NewRect("Viewport", scroll));
+        viewport.gameObject.AddComponent<RectMask2D>();
+        viewport.gameObject.AddComponent<Image>().color = Color.clear;
+        var body = NewRect("Body", viewport);
+        body.anchorMin = new Vector2(0, 1); body.anchorMax = new Vector2(1, 1);
+        body.pivot = new Vector2(0.5f, 1);
+        body.sizeDelta = Vector2.zero;
+        Column(body, 8, new RectOffset(22, 22, 16, 16)).childForceExpandWidth = true;
+        body.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var sr = scroll.gameObject.AddComponent<ScrollRect>();
+        sr.viewport = viewport;
+        sr.content = body;
+        sr.horizontal = false;
+        sr.movementType = ScrollRect.MovementType.Clamped;
+        sr.scrollSensitivity = 40;
+
+        var owner = NewRect("Owner", body);
+        Round(owner, Lilac, 14);
+        var ownerRow = Row(owner, 10, new RectOffset(10, 12, 10, 10));
+        ownerRow.childControlHeight = true;
+        ownerRow.childAlignment = TextAnchor.MiddleLeft;
+        var ownerAvatar = NewRect("Avatar", owner);
+        Fixed(ownerAvatar, 34, 34);
+        var ownerAvatarImg = Round(ownerAvatar, PlayerCapsuleHook.PlayerColors[0], 17);
+        var ownerNumber = Txt(Stretch(NewRect("Number", ownerAvatar)), bold, 15, Color.white, TextAlignmentOptions.Center);
+        ownerNumber.text = "1";
+        var ownerText = Txt(NewRect("Text", owner), regular, 15, Ink, TextAlignmentOptions.MidlineLeft);
+        ownerText.richText = true;
+        ownerText.lineSpacing = -12;
+        ownerText.text = "<b>Placed by Ana</b>\n<color=#6B6584>Instruments round</color>";
+        var ownerTextSize = ownerText.gameObject.AddComponent<LayoutElement>();
+        ownerTextSize.flexibleWidth = 1;
+        ownerTextSize.minWidth = 0;
+        var vote = NewRect("Vote", owner);
+        Fixed(vote, 130, 30);
+        Round(vote, new Color32(0xDD, 0xF3, 0xE0, 0xFF), 15);
+        var voteText = Txt(Stretch(NewRect("Label", vote)), bold, 14, new Color32(0x1E, 0x7A, 0x2C, 0xFF), TextAlignmentOptions.Center);
+        voteText.textWrappingMode = TextWrappingModes.NoWrap;
+        voteText.text = "Approved 3–0";
+
+        Section(body, "WHAT IT IS");
+        var description = Txt(NewRect("Description", body), regular, 16, Ink, TextAlignmentOptions.TopLeft);
+        description.text = "What the instrument is.";
+        Section(body, "ALSO USED BY");
+        var also = NewRect("Also", body);
+        Column(also, 6, new RectOffset(0, 0, 0, 0));
+        var alsoRow = NewRect("AlsoTemplate", also);
+        Fixed(alsoRow, -1, 30);
+        Row(alsoRow, 8, new RectOffset(0, 0, 0, 0)).childControlHeight = true;
+        var alsoAvatar = NewRect("Avatar", alsoRow);
+        Fixed(alsoAvatar, 26, 26);
+        Round(alsoAvatar, PlayerCapsuleHook.PlayerColors[1], 13);
+        Txt(Stretch(NewRect("Number", alsoAvatar)), bold, 13, Color.white, TextAlignmentOptions.Center).text = "2";
+        var alsoLabel = Label(alsoRow, "Label", bold, 15, Ink, "04  Joining a network");
+        alsoLabel.overflowMode = TextOverflowModes.Ellipsis;
+        var alsoLabelSize = alsoLabel.gameObject.AddComponent<LayoutElement>();
+        alsoLabelSize.flexibleWidth = 1;
+        alsoLabelSize.minWidth = 0;
+        var noAlso = Label(also, "NoAlso", regular, 15, Muted, "No other card uses it.");
+
+        // Footer: previous, next, show on the board.
+        var footer = NewRect("Footer", root);
+        footer.anchorMin = Vector2.zero; footer.anchorMax = new Vector2(1, 0);
+        footer.pivot = new Vector2(0.5f, 0);
+        footer.sizeDelta = new Vector2(0, footerH);
+        footer.anchoredPosition = Vector2.zero;
+        var footLine = NewRect("Line", footer);
+        footLine.anchorMin = new Vector2(0, 1); footLine.anchorMax = new Vector2(1, 1);
+        footLine.pivot = new Vector2(0.5f, 1);
+        footLine.sizeDelta = new Vector2(0, 2);
+        footLine.gameObject.AddComponent<Image>().color = Lilac;
+        var footRow = Stretch(NewRect("Row", footer));
+        var footLayout = Row(footRow, 8, new RectOffset(18, 18, 15, 15));
+        footLayout.childControlHeight = true;
+        footLayout.childAlignment = TextAnchor.MiddleLeft;
+        var prev = PageArrow(footRow, "Prev", 180f, out _);
+        var next = PageArrow(footRow, "Next", 0f, out _);
+        foreach (var arrowButton in new[] { prev, next })
+        {
+            arrowButton.GetComponent<Image>().color = Lilac;
+            var colors = arrowButton.colors;
+            colors.disabledColor = new Color(1, 1, 1, 0.45f);
+            arrowButton.colors = colors;
+        }
+        var show = WideButton(footRow, "ShowOnBoard", "Show on the board", Purple, Color.white);
+        var showSize = show.GetComponent<LayoutElement>();
+        showSize.flexibleWidth = 1;
+        showSize.preferredHeight = showSize.minHeight = 48;
+
+        cat.gameObject.SetActive(false);
+        alsoRow.gameObject.SetActive(false);
+        root.gameObject.SetActive(false);
+
+        sheet.root = root.gameObject;
+        sheet.header = header;
+        sheet.headerFill = headerFill;
+        sheet.eyebrow = eyebrow;
+        sheet.bigNumber = bigNumber;
+        sheet.nameText = name;
+        sheet.categories = cats;
+        sheet.categoryTemplate = cat.gameObject;
+        sheet.ownerRow = owner.gameObject;
+        sheet.ownerAvatar = ownerAvatarImg;
+        sheet.ownerNumber = ownerNumber;
+        sheet.ownerText = ownerText;
+        sheet.vote = vote.gameObject;
+        sheet.voteText = voteText;
+        sheet.description = description;
+        sheet.scroll = sr;
+        sheet.alsoContainer = also;
+        sheet.alsoTemplate = alsoRow.gameObject;
+        sheet.noAlso = noAlso.gameObject;
+        sheet.closeButton = closeButton;
+        sheet.prevButton = prev;
+        sheet.nextButton = next;
+        sheet.showOnBoardButton = show;
+        EditorUtility.SetDirty(sheet);
+        return sheet;
+    }
+
+    // While the lanes are hidden to see the board: a pink "Back to the cards" under the ribbon.
+    private static RectTransform BuildBoardPeek(RectTransform holder, float top)
+    {
+        var peek = NewRect("BoardPeek", holder);
+        peek.anchorMin = peek.anchorMax = peek.pivot = new Vector2(0.5f, 1);
+        peek.sizeDelta = new Vector2(620, 56);
+        peek.anchoredPosition = new Vector2(0, -top);
+        Round(peek, Color.white, 28);
+        var shadow = peek.gameObject.AddComponent<Shadow>();
+        shadow.effectColor = new Color(0.04f, 0.02f, 0.16f, 0.35f);
+        shadow.effectDistance = new Vector2(0, -6);
+        var row = Row(peek, 14, new RectOffset(24, 6, 6, 6));
+        row.childControlHeight = true;
+        row.childAlignment = TextAnchor.MiddleLeft;
+        var hint = Label(peek, "Hint", bold, 18, Ink, "The glowing pieces are this card’s instruments");
+        var hintSize = hint.gameObject.AddComponent<LayoutElement>();
+        hintSize.flexibleWidth = 1;
+        hintSize.minWidth = 0;
+        hint.overflowMode = TextOverflowModes.Ellipsis;
+        var back = WideButton(peek, "BackToCards", "Back to the cards", Pink, Color.white);
+        var backSize = back.GetComponent<LayoutElement>();
+        backSize.preferredWidth = backSize.minWidth = 210;
+        backSize.preferredHeight = backSize.minHeight = 44;
+        peek.gameObject.SetActive(false);
+        return peek;
     }
 
     // Round white arrow button for the pager; a pink dot on it when a request waits on that side.
@@ -1884,8 +2246,26 @@ public static class MainHudBuilder
         var usedText = Label(used, "Label", bold, 14, Color.white, "0 of 5 tokens");
         used.gameObject.SetActive(false);
 
-        var cards = NewRect("Cards", lane);
-        Column(cards, 12, new RectOffset(0, 0, 0, 0));
+        // The cards scroll: with their full descriptions they can be taller than the lane.
+        var scroll = NewRect("Scroll", lane);
+        scroll.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+        var viewport = Stretch(NewRect("Viewport", scroll));
+        viewport.gameObject.AddComponent<RectMask2D>();
+        var hit = viewport.gameObject.AddComponent<Image>();
+        hit.color = Color.clear; // the wheel scrolls between cards too
+        var cards = NewRect("Cards", viewport);
+        cards.anchorMin = new Vector2(0, 1);
+        cards.anchorMax = new Vector2(1, 1);
+        cards.pivot = new Vector2(0.5f, 1);
+        cards.sizeDelta = Vector2.zero;
+        Column(cards, 12, new RectOffset(0, 0, 0, 12));
+        cards.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var sr = scroll.gameObject.AddComponent<ScrollRect>();
+        sr.viewport = viewport;
+        sr.content = cards;
+        sr.horizontal = false;
+        sr.movementType = ScrollRect.MovementType.Clamped;
+        sr.scrollSensitivity = 40;
 
         return new CollaborationRound.Lane
         {
@@ -1920,8 +2300,50 @@ public static class MainHudBuilder
 
         var title = Txt(NewRect("Title", face), bold, 20, Ink, TextAlignmentOptions.TopLeft);
         title.text = "Creating partnerships to enhance biodiversity";
-        title.overflowMode = TextOverflowModes.Ellipsis;
-        title.maxVisibleLines = 2;
+        // The card's full text: what the action is, and how (when the player wrote it).
+        var description = Txt(NewRect("Description", face), regular, 16, Ink, TextAlignmentOptions.TopLeft);
+        description.text = "What the action does.";
+        var how = Txt(NewRect("How", face), regular, 16, Muted, TextAlignmentOptions.TopLeft);
+        how.richText = true;
+        how.text = "<b>How:</b> …";
+
+        // The instruments the card uses: each opens the instrument sheet.
+        var uses = NewRect("Uses", face);
+        Column(uses, 6, new RectOffset(0, 0, 4, 2));
+        var usesLabel = Label(uses, "Label", bold, 12, Muted, "USES THESE INSTRUMENTS");
+        usesLabel.characterSpacing = 8;
+        var links = NewRect("Links", uses);
+        Column(links, 6, new RectOffset(0, 0, 0, 0));
+        var link = NewRect("LinkTemplate", links);
+        Fixed(link, -1, 50);
+        var linkImg = Round(link, Lilac, 14);
+        linkImg.raycastTarget = true;
+        link.gameObject.AddComponent<Button>().targetGraphic = linkImg;
+        var linkRow = Row(link, 10, new RectOffset(6, 10, 6, 6));
+        linkRow.childControlHeight = true;
+        linkRow.childAlignment = TextAnchor.MiddleLeft;
+        var linkHex = NewRect("Hex", link);
+        Fixed(linkHex, 32, 37);
+        var linkHexImg = PlayerCapsuleBuilder.Icon(linkHex, hex, Purple);
+        linkHexImg.preserveAspect = false;
+        var linkNumber = Txt(Stretch(NewRect("Number", linkHex)), bold, 13, Color.white, TextAlignmentOptions.Center);
+        linkNumber.textWrappingMode = TextWrappingModes.NoWrap;
+        linkNumber.text = "4";
+        var linkTexts = NewRect("Texts", link);
+        Column(linkTexts, -4, new RectOffset(0, 0, 0, 0)).childAlignment = TextAnchor.MiddleLeft;
+        var linkTextsSize = linkTexts.gameObject.AddComponent<LayoutElement>();
+        linkTextsSize.flexibleWidth = 1;
+        linkTextsSize.minWidth = 0;
+        var linkCat = Label(linkTexts, "Category", bold, 11, PurpleMid, "Planning & Project Design");
+        linkCat.overflowMode = TextOverflowModes.Ellipsis;
+        var linkName = Label(linkTexts, "Name", bold, 15, Ink, "Land Use Zoning");
+        linkName.overflowMode = TextOverflowModes.Ellipsis;
+        var chevron = NewRect("Chevron", link);
+        Fixed(chevron, 14, 14);
+        var chevronImg = chevron.gameObject.AddComponent<Image>();
+        chevronImg.sprite = ActionDrawerBuilder.GetOrCreateChevron();
+        chevronImg.color = Muted;
+        chevronImg.raycastTarget = false;
 
         var line = NewRect("Line", face);
         Fixed(line, -1, 1.5f);

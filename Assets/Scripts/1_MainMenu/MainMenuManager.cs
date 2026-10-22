@@ -48,6 +48,8 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(1); //Loading
     }
 
+    public void OpenHelp() => HelpScreen.Open(0);
+
     // A browser tab can't close itself: the web build leaves full screen and shows a goodbye screen.
     public void QuitGame()
     {

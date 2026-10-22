@@ -56,6 +56,7 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
     public Image doneButtonImage;
     public TMP_Text doneLabel;
     public GameObject doneGlow;         // pulses around "I'm done" when there is nothing left to collaborate on
+    public GameObject endActionsGlow;   // pulses around the GM's "End actions round" once everyone has played
 
     [Header("Vote result")]
     public float resultSeconds = 3.5f;
@@ -190,7 +191,12 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         if (actions)
         {
             eyebrow = "ACTION CARDS ROUND";
-            text = gm ? "Players are choosing their cards" : "Choose your action cards";
+            var (played, total) = ActionCardsPlayed();
+            bool everyone = total > 0 && played >= total;
+            text = !gm ? "Choose your action cards"
+                 : everyone ? "Everyone has played their cards"
+                 : $"{played} of {total} players have played";
+            if (endActionsGlow) endActionsGlow.SetActive(gm && everyone);
         }
         else if (voting)
         {
@@ -231,7 +237,27 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         if (endTurnButton) endTurnButton.SetActive(gm && !actions);
         if (endTurnLabel) endTurnLabel.text = voting ? "End vote · next turn" : "End turn";
         if (endActionsButton) endActionsButton.SetActive(gm && actions);
+        if (!actions && endActionsGlow) endActionsGlow.SetActive(false);
     }
+
+    // Action cards round: players (not the GM, not those who left) who have played their cards.
+    // Played cards are kept by position in the actor-sorted player list, like GameState.localPlayerIndex.
+    public static (int played, int total) ActionCardsPlayed()
+    {
+        int played = 0, total = 0;
+        if (GameState.Instance == null) return (0, 0);
+        var sorted = PhotonNetwork.PlayerList.OrderBy(p => p.ActorNumber).ToArray();
+        for (int i = 0; i < sorted.Length; i++)
+        {
+            if (sorted[i].IsMasterClient || sorted[i].IsInactive) continue;
+            total++;
+            if (HasPlayedCards(i)) played++;
+        }
+        return (played, total);
+    }
+
+    public static bool HasPlayedCards(int sortedIndex) =>
+        GameState.Instance != null && GameState.Instance.playerActionCards.ContainsKey(sortedIndex);
 
     // ── Vote result ──────────────────────────────────────────────────────────
 

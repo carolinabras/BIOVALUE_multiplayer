@@ -76,7 +76,7 @@ public class GameState : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey(BiovalueStatics.CollabTokensKey))
         {
             var props = new Hashtable();
-            props[BiovalueStatics.CollabTokensKey] = 5;
+            props[BiovalueStatics.CollabTokensKey] = ColaborationManager.StartTokens;
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
 

@@ -51,6 +51,8 @@ public class GameMasterHud : MonoBehaviourPunCallbacks
     private static readonly Color Grey = new Color32(0x9A, 0x92, 0xAC, 0xFF);
     private static readonly Color Ink = new Color32(0x24, 0x1B, 0x3A, 0xFF);
     private static readonly Color Red = new Color32(0xD9, 0x3A, 0x3A, 0xFF);
+    private static readonly Color OkLight = new Color32(0xDD, 0xF3, 0xE0, 0xFF);
+    private static readonly Color OkDark = new Color32(0x1E, 0x7A, 0x2C, 0xFF);
 
     private const string EndGameKey = "endGame";
     private const float ConfirmSeconds = 3f;
@@ -168,10 +170,10 @@ public class GameMasterHud : MonoBehaviourPunCallbacks
         if (endCollabButton) endCollabButton.SetActive(step == 2);
         if (showActionsButton) showActionsButton.SetActive(step == 1);
 
-        RefreshRows(step == 0, step == 2, state.GetCurrentPlayerTurnIndex(), state.PeekNextTurnActor());
+        RefreshRows(step == 0, step == 1, step == 2, state.GetCurrentPlayerTurnIndex(), state.PeekNextTurnActor());
     }
 
-    private void RefreshRows(bool placing, bool collaborating, int turn, int next)
+    private void RefreshRows(bool placing, bool playing, bool collaborating, int turn, int next)
     {
         if (!rows || !rowTemplate) return;
         var players = PhotonNetwork.PlayerList.OrderBy(p => p.ActorNumber).Skip(1).ToList(); // no GM
@@ -204,13 +206,15 @@ public class GameMasterHud : MonoBehaviourPunCallbacks
 
             bool confirming = confirmActor == actor;
             string status = placing && actor == turn ? "Placing" : placing && actor == next ? "Next"
-                : collaborating && ColaborationManager.IsDone(players[i]) ? "Done" : "";
+                : collaborating && ColaborationManager.IsDone(players[i]) ? "Done"
+                : playing ? (TurnRibbon.HasPlayedCards(i + 1) ? "Played" : "Choosing") : "";
             var chip = row.transform.Find("Status");
             if (chip)
             {
                 chip.gameObject.SetActive(status != "" && !confirming); // the wide "Remove?" takes its place
-                chip.GetComponent<Image>().color = status == "Placing" ? PinkLight : Lilac;
-                SetText(row, "Status/Label", status, status == "Placing" ? PinkDark : Purple);
+                bool done = status == "Played" || status == "Done";
+                chip.GetComponent<Image>().color = status == "Placing" ? PinkLight : done ? OkLight : Lilac;
+                SetText(row, "Status/Label", status, status == "Placing" ? PinkDark : done ? OkDark : status == "Choosing" ? Grey : Purple);
             }
 
             Set(row, "Kick", img => img.color = confirming ? Red : new Color(1, 1, 1, 0));

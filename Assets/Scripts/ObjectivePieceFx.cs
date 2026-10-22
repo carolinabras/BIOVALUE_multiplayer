@@ -16,6 +16,7 @@ public class ObjectivePieceFx : MonoBehaviour
     public float sheenPeriod = 3.2f;
     public float sheenFrom = -190f, sheenTo = 190f;
     public float landTime = 0.7f;
+    private const float IntroGrace = 3f; // how long to wait for a phase intro that hasn't started
     public float tileWidth = 143f; // the piece's tile width in its own units (matched to the board's tile)
 
     private float _auraAlpha = 1f, _born;
@@ -99,7 +100,10 @@ public class ObjectivePieceFx : MonoBehaviour
 
         if (_waiting)
         {
-            if (PhaseIntro.Instance && PhaseIntro.Instance.IsPlaying)
+            // At the start of the game: after the instruments intro (waiting for it to begin, but not forever).
+            var intro = PhaseIntro.Instance;
+            bool introAhead = intro && intro.isActiveAndEnabled && !intro.HasStarted && now - _born < IntroGrace;
+            if (intro && (intro.IsPlaying || introAhead))
             {
                 if (piece) piece.localScale = Vector3.zero; // hidden until the intro is gone
                 return;

@@ -8,8 +8,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // End of the game: everyone's results on one card.
-//  - The GM sees it as soon as the game ends ("End collaboration"), answers coming in live, players still
-//    answering greyed out; "Show results to everyone" shares it, "Save results" exports.
+//  - When the game ends ("End collaboration") the GM first sees "Players are rating the game" (waiting):
+//    who has answered, live. "See results" opens the card (players still answering greyed out);
+//    "Show results to everyone" shares it, "Save results" exports.
 //  - Players see it once the GM shares it (their end card closes then). Everyone has "Quit game".
 //  - Header: the two rating averages and the score formula. One row per player, ranked by score: rank,
 //    avatar, name, company, both ratings (red → green), a bar of how the score adds up (one colour per
@@ -34,6 +35,14 @@ public class ResultsCard : MonoBehaviourPunCallbacks
     public TMP_Text shareLabel;
     public GameObject leaveButton;     // "Quit game", for everyone
 
+    [Header("GM: waiting for the players' ratings")]
+    public GameObject waiting;
+    public TMP_Text waitingCount;
+    public RectTransform waitingRows;
+    public GameObject waitingRowTemplate; // Avatar (Image) > Number, Name, Status (Image) > Label
+    public Button seeResultsButton;
+    public TMP_Text seeResultsLabel;
+
     private const string EndGameKey = "endGame";
     private const string ShowResultsKey = "showResults";
 
@@ -48,9 +57,13 @@ public class ResultsCard : MonoBehaviourPunCallbacks
     private static readonly Color OpenBg = new Color32(0xF7, 0xF4, 0xFC, 0xFF);
     private static readonly Color Done = new Color32(0xE4, 0xE1, 0xEC, 0xFF);
     private static readonly Color DoneText = new Color32(0x5E, 0x55, 0x75, 0xFF);
+    private static readonly Color AnsweredBg = new Color32(0xDD, 0xF3, 0xE0, 0xFF);
+    private static readonly Color AnsweredText = new Color32(0x1E, 0x7A, 0x2C, 0xFF);
 
     private readonly List<GameObject> rowPool = new List<GameObject>();
     private readonly List<GameObject> legendPool = new List<GameObject>();
+    private readonly List<GameObject> waitingPool = new List<GameObject>();
+    private bool gmOpened;              // the GM chose "See results"
     private int openActor = -1;
     private float nextRefresh;
 
@@ -58,6 +71,8 @@ public class ResultsCard : MonoBehaviourPunCallbacks
     {
         Instance = this;
         if (content) content.SetActive(false);
+        if (waiting) waiting.SetActive(false);
+        if (waitingRowTemplate) waitingRowTemplate.SetActive(false);
         if (rowTemplate) rowTemplate.SetActive(false);
         if (legendTemplate) legendTemplate.SetActive(false);
     }
@@ -70,6 +85,7 @@ public class ResultsCard : MonoBehaviourPunCallbacks
     private void Start()
     {
         if (shareButton) shareButton.onClick.AddListener(() => EndGameManager.Instance?.OnClickShowResultsToAll());
+        if (seeResultsButton) seeResultsButton.onClick.AddListener(() => { gmOpened = true; UpdateVisibility(); });
         UpdateVisibility();
     }
 
@@ -78,8 +94,9 @@ public class ResultsCard : MonoBehaviourPunCallbacks
         PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out var v) && v is bool b && b;
 
     public override void OnRoomPropertiesUpdate(Hashtable changedProps) => UpdateVisibility();
-    public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps) => Refresh();
-    public override void OnPlayerLeftRoom(Player other) => Refresh();
+    public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps) { Refresh(); RefreshWaiting(); }
+    public override void OnPlayerLeftRoom(Player other) { Refresh(); RefreshWaiting(); }
+    public override void OnPlayerEnteredRoom(Player other) => RefreshWaiting();
 
     private void Update()
     {
@@ -91,9 +108,59 @@ public class ResultsCard : MonoBehaviourPunCallbacks
     private void UpdateVisibility()
     {
         bool gm = GameAuthority.IsGameMaster;
-        bool show = RoomFlag(EndGameKey) && (gm || RoomFlag(ShowResultsKey));
+        bool ended = RoomFlag(EndGameKey);
+        bool shared = RoomFlag(ShowResultsKey);
+        // The GM waits for the ratings first (no waiting panel built: straight to the results, as before).
+        bool wait = gm && ended && !shared && !gmOpened && waiting;
+        bool show = ended && (shared || (gm && !wait));
+        if (waiting && waiting.activeSelf != wait) waiting.SetActive(wait);
         if (content && content.activeSelf != show) content.SetActive(show);
+        if (wait) RefreshWaiting();
         if (show) Refresh();
+    }
+
+    private void RefreshWaiting()
+    {
+        if (!waiting || !waiting.activeSelf) return;
+        var all = ScoreFormula.Players();
+        int answered = all.Count(ScoreFormula.HasAnswered);
+        bool everyone = all.Length > 0 && answered == all.Length;
+        if (waitingCount)
+            waitingCount.text = everyone ? "Everyone has answered" : $"{answered} of {all.Length} players have answered";
+        if (seeResultsLabel)
+        {
+            seeResultsLabel.text = everyone ? "See results" : "See results now";
+            seeResultsLabel.color = everyone ? Color.white : Purple;
+        }
+        if (seeResultsButton && seeResultsButton.targetGraphic)
+            seeResultsButton.targetGraphic.color = everyone ? Pink : Lilac;
+
+        if (!waitingRows || !waitingRowTemplate) return;
+        while (waitingPool.Count < all.Length) waitingPool.Add(Instantiate(waitingRowTemplate, waitingRows));
+        for (int i = 0; i < waitingPool.Count; i++)
+        {
+            bool used = i < all.Length;
+            waitingPool[i].SetActive(used);
+            if (!used) continue;
+            var p = all[i];
+            bool done = ScoreFormula.HasAnswered(p);
+            int number = TurnRibbon.PlayerNumberOf(p.ActorNumber);
+            var t = waitingPool[i].transform;
+            var avatar = t.Find("Avatar")?.GetComponent<Image>();
+            if (avatar) avatar.color = PlayerCapsuleHook.ColorFor(number);
+            var num = t.Find("Avatar/Number")?.GetComponent<TMP_Text>();
+            if (num) num.text = number.ToString();
+            var name = t.Find("Name")?.GetComponent<TMP_Text>();
+            if (name) name.text = $"<noparse>{GameLog.GetPlayerName(p.ActorNumber)}</noparse>";
+            var status = t.Find("Status")?.GetComponent<Image>();
+            if (status) status.color = done ? AnsweredBg : Idle;
+            var label = t.Find("Status/Label")?.GetComponent<TMP_Text>();
+            if (label)
+            {
+                label.text = done ? "Answered" : "Answering…";
+                label.color = done ? AnsweredText : Muted;
+            }
+        }
     }
 
     // ── Content ──────────────────────────────────────────────────────────────

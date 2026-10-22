@@ -18,8 +18,8 @@ public static class PlayerCapsuleBuilder
     private const string ScenePath = "Assets/Scenes/MainGame.unity";
     private const string BoardPrefabPath = "Assets/Resources/PhotonPrefabs/PlayersBoard.prefab";
 
-    private const float W = 640f;     // details window width
-    private const float HeaderH = 150f;
+    // Details window: player on the left (their colour), tabs on the right.
+    private const float W = 1000f, H = 670f, LeftW = 320f, StatH = 78f, TabsH = 66f;
 
     private static readonly Color Purple = new Color32(0x46, 0x32, 0x7F, 0xFF);
     private static readonly Color PurpleMid = new Color32(0x6A, 0x55, 0xA8, 0xFF);
@@ -33,6 +33,9 @@ public static class PlayerCapsuleBuilder
     private static readonly Color Muted = new Color32(0x5E, 0x55, 0x75, 0xFF);
     private static readonly Color Yes = new Color32(0x2F, 0xA8, 0x4F, 0xFF);
     private static readonly Color No = new Color32(0xD9, 0x3A, 0x3A, 0xFF);
+    private static readonly Color CardCream = new Color32(0xFF, 0xFB, 0xF2, 0xFF);
+    private static readonly Color Body = new Color32(0x4A, 0x44, 0x60, 0xFF);
+    private static readonly Color TokenBlue = new Color32(0x2F, 0x6F, 0xB0, 0xFF);
 
     // Round token with a white ring and a tick or a cross, inside the capsule's right end.
     private static GameObject VoteToken(RectTransform look, string name, Color color, bool tick)
@@ -268,179 +271,420 @@ public static class PlayerCapsuleBuilder
 
         // Dimmed board; a tap outside the window closes it.
         var dim = Stretch(NewRect("Dim", root)).gameObject.AddComponent<Image>();
-        dim.color = new Color(0.08f, 0.055f, 0.16f, 0.45f);
+        dim.color = new Color(0.08f, 0.047f, 0.196f, 0.6f);
         var dimButton = dim.gameObject.AddComponent<Button>();
         dimButton.transition = Selectable.Transition.None;
 
-        // The window grows with its content.
         var window = NewRect("Window", root);
         window.anchorMin = window.anchorMax = window.pivot = new Vector2(0.5f, 0.5f);
-        window.sizeDelta = new Vector2(W, 400);
-        var windowImg = Round(window, Color.white, 28);
+        window.sizeDelta = new Vector2(W, H);
+        var windowImg = Round(window, Color.white, 26);
         windowImg.raycastTarget = true; // clicks on the window don't close it
         var windowShadow = window.gameObject.AddComponent<Shadow>();
-        windowShadow.effectColor = new Color(0.04f, 0.02f, 0.1f, 0.3f);
-        windowShadow.effectDistance = new Vector2(0, -12);
+        windowShadow.effectColor = new Color(0.04f, 0.02f, 0.16f, 0.45f);
+        windowShadow.effectDistance = new Vector2(0, -14);
         window.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-        var windowLayout = Column(window, 0, new RectOffset(0, 0, 0, 0));
-        windowLayout.childForceExpandWidth = true;
-        window.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        // ── Header in the player's colour ──
-        var header = NewRect("Header", window);
-        Fixed(header, -1, HeaderH);
-        var headerFill = header.gameObject.AddComponent<Image>();
-        headerFill.color = PlayerCapsuleHook.PlayerColors[0];
-        headerFill.raycastTarget = false;
-        var shade = Stretch(NewRect("Shade", header)).gameObject.AddComponent<Image>();
-        shade.color = new Color(0, 0, 0, 0.12f);
-        shade.raycastTarget = false;
-        var shadeRT = shade.rectTransform;
-        shadeRT.anchorMax = new Vector2(1, 0.5f); // a darker lower half gives the header some depth
-        var cascade = Stretch(NewRect("HexCascade", header)).gameObject.AddComponent<CardCascade>();
+        // ── Left: who, in the player's colour ──
+        var left = NewRect("Left", window);
+        left.anchorMin = Vector2.zero; left.anchorMax = new Vector2(0, 1);
+        left.pivot = new Vector2(0, 0.5f);
+        left.sizeDelta = new Vector2(LeftW, 0);
+        left.anchoredPosition = Vector2.zero;
+        var leftFill = left.gameObject.AddComponent<Image>();
+        leftFill.color = PlayerCapsuleHook.PlayerColors[0];
+        leftFill.raycastTarget = false;
+        var shade = Stretch(NewRect("Shade", left));
+        shade.anchorMax = new Vector2(1, 0.45f); // a darker lower part, behind the numbers
+        var shadeImg = shade.gameObject.AddComponent<Image>();
+        shadeImg.color = new Color(0.08f, 0.05f, 0.2f, 0.22f);
+        shadeImg.raycastTarget = false;
+        var cascade = Stretch(NewRect("HexCascade", left)).gameObject.AddComponent<CardCascade>();
         cascade.cardSprite = hex;
         cascade.pixelsPerUnitMultiplier = 1f;
         cascade.cardSize = new Vector2(26, 30);
-        cascade.color = new Color(1f, 1f, 1f, 0.16f);
-        header.gameObject.AddComponent<RectMask2D>();
+        cascade.color = new Color(1f, 1f, 1f, 0.1f);
 
-        // Profile picture: white circle, person in the player's colour, number in a dark corner badge.
-        var bigBadge = NewRect("Avatar", header);
-        bigBadge.anchorMin = bigBadge.anchorMax = bigBadge.pivot = new Vector2(0, 0.5f);
-        bigBadge.sizeDelta = new Vector2(92, 92);
-        bigBadge.anchoredPosition = new Vector2(30, 0);
-        Circle(bigBadge, Color.white, out var bigCircle);
-        var bigPerson = Stretch(NewRect("Person", bigCircle));
-        bigPerson.offsetMin = new Vector2(15, 0);
-        bigPerson.offsetMax = new Vector2(-15, -14);
-        var avatarIcon = Icon(bigPerson, GetOrCreatePerson(), PlayerCapsuleHook.PlayerColors[0]);
-        NumberBadge(bigBadge, 34, Ink, Color.white, 19, out var badgeNumber);
+        var prev = CircleButton(left, "Prev", 20, 20, 40, new Color(1, 1, 1, 0.25f), Color.white, 180f);
+        var position = Txt(Place(NewRect("Position", left), 64, 20, LeftW - 128, 40), bold, 14, Color.white, TextAlignmentOptions.Center);
+        position.characterSpacing = 6;
+        position.textWrappingMode = TextWrappingModes.NoWrap;
+        position.text = "PLAYER 1 OF 4";
+        var next = CircleButton(left, "Next", LeftW - 60, 20, 40, new Color(1, 1, 1, 0.25f), Color.white, 0f);
 
-        const float textX = 140f, textW = W - textX - 80f;
-        var eyebrow = Txt(Place(NewRect("Eyebrow", header), textX, 26, textW, 22), bold, 16, new Color(1, 1, 1, 0.85f), TextAlignmentOptions.TopLeft);
-        eyebrow.characterSpacing = 6;
-        eyebrow.text = "PLAYER 1";
-        var nameText = Txt(Place(NewRect("Name", header), textX, 48, textW, 48), bold, 38, Color.white, TextAlignmentOptions.TopLeft);
-        nameText.textWrappingMode = TextWrappingModes.NoWrap;
-        nameText.overflowMode = TextOverflowModes.Ellipsis;
-        nameText.enableAutoSizing = true;
-        nameText.fontSizeMin = 26;
-        nameText.fontSizeMax = 38;
+        // Avatar: white circle, person in the player's colour, number badge on the edge.
+        var avatar = Place(NewRect("Avatar", left), (LeftW - 110) / 2f, 78, 110, 110);
+        Circle(avatar, Color.white, out var circle);
+        var person = Stretch(NewRect("Person", circle));
+        person.offsetMin = new Vector2(18, 0);
+        person.offsetMax = new Vector2(-18, -16);
+        var avatarIcon = Icon(person, GetOrCreatePerson(), PlayerCapsuleHook.PlayerColors[0]);
+        var badge = NewRect("Badge", avatar);
+        badge.anchorMin = badge.anchorMax = badge.pivot = new Vector2(1, 0);
+        badge.sizeDelta = new Vector2(40, 40);
+        badge.anchoredPosition = new Vector2(4, 0);
+        var badgeFill = Round(badge, PlayerCapsuleHook.PlayerColors[0], 20);
+        var badgeRing = badge.gameObject.AddComponent<Outline>();
+        badgeRing.effectColor = Color.white;
+        badgeRing.effectDistance = new Vector2(2.5f, -2.5f);
+        var badgeNumber = Txt(Stretch(NewRect("Number", badge)), bold, 19, Color.white, TextAlignmentOptions.Center);
+        badgeNumber.text = "1";
+
+        // Name, organisation, status: stacked, centred, as tall as they need.
+        var who = Place(NewRect("Who", left), 22, 202, LeftW - 44, 230);
+        var whoCol = Column(who, 6, new RectOffset(0, 0, 0, 0));
+        whoCol.childAlignment = TextAnchor.UpperCenter;
+        var nameText = Txt(NewRect("Name", who), bold, 28, Color.white, TextAlignmentOptions.Top);
+        nameText.lineSpacing = -12;
         nameText.text = "Player name";
-        var company = Txt(Place(NewRect("Company", header), textX, 98, textW, 30), regular, 21, Color.white, TextAlignmentOptions.TopLeft);
-        company.textWrappingMode = TextWrappingModes.NoWrap;
-        company.overflowMode = TextOverflowModes.Ellipsis;
+        var company = Txt(NewRect("Company", who), regular, 17, new Color(1, 1, 1, 0.92f), TextAlignmentOptions.Top);
+        company.lineSpacing = -8;
         company.text = "Organisation";
+        var statusRow = NewRect("StatusRow", who);
+        var statusRowLayout = Row(statusRow, 0);
+        statusRowLayout.childAlignment = TextAnchor.MiddleCenter;
+        statusRowLayout.padding = new RectOffset(0, 0, 6, 0);
+        var status = Chip(statusRow, "Status", new Color(0, 0, 0, 0.2f), 32, new RectOffset(14, 16, 0, 0));
+        var statusDot = NewRect("Dot", status);
+        Fixed(statusDot, 10, 10);
+        var statusDotImg = Round(statusDot, Color.white, 5);
+        var statusText = ChipLabel(status, bold, 15, Color.white, "Waiting for their turn");
 
-        var closeRT = NewRect("Close", header);
-        closeRT.anchorMin = closeRT.anchorMax = closeRT.pivot = new Vector2(1, 1);
-        closeRT.sizeDelta = new Vector2(42, 42);
-        closeRT.anchoredPosition = new Vector2(-18, -18);
-        var closeImg = Round(closeRT, new Color(1, 1, 1, 0.25f), 21);
+        // Four numbers, two by two, at the bottom.
+        var stats = NewRect("Stats", left);
+        stats.anchorMin = Vector2.zero; stats.anchorMax = new Vector2(1, 0);
+        stats.pivot = new Vector2(0.5f, 0);
+        stats.offsetMin = new Vector2(22, 22);
+        stats.offsetMax = new Vector2(-22, 22 + 2 * StatH + 8);
+        var grid = stats.gameObject.AddComponent<GridLayoutGroup>();
+        grid.cellSize = new Vector2((LeftW - 44 - 8) / 2f, StatH);
+        grid.spacing = new Vector2(8, 8);
+        var statValues = new TMP_Text[4];
+        string[] statLabels = { "instruments placed", "action cards played", "collaborations made", "collaborators on their cards" };
+        for (int i = 0; i < 4; i++)
+        {
+            var tile = NewRect("Stat" + (i + 1), stats);
+            Round(tile, new Color(1, 1, 1, 0.16f), 14);
+            var value = Txt(Place(NewRect("Value", tile), 12, 8, 110, 30), bold, 28, Color.white, TextAlignmentOptions.TopLeft);
+            value.textWrappingMode = TextWrappingModes.NoWrap;
+            value.text = "0";
+            var label = Txt(Place(NewRect("Label", tile), 12, 40, (LeftW - 52) / 2f - 20, 36), bold, 13, new Color(1, 1, 1, 0.9f), TextAlignmentOptions.TopLeft);
+            label.lineSpacing = -14;
+            label.text = statLabels[i];
+            statValues[i] = value;
+        }
+
+        // ── Right: what they did ──
+        var right = Stretch(NewRect("Right", window));
+        right.offsetMin = new Vector2(LeftW, 0);
+
+        var tabsRT = Place(NewRect("Tabs", right), 20, 16, W - LeftW - 100, TabsH - 16);
+        var tabsRow = Row(tabsRT, 4);
+        tabsRow.childControlHeight = true;
+        tabsRow.childForceExpandHeight = true;
+        string[] tabNames = { "Instruments", "Action cards", "Collaborations" };
+        float[] tabWidths = { 186, 196, 220 };
+        var tabButtons = new Button[3];
+        var tabLabels = new TMP_Text[3];
+        var tabCountFills = new Image[3];
+        var tabCounts = new TMP_Text[3];
+        var tabUnderlines = new Image[3];
+        for (int i = 0; i < 3; i++)
+        {
+            var tab = NewRect("Tab" + (i + 1), tabsRT);
+            Fixed(tab, tabWidths[i], -1);
+            var hit = tab.gameObject.AddComponent<Image>();
+            hit.color = Color.clear;
+            var button = tab.gameObject.AddComponent<Button>();
+            button.targetGraphic = hit;
+            button.transition = Selectable.Transition.None;
+            var inner = Row(tab, 8);
+            inner.padding = new RectOffset(12, 8, 0, 8);
+            inner.childAlignment = TextAnchor.MiddleLeft;
+            var label = Txt(NewRect("Label", tab), bold, 18, Ink, TextAlignmentOptions.MidlineLeft);
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.text = tabNames[i];
+            var count = NewRect("Count", tab);
+            Fixed(count, 28, 24);
+            var countFill = Round(count, Lilac, 12);
+            var countText = Txt(Stretch(NewRect("Text", count)), bold, 14, Muted, TextAlignmentOptions.Center);
+            countText.text = "0";
+            var underline = NewRect("Underline", tab);
+            underline.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            underline.anchorMin = Vector2.zero; underline.anchorMax = new Vector2(1, 0);
+            underline.pivot = new Vector2(0.5f, 0);
+            underline.sizeDelta = new Vector2(0, 3);
+            underline.anchoredPosition = new Vector2(0, -2);
+            var underlineImg = underline.gameObject.AddComponent<Image>();
+            underlineImg.color = Color.clear;
+            underlineImg.raycastTarget = false;
+            tabButtons[i] = button; tabLabels[i] = label; tabCountFills[i] = countFill; tabCounts[i] = countText; tabUnderlines[i] = underlineImg;
+        }
+        var divider = NewRect("Divider", right);
+        divider.anchorMin = new Vector2(0, 1); divider.anchorMax = new Vector2(1, 1);
+        divider.pivot = new Vector2(0.5f, 1);
+        divider.sizeDelta = new Vector2(0, 2);
+        divider.anchoredPosition = new Vector2(0, -TabsH);
+        divider.gameObject.AddComponent<Image>().color = Lilac;
+
+        var close = NewRect("Close", right);
+        close.anchorMin = close.anchorMax = close.pivot = new Vector2(1, 1);
+        close.sizeDelta = new Vector2(42, 42);
+        close.anchoredPosition = new Vector2(-20, -12);
+        var closeImg = Round(close, Lilac, 21);
         closeImg.raycastTarget = true;
-        var closeButton = closeRT.gameObject.AddComponent<Button>();
+        var closeButton = close.gameObject.AddComponent<Button>();
         closeButton.targetGraphic = closeImg;
         foreach (var angle in new[] { 45f, -45f })
         {
-            var bar = NewRect("Bar", closeRT);
+            var bar = NewRect("Bar", close);
             bar.anchorMin = bar.anchorMax = bar.pivot = new Vector2(0.5f, 0.5f);
             bar.sizeDelta = new Vector2(18, 3.5f);
             bar.localRotation = Quaternion.Euler(0, 0, angle);
-            Round(bar, Color.white, 1.75f);
+            Round(bar, Ink, 1.75f);
         }
 
-        // ── Body ──
-        var body = NewRect("Body", window);
-        Column(body, 12, new RectOffset(26, 26, 20, 26));
+        // Scrolling pages
+        var scroll = Stretch(NewRect("Scroll", right));
+        scroll.offsetMin = new Vector2(24, 20);
+        scroll.offsetMax = new Vector2(-14, -TabsH - 16);
+        var viewport = Stretch(NewRect("Viewport", scroll));
+        viewport.gameObject.AddComponent<RectMask2D>();
+        viewport.gameObject.AddComponent<Image>().color = Color.clear;
+        var content = NewRect("Content", viewport);
+        content.anchorMin = new Vector2(0, 1); content.anchorMax = new Vector2(1, 1);
+        content.pivot = new Vector2(0.5f, 1);
+        content.sizeDelta = Vector2.zero;
+        Column(content, 0, new RectOffset(0, 12, 0, 4));
+        content.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var sr = scroll.gameObject.AddComponent<ScrollRect>();
+        sr.viewport = viewport;
+        sr.content = content;
+        sr.horizontal = false;
+        sr.movementType = ScrollRect.MovementType.Clamped;
+        sr.scrollSensitivity = 40;
 
-        // Turn tag
-        var turnRow = Row(NewRect("TurnRow", body), 0);
-        var turnTag = Chip(turnRow, "TurnTag", PinkLight, 30, new RectOffset(12, 16, 0, 0));
-        var turnDot = NewRect("Dot", turnTag);
-        Round(turnDot, Pink, 5);
-        Fixed(turnDot, 10, 10);
-        ChipLabel(turnTag, bold, 17, PinkDark, "Placing an instrument now");
-        turnRow.gameObject.SetActive(false);
+        // Page 1: instruments
+        var instPage = NewRect("Instruments", content);
+        Column(instPage, 10, new RectOffset(0, 0, 0, 0));
+        var instRow = NewRect("InstrumentTemplate", instPage);
+        var instRowImg = Round(instRow, Lilac, 16);
+        instRowImg.raycastTarget = true;
+        var instButton = instRow.gameObject.AddComponent<Button>();
+        instButton.targetGraphic = instRowImg;
+        var instLayout = Row(instRow, 14);
+        instLayout.padding = new RectOffset(14, 14, 12, 12);
+        var instHex = NewRect("Hex", instRow);
+        Fixed(instHex, 52, 60);
+        var instHexImg = Icon(instHex, hex, Purple);
+        instHexImg.preserveAspect = false;
+        var instHexInner = Stretch(NewRect("Inner", instHex));
+        instHexInner.offsetMin = new Vector2(6, 7);
+        instHexInner.offsetMax = new Vector2(-6, -7);
+        Icon(instHexInner, hex, Color.white).preserveAspect = false;
+        var instNumber = Txt(Stretch(NewRect("Number", instHex)), bold, 17, Ink, TextAlignmentOptions.Center);
+        instNumber.textWrappingMode = TextWrappingModes.NoWrap;
+        instNumber.text = "4";
+        var instTexts = NewRect("Texts", instRow);
+        Column(instTexts, -2, new RectOffset(0, 0, 0, 0));
+        instTexts.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        Txt(NewRect("Category", instTexts), bold, 13, Purple, TextAlignmentOptions.TopLeft).text = "Planning & Project Design";
+        Txt(NewRect("Name", instTexts), bold, 19, Ink, TextAlignmentOptions.TopLeft).text = "Land Use Zoning";
+        var vote = NewRect("Vote", instRow);
+        Fixed(vote, 140, 30);
+        Round(vote, Lilac, 15);
+        var voteLabel = Txt(Stretch(NewRect("Label", vote)), bold, 14, Ink, TextAlignmentOptions.Center);
+        voteLabel.textWrappingMode = TextWrappingModes.NoWrap;
+        voteLabel.text = "Approved 3–0";
+        var noInstruments = Empty(instPage, "NoInstruments", "No instruments placed yet.");
 
-        // Three numbers
-        var facts = Row(NewRect("Facts", body), 12);
-        facts.childForceExpandWidth = true;
-        facts.childControlWidth = true;
-        facts.childForceExpandHeight = true;
-        Fixed((RectTransform)facts.transform, -1, 88);
-        var tokensValue = Fact(facts, "Collaboration tokens");
-        var instrumentsValue = Fact(facts, "Instruments placed");
-        var cardsValue = Fact(facts, "Action cards played");
-
-        // Instruments placed
-        SectionLabel(body, "INSTRUMENTS PLACED", PurpleMid);
-        var instruments = Flow(NewRect("Instruments", body));
-        var instrumentTemplate = Chip(instruments, "InstrumentTemplate", Lilac, 40, new RectOffset(5, 16, 0, 0));
-        var chipHex = NewRect("Hex", instrumentTemplate);
-        Fixed(chipHex, 28, 32);
-        var chipHexImg = chipHex.gameObject.AddComponent<Image>();
-        chipHexImg.sprite = hex;
-        chipHexImg.preserveAspect = true;
-        chipHexImg.color = Purple;
-        chipHexImg.raycastTarget = false;
-        var chipNumber = Txt(Stretch(NewRect("Number", chipHex)), bold, 13, Color.white, TextAlignmentOptions.Center);
-        chipNumber.textWrappingMode = TextWrappingModes.NoWrap;
-        chipNumber.text = "0";
-        ChipLabel(instrumentTemplate, medium, 17, Ink, "Instrument");
-        var noInstruments = Note(body, "NoInstruments", "None yet");
-
-        // Action cards played
-        SectionLabel(body, "ACTION CARDS PLAYED", Orange);
-        var cards = Flow(NewRect("Cards", body));
-        var cardTemplate = Chip(cards, "CardTemplate", Cream, 40, new RectOffset(14, 16, 0, 0));
-        var cardOutline = cardTemplate.gameObject.AddComponent<Outline>();
+        // Page 2: action cards
+        var cardsPage = NewRect("Cards", content);
+        Column(cardsPage, 12, new RectOffset(0, 0, 0, 0));
+        var card = NewRect("CardTemplate", cardsPage);
+        Round(card, CardCream, 16);
+        var cardOutline = card.gameObject.AddComponent<Outline>();
         cardOutline.effectColor = Orange;
-        cardOutline.effectDistance = new Vector2(1.5f, -1.5f);
-        ChipLabel(cardTemplate, medium, 17, Orange, "03  Card name");
-        var noCards = Note(body, "NoCards", "None yet");
+        cardOutline.effectDistance = new Vector2(2.5f, -2.5f);
+        Column(card, 6, new RectOffset(16, 16, 14, 14));
+        var top = NewRect("Top", card);
+        Fixed(top, -1, 46);
+        Row(top, 10);
+        var cardHex = NewRect("Hex", top);
+        Fixed(cardHex, 40, 46);
+        Icon(cardHex, hex, Orange).preserveAspect = false;
+        var cardNumber = Txt(Stretch(NewRect("Number", cardHex)), bold, 15, Color.white, TextAlignmentOptions.Center);
+        cardNumber.textWrappingMode = TextWrappingModes.NoWrap;
+        cardNumber.text = "03";
+        NewRect("Spacer", top).gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var kind = Txt(NewRect("Kind", top), bold, 13, Orange, TextAlignmentOptions.MidlineRight);
+        kind.characterSpacing = 8;
+        kind.textWrappingMode = TextWrappingModes.NoWrap;
+        kind.text = "ACTION";
+        Txt(NewRect("Title", card), bold, 20, Ink, TextAlignmentOptions.TopLeft).text = "Creating partnerships to enhance biodiversity";
+        Txt(NewRect("Description", card), regular, 16, Body, TextAlignmentOptions.TopLeft).text = "What the action does.";
+        var how = Txt(NewRect("How", card), regular, 15, Muted, TextAlignmentOptions.TopLeft);
+        how.richText = true;
+        how.text = "<b>How:</b> …";
+        var uses = NewRect("Uses", card);
+        Column(uses, 6, new RectOffset(0, 0, 6, 2));
+        var usesLabel = Txt(NewRect("Label", uses), bold, 13, Muted, TextAlignmentOptions.TopLeft);
+        usesLabel.characterSpacing = 8;
+        usesLabel.text = "USES";
+        var links = Flow(NewRect("Links", uses));
+        var link = Chip(links, "LinkTemplate", Lilac, 30, new RectOffset(10, 12, 0, 0));
+        var linkImg = link.GetComponent<Image>();
+        linkImg.raycastTarget = true;
+        link.gameObject.AddComponent<Button>().targetGraphic = linkImg;
+        var linkDot = NewRect("Dot", link);
+        Fixed(linkDot, 10, 10);
+        Round(linkDot, Purple, 5);
+        ChipLabel(link, bold, 14, Ink, "4 · Land Use Zoning");
+        var cardLine = NewRect("Line", card);
+        Fixed(cardLine, -1, 1.5f);
+        cardLine.gameObject.AddComponent<Image>().color = new Color32(0xEF, 0xE6, 0xD2, 0xFF);
+        var footer = NewRect("Footer", card);
+        Fixed(footer, -1, 34);
+        Row(footer, 8);
+        var collabLabel = Txt(NewRect("Label", footer), bold, 13, Muted, TextAlignmentOptions.MidlineLeft);
+        collabLabel.characterSpacing = 8;
+        collabLabel.textWrappingMode = TextWrappingModes.NoWrap;
+        collabLabel.text = "COLLABORATORS";
+        var avatars = NewRect("Avatars", footer);
+        Row(avatars, -6).childControlHeight = false;
+        var people = Txt(NewRect("People", footer), regular, 15, Muted, TextAlignmentOptions.MidlineLeft);
+        people.overflowMode = TextOverflowModes.Ellipsis;
+        people.textWrappingMode = TextWrappingModes.NoWrap;
+        people.text = "No one yet";
+        var peopleSize = people.gameObject.AddComponent<LayoutElement>();
+        peopleSize.flexibleWidth = 1;
+        peopleSize.minWidth = 0;
+        var avatarTemplate = NewRect("AvatarTemplate", cardsPage);
+        Fixed(avatarTemplate, 30, 30);
+        Round(avatarTemplate, PlayerCapsuleHook.PlayerColors[1], 15);
+        var avatarRing = avatarTemplate.gameObject.AddComponent<Outline>();
+        avatarRing.effectColor = CardCream;
+        avatarRing.effectDistance = new Vector2(2, -2);
+        var avatarNumber = Txt(Stretch(NewRect("Number", avatarTemplate)), bold, 14, Color.white, TextAlignmentOptions.Center);
+        avatarNumber.text = "2";
+        var noCards = Empty(cardsPage, "NoCards", "Hasn’t played any action cards yet.");
 
-        // Open their played cards
-        var buttonRow = Row(NewRect("ButtonRow", body), 0);
-        buttonRow.padding = new RectOffset(0, 0, 6, 0);
-        var showRT = NewRect("ShowCards", buttonRow.transform);
-        Fixed(showRT, 260, 52);
-        var showImg = Round(showRT, Orange, 26);
-        showImg.raycastTarget = true;
-        var showButton = showRT.gameObject.AddComponent<Button>();
-        showButton.targetGraphic = showImg;
-        var showLabel = Txt(Stretch(NewRect("Label", showRT)), bold, 20, Color.white, TextAlignmentOptions.Center);
-        showLabel.textWrappingMode = TextWrappingModes.NoWrap;
-        showLabel.text = "See played cards";
+        // Page 3: collaborations
+        var collabPage = NewRect("Collaborations", content);
+        Column(collabPage, 8, new RectOffset(0, 0, 0, 0));
+        SectionLabel(collabPage, "JOINED OTHERS’ ACTIONS", Muted);
+        var joined = NewRect("Joined", collabPage);
+        Column(joined, 8, new RectOffset(0, 0, 0, 0));
+        var joinedRow = NewRect("JoinedTemplate", joined);
+        Round(joinedRow, Lilac, 14);
+        var joinedLayout = Row(joinedRow, 12);
+        joinedLayout.padding = new RectOffset(12, 14, 10, 10);
+        var joinedAvatar = NewRect("Avatar", joinedRow);
+        Fixed(joinedAvatar, 34, 34);
+        Round(joinedAvatar, PlayerCapsuleHook.PlayerColors[1], 17);
+        Txt(Stretch(NewRect("Number", joinedAvatar)), bold, 15, Color.white, TextAlignmentOptions.Center).text = "2";
+        var joinedTexts = NewRect("Texts", joinedRow);
+        Column(joinedTexts, -2, new RectOffset(0, 0, 0, 0));
+        joinedTexts.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        Txt(NewRect("Card", joinedTexts), bold, 17, Ink, TextAlignmentOptions.TopLeft).text = "04  Joining a network";
+        Txt(NewRect("Owner", joinedTexts), regular, 14, Muted, TextAlignmentOptions.TopLeft).text = "Rui’s action";
+        var joinedTag = NewRect("Tag", joinedRow);
+        Fixed(joinedTag, 130, 28);
+        Round(joinedTag, new Color32(0xDC, 0xEB, 0xFA, 0xFF), 14);
+        var joinedTagLabel = Txt(Stretch(NewRect("Label", joinedTag)), bold, 14, TokenBlue, TextAlignmentOptions.Center);
+        joinedTagLabel.textWrappingMode = TextWrappingModes.NoWrap;
+        joinedTagLabel.text = "Collaborating";
+        var noJoined = Empty(collabPage, "NoJoined", "Hasn’t joined anyone’s action yet.");
+        var gap = NewRect("Gap", collabPage);
+        Fixed(gap, -1, 10);
+        SectionLabel(collabPage, "TOKENS", Muted);
+        var tokens = NewRect("Tokens", collabPage);
+        Fixed(tokens, -1, 30);
+        Row(tokens, 6).childControlHeight = false;
+        var token = NewRect("TokenTemplate", tokens);
+        Fixed(token, 24, 24);
+        Round(token, TokenBlue, 12);
+        var tokensText = Txt(NewRect("Text", tokens), bold, 16, TokenBlue, TextAlignmentOptions.MidlineLeft);
+        tokensText.textWrappingMode = TextWrappingModes.NoWrap;
+        tokensText.margin = new Vector4(8, 0, 0, 0);
+        tokensText.text = "5 of 5 tokens left";
 
         // ── Wire ──
         panel.root = root.gameObject;
         panel.rootGroup = group;
         panel.window = window;
-        panel.headerFill = headerFill;
-        panel.badgeNumber = badgeNumber;
+        panel.leftFill = leftFill;
+        panel.positionText = position;
+        panel.prevButton = prev;
+        panel.nextButton = next;
         panel.avatarIcon = avatarIcon;
-        panel.eyebrow = eyebrow;
+        panel.badgeFill = badgeFill;
+        panel.badgeNumber = badgeNumber;
         panel.nameText = nameText;
         panel.companyText = company;
-        panel.turnTag = turnRow.gameObject;
-        panel.tokensValue = tokensValue;
-        panel.instrumentsValue = instrumentsValue;
-        panel.cardsValue = cardsValue;
-        panel.instrumentsContainer = instruments;
-        panel.instrumentTemplate = instrumentTemplate.gameObject;
-        panel.noInstruments = noInstruments;
-        panel.cardsContainer = cards;
-        panel.cardTemplate = cardTemplate.gameObject;
+        panel.statusDot = statusDotImg;
+        panel.statusText = statusText;
+        panel.statValues = statValues;
+        panel.tabButtons = tabButtons;
+        panel.tabLabels = tabLabels;
+        panel.tabCountFills = tabCountFills;
+        panel.tabCounts = tabCounts;
+        panel.tabUnderlines = tabUnderlines;
+        panel.tabPages = new[] { instPage.gameObject, cardsPage.gameObject, collabPage.gameObject };
+        panel.scroll = sr;
+        panel.closeButton = closeButton;
+        panel.instrumentsContainer = instPage;
+        panel.instrumentTemplate = instRow.gameObject;
+        panel.noInstruments = noInstruments.gameObject;
+        panel.cardsContainer = cardsPage;
+        panel.cardTemplate = card.gameObject;
+        panel.avatarTemplate = avatarTemplate.gameObject;
         panel.noCards = noCards;
-        panel.showCardsButton = showRT.gameObject;
-        instrumentTemplate.gameObject.SetActive(false);
-        cardTemplate.gameObject.SetActive(false);
+        panel.joinedContainer = joined;
+        panel.joinedTemplate = joinedRow.gameObject;
+        panel.noJoined = noJoined.gameObject;
+        panel.tokensContainer = tokens;
+        panel.tokenTemplate = token.gameObject;
+        panel.tokensText = tokensText;
+        instRow.gameObject.SetActive(false);
+        card.gameObject.SetActive(false);
+        avatarTemplate.gameObject.SetActive(false);
+        joinedRow.gameObject.SetActive(false);
+        token.gameObject.SetActive(false);
+        cardsPage.gameObject.SetActive(false);
+        collabPage.gameObject.SetActive(false);
         root.gameObject.SetActive(false);
         EditorUtility.SetDirty(panel);
 
         UnityEventTools.AddPersistentListener(dimButton.onClick, new UnityAction(panel.Close));
-        UnityEventTools.AddPersistentListener(closeButton.onClick, new UnityAction(panel.Close));
-        UnityEventTools.AddPersistentListener(showButton.onClick, new UnityAction(panel.ShowPlayedCards));
+    }
+
+    // Round button with a chevron (angle 0 points right).
+    private static Button CircleButton(RectTransform parent, string name, float x, float y, float size, Color fill, Color ink, float angle)
+    {
+        var rt = Place(NewRect(name, parent), x, y, size, size);
+        var img = Round(rt, fill, size / 2f);
+        img.raycastTarget = true;
+        var button = rt.gameObject.AddComponent<Button>();
+        button.targetGraphic = img;
+        var arrow = NewRect("Arrow", rt);
+        arrow.anchorMin = arrow.anchorMax = new Vector2(0.5f, 0.5f);
+        arrow.sizeDelta = new Vector2(size * 0.42f, size * 0.42f);
+        arrow.localRotation = Quaternion.Euler(0, 0, angle);
+        var arrowImg = arrow.gameObject.AddComponent<Image>();
+        arrowImg.sprite = ActionDrawerBuilder.GetOrCreateChevron();
+        arrowImg.color = ink;
+        arrowImg.raycastTarget = false;
+        return button;
+    }
+
+    // Centred grey line for an empty list.
+    private static TextMeshProUGUI Empty(RectTransform parent, string name, string text)
+    {
+        var label = Txt(NewRect(name, parent), regular, 18, new Color32(0x9A, 0x92, 0xAC, 0xFF), TextAlignmentOptions.Center);
+        label.margin = new Vector4(0, 24, 0, 24);
+        label.text = text;
+        return label;
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

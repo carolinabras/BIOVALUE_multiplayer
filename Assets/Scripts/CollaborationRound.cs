@@ -13,6 +13,8 @@ using UnityEngine.UI;
 // Each played card shows its collaborators and, on other players' cards, "Collaborate · 1 token"
 // (asks the owner, who accepts or declines in the usual pop-up; a decline gives the token back).
 // The owner's cards show "Your action" or the pink "N requests". The GM sees each player's tokens used.
+// Each card lists the instruments it uses: click one for its sheet beside the lanes (CollabInstrumentSheet);
+// "Show on the board" hides the lanes and makes those pieces glow until "Back to the cards".
 // "I'm done" and "End collaboration" are on the turn ribbon.
 // Built by the editor menu "BioValue/Build Turn Ribbon and GM Panel".
 public class CollaborationRound : MonoBehaviour
@@ -41,6 +43,10 @@ public class CollaborationRound : MonoBehaviour
     public Lane[] lanes;
     public GameObject cardTemplate;
     public GameObject avatarTemplate;
+    public RectTransform lanesArea;            // made narrower while the sheet is open
+    public CollabInstrumentSheet sheet;
+    public GameObject boardPeek;               // "Back to the cards", shown while the lanes are hidden
+    public Button backToCardsButton;
 
     private const int PerPage = 4;
     private const string EndGameKey = "endGame";
@@ -57,8 +63,12 @@ public class CollaborationRound : MonoBehaviour
     private static readonly Color GreySoft = new Color32(0xF1, 0xEE, 0xF4, 0xFF), GreyInk = new Color32(0x7A, 0x70, 0x90, 0xFF);
     private static readonly Color Disabled = new Color32(0xE4, 0xE1, 0xEC, 0xFF), DisabledInk = new Color32(0x9A, 0x92, 0xAC, 0xFF);
 
+    private const float LanesInset = 28f, SheetSpace = 440f + 20f;
+
     private int page;
     private bool shown;
+    private bool peeking;               // the lanes are hidden to see the board
+    private float lanesRight = -1f;
     private string signature = "";
     private float nextRefresh;
     private bool dirty = true;
@@ -73,6 +83,39 @@ public class CollaborationRound : MonoBehaviour
         if (prevButton) prevButton.onClick.AddListener(() => GoTo(page - 1));
         if (nextButton) nextButton.onClick.AddListener(() => GoTo(page + 1));
         if (content) content.SetActive(false);
+        if (boardPeek) boardPeek.SetActive(false);
+        if (sheet) sheet.onShowOnBoard = PeekBoard;
+        if (backToCardsButton) backToCardsButton.onClick.AddListener(EndPeek);
+    }
+
+    // Hide the lanes and make these instruments glow on the board.
+    public void PeekBoard(int[] ids)
+    {
+        if (ids == null || ids.Length == 0) return;
+        peeking = true;
+        InstrumentLinkHighlights.Set(ids);
+        InstrumentLinkHighlights.Visible = true;
+        if (content) content.SetActive(false);
+        if (boardPeek) boardPeek.SetActive(true);
+    }
+
+    public void EndPeek()
+    {
+        if (!peeking) return;
+        peeking = false;
+        InstrumentLinkHighlights.Clear();
+        if (boardPeek) boardPeek.SetActive(false);
+        dirty = true;
+    }
+
+    // The lanes make room for the sheet.
+    private void FitLanes()
+    {
+        if (!lanesArea) return;
+        float right = LanesInset + (sheet && sheet.IsOpen ? SheetSpace : 0f);
+        if (Mathf.Approximately(right, lanesRight)) return;
+        lanesRight = right;
+        lanesArea.offsetMax = new Vector2(-right, lanesArea.offsetMax.y);
     }
 
     private void OnEnable() => TrySubscribe();
@@ -97,6 +140,8 @@ public class CollaborationRound : MonoBehaviour
     private void Update()
     {
         TrySubscribe();
+        FitLanes();
+        if (peeking && Input.GetKeyDown(KeyCode.Escape)) EndPeek();
         if (!dirty && Time.unscaledTime < nextRefresh) return;
         nextRefresh = Time.unscaledTime + 0.25f;
         dirty = false;
@@ -132,7 +177,19 @@ public class CollaborationRound : MonoBehaviour
         return true;
     }
 
-    private static List<int> CardsOf(int actor)
+    // A played card's description and "how": what the player wrote (open actions, edited cards), else the deck's.
+    public static (string what, string how) CardTexts(int owner, int cardId, ActionCard data)
+    {
+        var state = GameState.Instance;
+        int index = TurnRibbon.PlayerNumberOf(owner);
+        string what = state != null ? state.GetActionCardDescription(index, cardId) : "";
+        string how = state != null ? state.GetActionCardDescriptionHow(index, cardId) : "";
+        if (string.IsNullOrWhiteSpace(what) && data != null) what = data.descriptionGeneral;
+        if (string.IsNullOrWhiteSpace(how) && data != null) how = data.descriptionHow;
+        return ((what ?? "").Trim(), (how ?? "").Trim());
+    }
+
+    public static List<int> CardsOf(int actor)
     {
         var state = GameState.Instance;
         if (state == null) return new List<int>();
@@ -148,7 +205,10 @@ public class CollaborationRound : MonoBehaviour
         bool ended = PhotonNetwork.InRoom &&
                      PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(EndGameKey, out var e) && e is bool b && b;
         bool show = state != null && !ended && state.GetCurrentGamePhase() == GameState.GamePhase.Collaboration;
-        if (content && content.activeSelf != show) content.SetActive(show);
+        if (!show && peeking) EndPeek();
+        if (!show && sheet) sheet.Close();
+        bool showLanes = show && !peeking;
+        if (content && content.activeSelf != showLanes) content.SetActive(showLanes);
         if (show && !shown) { page = 0; signature = ""; } // a new round starts on the first page
         if (!show && shown && ColaborationManager.Instance) ColaborationManager.Instance.EndRound(); // refund unanswered requests
         shown = show;
@@ -173,6 +233,7 @@ public class CollaborationRound : MonoBehaviour
             for (int i = 0; i < ids.Count; i++)
             {
                 sig.Append(',').Append(ids[i]);
+                if (state != null) sig.Append('#').Append(string.Join(".", state.GetActionCardLinks(TurnRibbon.PlayerNumberOf(p.ActorNumber), ids[i]) ?? new int[0]));
                 if (!collab) continue;
                 sig.Append(':').Append(string.Join(".", collab.GetCollaborators(p.ActorNumber, i)))
                    .Append(collab.MyState(p.ActorNumber, i)).Append(collab.IncomingRequests(p.ActorNumber, i));
@@ -256,6 +317,14 @@ public class CollaborationRound : MonoBehaviour
         SetText(card, "Face/Top/Hex/Number", InstrumentDetailsPanel.CardNumber(cardId));
         SetText(card, "Face/Top/Kind", open ? "OPEN ACTION" : "ACTION", accent);
         SetText(card, "Face/Title", data != null && !string.IsNullOrEmpty(data.cardName) ? data.cardName : "Action card");
+        var (what, how) = CardTexts(owner, cardId, data);
+        SetText(card, "Face/Description", what);
+        SetText(card, "Face/How", string.IsNullOrEmpty(how) ? "" : "<b>How:</b> " + how);
+        var whatT = card.Find("Face/Description");
+        if (whatT) whatT.gameObject.SetActive(!string.IsNullOrEmpty(what));
+        var howT = card.Find("Face/How");
+        if (howT) howT.gameObject.SetActive(!string.IsNullOrEmpty(how));
+        FillLinks(card, owner, cardId);
 
         // Collaborators
         var avatars = card.Find("Face/Footer/Avatars");
@@ -315,6 +384,36 @@ public class CollaborationRound : MonoBehaviour
             var tagImg = tagT.GetComponent<Image>();
             if (tagImg) tagImg.color = fill;
             SetText(tagT, "Label", tag, ink);
+        }
+    }
+
+    // The instruments this card uses, each a button that opens the sheet.
+    private void FillLinks(Transform card, int owner, int cardId)
+    {
+        var links = GameState.Instance != null
+            ? GameState.Instance.GetActionCardLinks(TurnRibbon.PlayerNumberOf(owner), cardId) ?? new int[0]
+            : new int[0];
+        var uses = card.Find("Face/Uses");
+        if (uses) uses.gameObject.SetActive(links.Length > 0);
+        var list = card.Find("Face/Uses/Links");
+        var template = list ? list.Find("LinkTemplate") : null;
+        if (!template) return;
+        template.gameObject.SetActive(false);
+        for (int k = 0; k < links.Length; k++)
+        {
+            int index = k;
+            var hook = InstrumentLookup.Find(links[k]);
+            var (a, _) = InstrumentLookup.Styles(hook);
+            var chip = Instantiate(template.gameObject, list).transform;
+            chip.gameObject.SetActive(true);
+            var img = chip.GetComponent<Image>();
+            if (img) img.color = a != null ? a.fill : Lilac;
+            SetImage(chip, "Hex", a != null ? a.ring : Purple);
+            SetText(chip, "Hex/Number", links[k].ToString());
+            SetText(chip, "Texts/Category", InstrumentLookup.Categories(hook), a != null ? a.badge : PurpleMid);
+            SetText(chip, "Texts/Name", hook ? hook.instrument.name : $"Instrument {links[k]}");
+            var button = chip.GetComponent<Button>();
+            if (button && sheet) button.onClick.AddListener(() => sheet.Open(owner, cardId, links, index));
         }
     }
 

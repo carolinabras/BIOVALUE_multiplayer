@@ -469,6 +469,19 @@ public static class LobbyBuilder
         var box = Place(NewRect("Explain", page), 0, 175, 1282, 92);
         Round(box, Lilac, 21);
         s.limitText = Label(box, "Text", regular, 24, Ink, 28, 0, 1226, 92, TextAlignmentOptions.MidlineLeft);
+
+        // Collaboration tokens
+        Label(page, "TokensTitle", bold, 23, Ink, 0, 315, 1282, 32).text = "How many collaboration tokens does each player get?";
+        Label(page, "TokensHint", regular, 20, Muted, 0, 347, 1282, 28).text = "The rules suggest 5.";
+        s.tokenButtons = new Button[LobbyScreen.TokenCounts.Length];
+        for (int i = 0; i < s.tokenButtons.Length; i++)
+        {
+            int n = LobbyScreen.TokenCounts[i];
+            s.tokenButtons[i] = ChipButton(Place(NewRect("Tokens " + n, page), i * 80, 395, 69, 61), n.ToString(), 24, 30.5f);
+        }
+        var tokenBox = Place(NewRect("TokensExplain", page), 0, 490, 1282, 92);
+        Round(tokenBox, Lilac, 21);
+        s.tokenText = Label(tokenBox, "Text", regular, 24, Ink, 28, 0, 1226, 92, TextAlignmentOptions.MidlineLeft);
     }
 
     private static void BuildScoringPage(RectTransform page, LobbyScreen s)

@@ -30,7 +30,9 @@ public class ActionCardsSpawner : MonoBehaviour
     [Tooltip("Max action cards a player can play per round. 0 = no limit. Used when the room has no value from the Lobby.")]
     [SerializeField] private int maxCardsPerRound = 0;
     // Set by the GM in the Lobby (room property); this field is the fallback for testing without the Lobby.
+    // The GM has no limit: they only play cards if the game needs a push.
     public int MaxCardsPerRound =>
+        GameAuthority.IsGameMaster ? 0 :
         Photon.Pun.PhotonNetwork.InRoom &&
         Photon.Pun.PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(BiovalueStatics.MaxActionCardsKey, out var v) && v is int n
             ? n : maxCardsPerRound;

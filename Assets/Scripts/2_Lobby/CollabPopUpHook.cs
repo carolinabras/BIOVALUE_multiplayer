@@ -15,13 +15,15 @@ public class CollabPopUpHook : MonoBehaviour
     [SerializeField] private TMP_Text title;
     [SerializeField] private TMP_Text sub;
     [SerializeField] private TMP_Text cardTitle;
+    [SerializeField] private TMP_Text cardDescription;
     [SerializeField] private float stackGap = 16f;
 
     private int _collaboratorActorNumber;
     private int _cardOwnerActorNumber;
     private int _cardIndex;
 
-    public void Setup(string requesterName, string entity, string cardName, int collaboratorActorNumber, int cardOwnerActorNumber, int cardIndex)
+    public void Setup(string requesterName, string entity, string cardName, string description,
+                      int collaboratorActorNumber, int cardOwnerActorNumber, int cardIndex)
     {
         _collaboratorActorNumber = collaboratorActorNumber;
         _cardOwnerActorNumber = cardOwnerActorNumber;
@@ -37,6 +39,8 @@ public class CollabPopUpHook : MonoBehaviour
             ? "Spends 1 of their tokens"
             : $"<noparse>{entity.Trim()}</noparse> · spends 1 token";
         if (cardTitle) cardTitle.text = $"<noparse>{cardName}</noparse>";
+        if (cardDescription)
+            cardDescription.text = string.IsNullOrWhiteSpace(description) ? "No description." : $"<noparse>{description.Trim()}</noparse>";
 
         acceptButton.onClick.AddListener(OnAccept);
         declineButton.onClick.AddListener(OnDecline);

@@ -24,6 +24,7 @@ public class BiovalueStatics
     public const string SkipActorsKey = "skip_actors";     // int[]: actors deferred to end of turn cycle after rejoin
     public const string SelectedInstrumentsKey = "selected_instruments"; // int[]: IDs of instruments selected in lobby
     public const string LobbyPlayersKey = "lobby_players";     // int: how many players the GM expects (not counting the GM)
+    public const string StartTokensKey = "start_tokens";       // int: collaboration tokens each player starts with (Lobby)
     public const string MaxActionCardsKey = "max_action_cards"; // int: action cards a player can play per round, 0 = no limit
     public const string ScoreFormulaKey = "score_formula";     // string: ScoreFormula.Encode(...)
 }

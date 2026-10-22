@@ -143,7 +143,11 @@ public class ActionDrawerView : MonoBehaviour
             playLabel.color = canPlay ? new Color32(0x1E, 0x0A, 0x14, 0xFF) : (Color)new Color32(0x7A, 0x6A, 0x58, 0xFF);
         }
 
-        if (fan) fan.SetCount(count, max);
+        if (fan)
+        {
+            fan.SetCount(count, max);
+            fan.ShowCount(!GameAuthority.IsGameMaster); // no "0/3" for the GM, who has no limit
+        }
     }
 
     // Filled = ready; white with a coloured border and an "!" = something missing.

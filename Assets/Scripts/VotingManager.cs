@@ -30,6 +30,15 @@ public class VotingManager : MonoBehaviourPun
     private readonly Dictionary<int, int> _accepted = new Dictionary<int, int>();
     private readonly Dictionary<int, int> _rejected = new Dictionary<int, int>();
 
+    // The latest vote on each instrument (by its number), as seen by this client.
+    private static readonly Dictionary<int, (int yes, int no)> _resultsByInstrument = new Dictionary<int, (int yes, int no)>();
+    public static bool TryGetResult(int instrumentId, out int yes, out int no)
+    {
+        bool found = _resultsByInstrument.TryGetValue(instrumentId, out var r);
+        yes = r.yes; no = r.no;
+        return found;
+    }
+
     public int GetPlacedCount(int actorNumber)   => _placed.TryGetValue(actorNumber, out int c) ? c : 0;
     public int GetAcceptedCount(int actorNumber) => _accepted.TryGetValue(actorNumber, out int c) ? c : 0;
     public int GetRejectedCount(int actorNumber) => _rejected.TryGetValue(actorNumber, out int c) ? c : 0;
@@ -184,6 +193,8 @@ public class VotingManager : MonoBehaviourPun
         Count(approved ? _accepted : _rejected, _pendingPlacerActorNumber);
 
         var pieceView = _pendingPiecePhotonViewId >= 0 ? PhotonView.Find(_pendingPiecePhotonViewId) : null;
+        var votedInstrument = pieceView != null ? pieceView.GetComponent<InstrumentHook>()?.instrument : null;
+        if (votedInstrument != null) _resultsByInstrument[votedInstrument.id] = (approveCount, rejectCount);
         if (pieceView != null)
         {
             var result = new VoteResult

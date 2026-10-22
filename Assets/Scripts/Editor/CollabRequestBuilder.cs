@@ -34,7 +34,7 @@ public static class CollabRequestBuilder
     // Expects LoadArt() to have run.
     public static void Build()
     {
-        const float w = 587, h = 299, pad = 27;
+        const float w = 587, h = 379, pad = 27;
         // Rebuilt inside the existing prefab, so its root keeps its id and the scene's reference holds.
         var root = PrefabUtility.LoadPrefabContents(PrefabPath);
         for (int i = root.transform.childCount - 1; i >= 0; i--) Object.DestroyImmediate(root.transform.GetChild(i).gameObject);
@@ -75,33 +75,40 @@ public static class CollabRequestBuilder
         so.FindProperty("sub").objectReferenceValue = sub;
 
         // The card
-        var card = Place(NewRect("Card", rt), pad, 126, w - 2 * pad, 70);
+        // name, then its description (an open action's is what its player wrote)
+        var card = Place(NewRect("Card", rt), pad, 126, w - 2 * pad, 150);
         Round(card, CardBorder, 19);
         var fill = Stretch(NewRect("Fill", card));
         fill.offsetMin = new Vector2(2.5f, 2.5f);
         fill.offsetMax = new Vector2(-2.5f, -2.5f);
         Round(fill, CardFill, 16.5f);
         var hexRt = NewRect("Hex", card);
-        hexRt.anchorMin = hexRt.anchorMax = new Vector2(0, 0.5f);
-        hexRt.pivot = new Vector2(0, 0.5f);
-        hexRt.anchoredPosition = new Vector2(14, 0);
+        hexRt.anchorMin = hexRt.anchorMax = new Vector2(0, 1);
+        hexRt.pivot = new Vector2(0, 1);
+        hexRt.anchoredPosition = new Vector2(14, -14);
         hexRt.sizeDelta = new Vector2(40, 46);
         var hexImg = hexRt.gameObject.AddComponent<Image>();
         hexImg.sprite = hex;
         hexImg.color = CardBorder;
         hexImg.raycastTarget = false;
         Txt(Stretch(NewRect("A", hexRt)), bold, 21, Color.white, TextAlignmentOptions.Center).text = "A";
-        var cardTitle = Txt(Place(NewRect("Title", card), 68, 0, w - 2 * pad - 68 - 16, 70), bold, 21, Ink, TextAlignmentOptions.MidlineLeft);
+        var cardTitle = Txt(Place(NewRect("Title", card), 68, 12, w - 2 * pad - 68 - 16, 50), bold, 21, Ink, TextAlignmentOptions.MidlineLeft);
         cardTitle.textWrappingMode = TextWrappingModes.Normal;
         cardTitle.overflowMode = TextOverflowModes.Ellipsis;
         cardTitle.lineSpacing = -14;
         cardTitle.text = "Creating partnerships to enhance biodiversity";
         so.FindProperty("cardTitle").objectReferenceValue = cardTitle;
+        var cardText = Txt(Place(NewRect("Description", card), 18, 68, w - 2 * pad - 36, 72), regular, 18, Muted, TextAlignmentOptions.TopLeft);
+        cardText.textWrappingMode = TextWrappingModes.Normal;
+        cardText.overflowMode = TextOverflowModes.Ellipsis;
+        cardText.lineSpacing = -10;
+        cardText.text = "What the player wrote for this open action.";
+        so.FindProperty("cardDescription").objectReferenceValue = cardText;
 
         // Answer
         float bw = (w - 2 * pad - 13) / 2;
-        var decline = LobbyBuilder.PillButton(Place(NewRect("DeclineButton", rt), pad, 214, bw, 61), DeclineBg, "Decline", 23, DeclineInk);
-        var accept = LobbyBuilder.PillButton(Place(NewRect("AcceptButton", rt), pad + bw + 13, 214, bw, 61), Pink, "Accept", 23, Color.white);
+        var decline = LobbyBuilder.PillButton(Place(NewRect("DeclineButton", rt), pad, 294, bw, 61), DeclineBg, "Decline", 23, DeclineInk);
+        var accept = LobbyBuilder.PillButton(Place(NewRect("AcceptButton", rt), pad + bw + 13, 294, bw, 61), Pink, "Accept", 23, Color.white);
         so.FindProperty("declineButton").objectReferenceValue = decline;
         so.FindProperty("acceptButton").objectReferenceValue = accept;
         so.FindProperty("collabRequestText").objectReferenceValue = null;

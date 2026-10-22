@@ -47,6 +47,9 @@ public class PhaseIntro : MonoBehaviour
     private bool skip;
     private Coroutine playing;
     public bool IsPlaying => playing != null;
+    // A phase intro has been picked (played, or skipped because the game ended): what waits for
+    // the intro, like the objective landing, can tell "not started yet" from "already over".
+    public bool HasStarted => lastShown >= 0;
 
     private void Start()
     {
@@ -76,7 +79,8 @@ public class PhaseIntro : MonoBehaviour
 
     private void OnPhase(GameState.GamePhase phase)
     {
-        int index = phase == GameState.GamePhase.InstrumentSelection ? 0
+        // The game starts in the instruments round before any phase is set ("None").
+        int index = phase == GameState.GamePhase.InstrumentSelection || phase == GameState.GamePhase.None ? 0
                   : phase == GameState.GamePhase.ActionCardPlay ? 1
                   : phase == GameState.GamePhase.Collaboration ? 2 : -1;
         if (index < 0 || index == lastShown || arts == null || index >= arts.Length) return;

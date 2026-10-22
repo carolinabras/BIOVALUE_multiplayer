@@ -16,7 +16,12 @@ public class ColaborationManager : MonoBehaviourPun
 
     // Collaboration round (see CollaborationRound): tokens each player starts with, and the player
     // property that says they have finished collaborating.
-    public const int StartTokens = 5;
+    public const int DefaultStartTokens = 5;
+    // Set by the GM in the Lobby (room property); the default when the game was started without the Lobby.
+    public static int StartTokens =>
+        PhotonNetwork.InRoom &&
+        PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(BiovalueStatics.StartTokensKey, out var v) && v is int n
+            ? n : DefaultStartTokens;
     public const string CollabDoneKey = "collab_done";
 
     public enum RequestState { None, Pending, Collaborating, Declined }
@@ -121,11 +126,11 @@ public class ColaborationManager : MonoBehaviourPun
 
         string requesterName = GetPlayerName(collaboratorActorNumber);
         string requesterEntity = GetPlayerCompany(collaboratorActorNumber);
-        string cardDescription = GetCardDescription(cardOwnerActorNumber, cardIndex);
+        var (cardName, cardDescription) = GetCardTexts(cardOwnerActorNumber, cardIndex);
 
         Transform parent = popUpParent != null ? popUpParent : FindObjectOfType<Canvas>().rootCanvas.transform; // on top of everything
         GameObject popUp = Instantiate(collabPopUpPrefab, parent);
-        popUp.GetComponent<CollabPopUpHook>()?.Setup(requesterName, requesterEntity, cardDescription, collaboratorActorNumber, cardOwnerActorNumber, cardIndex);
+        popUp.GetComponent<CollabPopUpHook>()?.Setup(requesterName, requesterEntity, cardName, cardDescription, collaboratorActorNumber, cardOwnerActorNumber, cardIndex);
     }
 
     // ── Owner response ────────────────────────────────────────────────────────
@@ -302,12 +307,16 @@ public class ColaborationManager : MonoBehaviourPun
         return card?.cardName ?? "";
     }
 
-    private string GetCardDescription(int cardOwnerActorNumber, int cardIndex)
+    // The card's name and description (for an open action, what its player wrote).
+    private (string name, string description) GetCardTexts(int cardOwnerActorNumber, int cardIndex)
     {
-        int ownerIndex = cardOwnerActorNumber - 1;
-        if (!GameState.Instance.playerActionCards.TryGetValue(ownerIndex, out var cardIds)) return "";
-        if (cardIndex < 0 || cardIndex >= cardIds.Count) return "";
+        // Played cards are kept by the player's number (sorted position, GM = 0).
+        int ownerIndex = TurnRibbon.PlayerNumberOf(cardOwnerActorNumber);
+        if (!GameState.Instance.playerActionCards.TryGetValue(ownerIndex, out var cardIds)) return ("", "");
+        if (cardIndex < 0 || cardIndex >= cardIds.Count) return ("", "");
         ActionCard card = ActionCardsDatabaseSession.Instance.SessionDb.GetActionCardById(cardIds[cardIndex]);
-        return card?.descriptionGeneral ?? "";
+        var (what, _) = CollaborationRound.CardTexts(cardOwnerActorNumber, cardIds[cardIndex], card);
+        string name = card != null && !string.IsNullOrEmpty(card.cardName) ? card.cardName : "Action card";
+        return (name, what);
     }
 }
