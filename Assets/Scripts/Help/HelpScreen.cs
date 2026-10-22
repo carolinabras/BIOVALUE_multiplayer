@@ -295,7 +295,7 @@ public class HelpScreen : MonoBehaviour
 
         var screen = Instantiate(prefab, holder.transform, false).GetComponent<HelpScreen>();
         _open = screen;
-        screen._gm = PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient;
+        screen._gm = PhotonNetwork.InRoom && GameAuthority.IsGameMaster;
         screen.Show(chapter < 0 ? ChapterForScene() : chapter);
     }
 

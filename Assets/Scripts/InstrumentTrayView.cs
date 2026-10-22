@@ -181,7 +181,8 @@ public class InstrumentTrayView : MonoBehaviour
         bool armed = picked && CanPlace(picked);
         if (bannerSubtitle)
             bannerSubtitle.text = armed ? $"Now tap a highlighted cell for {picked.instrument.id}"
-                : mine ? "Place one instrument on the board" : "You can read the instruments meanwhile";
+                : mine ? (VotingManager.Instance ? VotingManager.Instance.PlaceHint() : "Place one instrument on the board")
+                : "You can read the instruments meanwhile";
         if (bannerMine == mine && bannerActor == actor) return;
 
         bool becameMine = mine && bannerMine != true;
@@ -374,7 +375,7 @@ public class InstrumentTrayView : MonoBehaviour
     private bool CanPlace(InstrumentHook hook)
     {
         var drag = hook ? hook.GetComponent<DragPiece>() : null;
-        return drag && drag.enabled && drag.canDrag && drag.gridParent && hook.transform.parent == content;
+        return drag && drag.enabled && drag.CanPlaceNow && drag.gridParent && hook.transform.parent == content;
     }
 
     // ── Tap to place ─────────────────────────────────────────────────────────

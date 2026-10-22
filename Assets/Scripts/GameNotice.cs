@@ -44,4 +44,21 @@ public class GameNotice : MonoBehaviour
             LeanTween.scale(card, Vector3.one, 0.3f).setEaseOutBack().setIgnoreTimeScale(true);
         }
     }
+
+    // A short notice that fades away on its own (e.g. "You can place 1 instrument per turn").
+    public void ShowBrief(string titleText, string bodyText, float seconds = 2.2f)
+    {
+        Show(titleText, bodyText);
+        CancelInvoke(nameof(Hide));
+        Invoke(nameof(Hide), seconds);
+    }
+
+    public void Hide()
+    {
+        if (!content || !content.activeSelf) return;
+        if (!group) { content.SetActive(false); return; }
+        LeanTween.cancel(group.gameObject);
+        LeanTween.alphaCanvas(group, 0f, 0.25f).setIgnoreTimeScale(true)
+            .setOnComplete(() => { if (content) content.SetActive(false); });
+    }
 }

@@ -271,7 +271,7 @@ public class PlayerEndCard : MonoBehaviourPunCallbacks
     private void RefreshThanks()
     {
         if (!thanks || !thanks.activeInHierarchy || !dotTemplate || !dotsRow) return;
-        var players = PhotonNetwork.PlayerList.Where(p => !p.IsMasterClient).OrderBy(p => p.ActorNumber).ToList();
+        var players = PhotonNetwork.PlayerList.Where(p => !GameAuthority.IsGm(p)).OrderBy(p => p.ActorNumber).ToList();
         while (_dots.Count < players.Count)
             _dots.Add(Instantiate(dotTemplate, dotsRow));
         int answered = 0;

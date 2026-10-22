@@ -196,7 +196,7 @@ public static class ScoreFormula
     }
 
     public static Player[] Players() =>
-        PhotonNetwork.PlayerList.Where(p => !p.IsMasterClient).OrderBy(p => p.ActorNumber).ToArray();
+        PhotonNetwork.PlayerList.Where(p => !GameAuthority.IsGm(p)).OrderBy(p => p.ActorNumber).ToArray();
 
     public static bool TryRating(Player p, string key, out int value)
     {

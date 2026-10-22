@@ -177,19 +177,32 @@ public class PlayerCapsuleHook : MonoBehaviourPun
         if (VotingManager.Instance == null) return;
 
         // Remove before adding to avoid duplicates on repeated calls.
-        VotingManager.Instance.OnVoteStarted.RemoveListener(HideVoteIndicator);
         VotingManager.Instance.OnPlayerVoted.RemoveListener(OnPlayerVoted);
-        VotingManager.Instance.OnVoteEnded.RemoveListener(HideVoteIndicator);
+        VotingManager.Instance.OnVotesChanged.RemoveListener(RefreshVoteIndicator);
 
-        VotingManager.Instance.OnVoteStarted.AddListener(HideVoteIndicator);
         VotingManager.Instance.OnPlayerVoted.AddListener(OnPlayerVoted);
-        VotingManager.Instance.OnVoteEnded.AddListener(HideVoteIndicator);
+        VotingManager.Instance.OnVotesChanged.AddListener(RefreshVoteIndicator);
     }
+
+    // With several instruments under vote the token shows once the player voted on all of them:
+    // a tick if all yes, a cross if all no, nothing for a mix (the ribbon's dot shows that in purple).
+    private VotingManager.Summary _shownVote = VotingManager.Summary.NotYet;
 
     private void OnPlayerVoted(int actorNumber, bool approved)
     {
         if (actorNumber != _id) return;
-        ShowVoteIndicator(approved);
+        _shownVote = VotingManager.Summary.NotYet; // pop again, also when a player changes their vote
+        RefreshVoteIndicator();
+    }
+
+    private void RefreshVoteIndicator()
+    {
+        var summary = VotingManager.Instance ? VotingManager.Instance.SummaryOf(_id) : VotingManager.Summary.NotYet;
+        if (summary == _shownVote) return;
+        _shownVote = summary;
+        if (summary == VotingManager.Summary.Yes) ShowVoteIndicator(true);
+        else if (summary == VotingManager.Summary.No) ShowVoteIndicator(false);
+        else HideVoteIndicator();
     }
 
     private void ShowVoteIndicator(bool approved)
@@ -237,9 +250,8 @@ public class PlayerCapsuleHook : MonoBehaviourPun
             GameState.Instance.onGamePhaseChanged.RemoveListener(OnGamePhaseChanged);
         }
         if (VotingManager.Instance == null) return;
-        VotingManager.Instance.OnVoteStarted.RemoveListener(HideVoteIndicator);
         VotingManager.Instance.OnPlayerVoted.RemoveListener(OnPlayerVoted);
-        VotingManager.Instance.OnVoteEnded.RemoveListener(HideVoteIndicator);
+        VotingManager.Instance.OnVotesChanged.RemoveListener(RefreshVoteIndicator);
     }
 
     // ── Network ───────────────────────────────────────────────────────────────

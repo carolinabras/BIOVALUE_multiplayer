@@ -12,6 +12,8 @@ using UnityEngine.UI;
 //    who has answered, live. "See results" opens the card (players still answering greyed out);
 //    "Show results to everyone" shares it, "Save results" exports.
 //  - Players see it once the GM shares it (their end card closes then). Everyone has "Quit game".
+//  - Two tabs: "Scores" (below) and "Final board" (ResultsBoardView: the board as it ended, with the
+//    action cards on the instruments they use and the unlinked ones to the side).
 //  - Header: the two rating averages and the score formula. One row per player, ranked by score: rank,
 //    avatar, name, company, both ratings (red → green), a bar of how the score adds up (one colour per
 //    item), the score. Click a row for their "did your objective change?" answer and the math.
@@ -34,6 +36,14 @@ public class ResultsCard : MonoBehaviourPunCallbacks
     public Button shareButton;
     public TMP_Text shareLabel;
     public GameObject leaveButton;     // "Quit game", for everyone
+
+    [Header("Tabs")]
+    public Button[] tabButtons = new Button[2];
+    public Image[] tabFills = new Image[2];
+    public TMP_Text[] tabLabels = new TMP_Text[2];
+    public GameObject[] scoresParts;       // column titles, rows, legend
+    public GameObject boardPage;
+    public ResultsBoardView boardView;
 
     [Header("GM: waiting for the players' ratings")]
     public GameObject waiting;
@@ -86,6 +96,12 @@ public class ResultsCard : MonoBehaviourPunCallbacks
     {
         if (shareButton) shareButton.onClick.AddListener(() => EndGameManager.Instance?.OnClickShowResultsToAll());
         if (seeResultsButton) seeResultsButton.onClick.AddListener(() => { gmOpened = true; UpdateVisibility(); });
+        for (int i = 0; i < tabButtons.Length; i++)
+        {
+            int k = i;
+            if (tabButtons[i]) tabButtons[i].onClick.AddListener(() => ShowTab(k));
+        }
+        ShowTab(0);
         UpdateVisibility();
     }
 
@@ -117,6 +133,30 @@ public class ResultsCard : MonoBehaviourPunCallbacks
         if (content && content.activeSelf != show) content.SetActive(show);
         if (wait) RefreshWaiting();
         if (show) Refresh();
+    }
+
+    private int tab;
+    private static readonly Color TabIdle = new Color32(0x5F, 0x4D, 0x8F, 0xFF);
+
+    private void ShowTab(int index)
+    {
+        tab = index;
+        bool board = index == 1;
+        for (int i = 0; i < tabButtons.Length; i++)
+        {
+            bool on = i == index;
+            Color fill = on ? Color.white : TabIdle;
+            if (tabFills[i])
+            {
+                tabFills[i].color = fill;
+                var square = tabFills[i].transform.Find("SquareBottom")?.GetComponent<Image>();
+                if (square) square.color = fill;
+            }
+            if (tabLabels[i]) tabLabels[i].color = on ? Ink : Color.white;
+        }
+        if (scoresParts != null) foreach (var go in scoresParts) if (go) go.SetActive(!board);
+        if (boardPage) boardPage.SetActive(board);
+        if (board && boardView) boardView.Show();
     }
 
     private void RefreshWaiting()

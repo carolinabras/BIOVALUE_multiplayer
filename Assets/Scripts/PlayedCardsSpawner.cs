@@ -42,7 +42,7 @@ public class PlayedCardsSpawner : MonoBehaviourPun
 
         if (targetPlayer == null) return;
 
-        if (targetPlayer.IsMasterClient)
+        if (GameAuthority.IsGm(targetPlayer))
             playerName.text = "GM made a special action";
         else if (targetPlayer.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var nameObject))
             playerName.text = nameObject as string;
@@ -109,7 +109,7 @@ public class PlayedCardsSpawner : MonoBehaviourPun
         {
             if (player.ActorNumber == actorNumber)
             {
-                if (player.IsMasterClient)
+                if (GameAuthority.IsGm(player))
                     playerName.text = "GM made a special action";
                 else if (player.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var nameObj))
                     playerName.text = nameObj as string;

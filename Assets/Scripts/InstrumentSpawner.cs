@@ -15,6 +15,7 @@ public class InstrumentSpawner : MonoBehaviourPunCallbacks
     [SerializeField] private PhotonView photonView;
 
     private bool _populated = false;
+    private const string SpawnedKey = "spawned_instruments";
 
     private void Awake()
     {
@@ -39,6 +40,9 @@ public class InstrumentSpawner : MonoBehaviourPunCallbacks
     {
         if (_populated) return;
         if (!photonView || !photonView.IsMine) return;
+        // Already spawned in this game (the GM rejoined and the scene loaded again): the pieces come
+        // back from the room by themselves.
+        if (RejoinGuard.AlreadyDone(SpawnedKey)) { _populated = true; return; }
 
         if (!instrumentPrefab)
         {
@@ -88,6 +92,7 @@ public class InstrumentSpawner : MonoBehaviourPunCallbacks
             false,
             true  // PhotonNetwork.Instantiate
         );
+        RejoinGuard.MarkDone(SpawnedKey);
     }
 
     // Fallback: if room properties arrive after Start, retry spawn.

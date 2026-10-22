@@ -33,6 +33,10 @@ public class EndGameManager : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.InRoom) return;
 
+        // Rejoined while the GM is away.
+        var gmNow = GameAuthority.GmPlayer;
+        if (GameAuthority.GmActor > 0 && gmNow != null && gmNow.IsInactive) WaitForGm();
+
         var props = PhotonNetwork.CurrentRoom.CustomProperties;
 
         // Late-joiner: end-game was already triggered.
@@ -81,11 +85,63 @@ public class EndGameManager : MonoBehaviourPunCallbacks
             ReturnToMainMenu("The game master ended the game");
     }
 
-    // The GM left without quitting (closed the game, lost the connection): Photon would make a player the
-    // GM, so everyone goes back to the main menu instead.
+    // ── The GM dropped out ──────────────────────────────────────────────────
+    // Photon makes a player the master client, but the GM stays the GM (GameAuthority): the players wait
+    // for them to come back (RejoinGuard), then hand the master client back. If they don't come back in
+    // time, or left for good, everyone goes back to the main menu.
+
+    private const float GmGraceSeconds = 180f;
+    private Coroutine _gmGrace;
+
+    public override void OnPlayerLeftRoom(Player other)
+    {
+        if (_leaving || GameAuthority.GmActor < 0 || !GameAuthority.IsGm(other)) return;
+        if (other.IsInactive) WaitForGm();
+        else ReturnToMainMenu("The game master left the game");
+    }
+
+    public override void OnPlayerEnteredRoom(Player other)
+    {
+        if (_leaving || !GameAuthority.IsGm(other)) return;
+        if (_gmGrace != null) StopCoroutine(_gmGrace);
+        _gmGrace = null;
+        if (GameNotice.Instance) GameNotice.Instance.ShowBrief("The game master is back", "The game carries on.");
+        if (PhotonNetwork.IsMasterClient) PhotonNetwork.SetMasterClient(other);
+    }
+
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        if (!_leaving) ReturnToMainMenu("The game master left the game");
+        if (_leaving) return;
+        if (GameAuthority.GmActor < 0) { ReturnToMainMenu("The game master left the game"); return; } // started without the Lobby
+        // The GM is here (they came back before this client heard they had gone): give it back.
+        var gm = GameAuthority.GmPlayer;
+        if (newMasterClient.IsLocal && gm != null && !gm.IsInactive && !gm.IsLocal) PhotonNetwork.SetMasterClient(gm);
+    }
+
+    private void WaitForGm()
+    {
+        if (_gmGrace != null || GameAuthority.IsGameMaster) return;
+        _gmGrace = StartCoroutine(GmGrace());
+    }
+
+    private IEnumerator GmGrace()
+    {
+        for (float left = GmGraceSeconds; left > 0f; left -= Time.unscaledDeltaTime)
+        {
+            var gm = GameAuthority.GmPlayer;
+            if (gm != null && !gm.IsInactive) { _gmGrace = null; yield break; }
+            if (GameNotice.Instance)
+            {
+                int s = Mathf.CeilToInt(left);
+                string body = $"Waiting for them to come back… {s / 60}:{s % 60:00}";
+                if (!GameNotice.Instance.content || !GameNotice.Instance.content.activeSelf)
+                    GameNotice.Instance.Show("The game master lost connection", body);
+                else if (GameNotice.Instance.body) GameNotice.Instance.body.text = body;
+            }
+            yield return null;
+        }
+        _gmGrace = null;
+        ReturnToMainMenu("The game master didn't come back");
     }
 
     // Wired to the OpenResults button's OnClick in the Inspector — opens the panel locally.

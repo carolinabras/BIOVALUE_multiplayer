@@ -147,7 +147,7 @@ public class GmActionsDrawer : MonoBehaviour
 
         var state = GameState.Instance;
         var db = ActionCardsDatabaseSession.Instance ? ActionCardsDatabaseSession.Instance.SessionDb : null;
-        var players = PhotonNetwork.PlayerList.Where(p => !p.IsMasterClient).OrderBy(p => p.ActorNumber).ToList();
+        var players = PhotonNetwork.PlayerList.Where(p => !GameAuthority.IsGm(p)).OrderBy(p => p.ActorNumber).ToList();
         int playedCount = 0;
 
         foreach (var player in players)

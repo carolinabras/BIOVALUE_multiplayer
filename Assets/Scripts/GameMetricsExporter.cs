@@ -240,7 +240,7 @@ public class GameMetricsExporter : MonoBehaviour
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static Player[] NonGMPlayers() =>
-        PhotonNetwork.PlayerList.Where(p => !p.IsMasterClient).OrderBy(p => p.ActorNumber).ToArray();
+        PhotonNetwork.PlayerList.Where(p => !GameAuthority.IsGm(p)).OrderBy(p => p.ActorNumber).ToArray();
 
     private static Player[] SortedPlayers() =>
         PhotonNetwork.PlayerList.OrderBy(p => p.ActorNumber).ToArray();

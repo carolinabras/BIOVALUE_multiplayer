@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using Photon.Pun;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 
 public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -311,6 +312,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
     private void Start()
     {
+        StartCoroutine(RestoreFromRoom());
         if (_gameState == null) return;
         _gameState.onPlayerTurnIndexChanged.AddListener(OnPlayerTurnIndexChanged);
         OnPlayerTurnIndexChanged(_gameState.GetCurrentPlayerTurnIndex());
@@ -362,9 +364,21 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
 
     private bool isDragging = false;
 
+    // On the board now (placed, or under vote).
+    public bool OnBoard => currentCellIndex >= 0;
+
+    // Can it be put on the board now: its owner's turn and, from the tray, still under the
+    // instruments-per-turn limit (VotingManager.MaxPerTurn). Moving a piece already on the board is fine.
+    public bool CanPlaceNow =>
+        canDrag && (OnBoard || VotingManager.Instance == null || VotingManager.Instance.CanPlaceAnother());
+
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!canDrag) return;
+        if (!CanPlaceNow)
+        {
+            if (canDrag && !OnBoard) ShowLimitNotice();
+            return;
+        }
         if (!photonView.IsMine)
         {
             // pede ownership 
@@ -477,6 +491,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
             {
                 photonView.RPC(nameof(RPC_SnapToCellByIndex), RpcTarget.Others, newIndex, oldIndex);
                 BoardPlacementService.RegisterPlacement(this, newIndex, oldIndex);
+                SaveCell();
             }
         }
         else
@@ -492,7 +507,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
     // like a normal drag (a drag usually has the ownership by the time it ends).
     public IEnumerator PlaceAtCell(RectTransform cellRT)
     {
-        if (!canDrag || !gridParent || !cellRT || isDragging) yield break;
+        if (!CanPlaceNow || !gridParent || !cellRT || isDragging) yield break;
 
         if (photonView != null && !photonView.IsMine)
         {
@@ -556,6 +571,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         targetCell.SetOccupied(true);
         currentCell = targetCell;
         currentCellIndex = newIndex;
+        SaveCell();
 
         if (oldIndex < 0) PlayPlacementFlip();
     }
@@ -618,6 +634,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
                 instrument.isPlaced = false;
                 InstrumentDatabaseSession.Instance?.SessionDb?.NotifyDatabaseChanged();
             }
+            SaveCell();
             return;
         }
 
@@ -637,6 +654,7 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         oldCell.SetOccupied(true);
         currentCell = oldCell;
         currentCellIndex = oldCellIndex;
+        SaveCell();
     }
 
     // Reads the spawn-parent transform from the PhotonView instantiation data.
@@ -654,20 +672,29 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         return null;
     }
     
-    // Called by the closeInstrumentButton on the prefab.
+    // Called by the closeInstrumentButton (×) on the prefab: takes the placement back, for everyone.
+    // While it's under vote that vote is cancelled and the piece goes back where it came from
+    // (the tray, or the cell it was moved from).
     public void OnCloseInstrument()
     {
         if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
+        if (photonView == null || !photonView.IsMine) return;
 
-        rectTransform.SetParent(originalParent, worldPositionStays: false);
-        rectTransform.anchoredPosition = originalPosition;
+        int back = -1;
+        VotingManager.Instance?.TryCancelVote(photonView.ViewID, out back);
+        photonView.RPC(nameof(RPC_RevertToCell), RpcTarget.All, back);
+    }
 
-        if (currentCell != null)
-        {
-            currentCell.SetOccupied(false);
-            currentCell = null;
-            currentCellIndex = -1;
-        }
+    public void HideCloseButton()
+    {
+        if (closeInstrumentButton) closeInstrumentButton.SetActive(false);
+    }
+
+    private static void ShowLimitNotice()
+    {
+        int max = VotingManager.MaxPerTurn;
+        string text = max == 1 ? "You can place 1 instrument per turn" : $"You can place {max} instruments per turn";
+        if (GameNotice.Instance) GameNotice.Instance.ShowBrief(text, "Take one back (its ×) to place a different one.");
     }
 
     public void GiveOwner(int ownerID)
@@ -699,8 +726,67 @@ public class DragPiece : MonoBehaviourPun, IBeginDragHandler, IDragHandler, IEnd
         InstrumentDatabaseSession.Instance.SessionDb.NotifyDatabaseChanged();
         Debug.Log(
             $"Owner definido: PlayerIndex {ownerID} → Instrument {instrument.id}, isPlaced: {instrument.isPlaced}");
+        SaveCell();
+    }
 
+    // ── Rejoin ──────────────────────────────────────────────────────────────
 
+    // Where each piece is, kept in the room so a player who rejoins (RejoinGuard) gets the same board:
+    // "pc_" + view id → { cell index (-1 = the tray), owner's player index (-1 = nobody) }.
+    public const string CellKeyPrefix = "pc_";
 
+    // Written by whoever moved the piece and by the master client (who runs every move), so it's
+    // always the latest place.
+    private void SaveCell()
+    {
+        if (!PhotonNetwork.InRoom || photonView == null || photonView.ViewID == 0) return;
+        if (!PhotonNetwork.IsMasterClient && !photonView.IsMine) return;
+        var instrument = GetComponent<InstrumentHook>()?.instrument;
+        int owner = instrument != null && instrument.isPlaced ? instrument.ownerId : -1;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable
+            { { CellKeyPrefix + photonView.ViewID, new[] { currentCellIndex, owner } } });
+    }
+
+    // A rejoining client creates the pieces again: each one goes back to the cell the room remembers.
+    private IEnumerator RestoreFromRoom()
+    {
+        if (!PhotonNetwork.InRoom || photonView == null) yield break;
+        if (!PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(CellKeyPrefix + photonView.ViewID, out var v) ||
+            !(v is int[] saved) || saved.Length < 2)
+            yield break;
+
+        // The instrument arrives with a buffered RPC, right after the piece itself.
+        var hook = GetComponent<InstrumentHook>();
+        for (float t = 3f; t > 0f && (hook == null || hook.instrument == null || !gridParent); t -= Time.unscaledDeltaTime)
+        {
+            if (!gridParent) gridParent = FindGrid();
+            yield return null;
+        }
+        if (currentCellIndex >= 0 || isDragging) yield break; // it moved meanwhile
+
+        int cell = saved[0], owner = saved[1];
+        var instrument = hook ? hook.instrument : null;
+        if (instrument != null)
+        {
+            if (owner >= 0) InstrumentDatabaseSession.Instance?.SessionDb?.SetOwner(owner, instrument);
+            instrument.isPlaced = cell >= 0 && owner >= 0;
+            InstrumentDatabaseSession.Instance?.SessionDb?.NotifyDatabaseChanged();
+        }
+        if (cell < 0 || !gridParent || cell >= gridParent.childCount) yield break;
+
+        var cellRT = gridParent.GetChild(cell) as RectTransform;
+        var boardCell = cellRT ? cellRT.GetComponent<BoardCell>() : null;
+        if (!cellRT || boardCell == null) yield break;
+        rectTransform.SetParent(gridParent, worldPositionStays: false);
+        rectTransform.anchoredPosition = cellRT.anchoredPosition;
+        MatchCellSize(cellRT);
+        boardCell.SetOccupied(true);
+        currentCell = boardCell;
+        currentCellIndex = cell;
+
+        // Still under vote and ours: it can still be taken back.
+        var vm = VotingManager.Instance;
+        if (closeInstrumentButton && photonView.IsMine && vm != null && vm.Find(photonView.ViewID) != null)
+            closeInstrumentButton.SetActive(true);
     }
 }

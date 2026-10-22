@@ -37,6 +37,26 @@ public class ColaborationManager : MonoBehaviourPun
     private void Awake()
     {
         Instance = this;
+        RestoreFromRoom();
+    }
+
+    // Collaborations are also kept in the room (CollabKeyPrefix + "{owner actor}_{card index}" → the
+    // collaborators' actors), so a player who rejoins gets them. The master client writes them.
+    public const string CollabKeyPrefix = "co_";
+
+    private void SaveToRoom(string key)
+    {
+        if (!PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient) return;
+        var list = collaborations.TryGetValue(key, out var l) ? l.ToArray() : new int[0];
+        PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { CollabKeyPrefix + key, list } });
+    }
+
+    private void RestoreFromRoom()
+    {
+        if (!PhotonNetwork.InRoom) return;
+        foreach (var entry in PhotonNetwork.CurrentRoom.CustomProperties)
+            if (entry.Key is string key && key.StartsWith(CollabKeyPrefix) && entry.Value is int[] actors)
+                collaborations[key.Substring(CollabKeyPrefix.Length)] = new List<int>(actors);
     }
 
     private static string Key(int cardOwnerActorNumber, int cardIndex) => $"{cardOwnerActorNumber}_{cardIndex}";
@@ -205,6 +225,7 @@ public class ColaborationManager : MonoBehaviourPun
             collaborations[key] = new List<int>();
         if (!collaborations[key].Contains(collaboratorActorNumber))
             collaborations[key].Add(collaboratorActorNumber);
+        SaveToRoom(key);
         Changed?.Invoke();
 
         PlayedCardsSpawner spawner = FindSpawnerByOwner(cardOwnerActorNumber);
@@ -229,6 +250,7 @@ public class ColaborationManager : MonoBehaviourPun
         string key = $"{cardOwnerActorNumber}_{cardIndex}";
         if (collaborations.ContainsKey(key))
             collaborations[key].Remove(collaboratorActorNumber);
+        SaveToRoom(key);
         Changed?.Invoke();
 
         PlayedCardsSpawner spawner = FindSpawnerByOwner(cardOwnerActorNumber);

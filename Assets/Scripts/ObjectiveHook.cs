@@ -23,7 +23,7 @@ public class ObjectiveHook : MonoBehaviourPun
         yield return new WaitForSeconds(0.5f);
         if (photonView)
         {
-            photonView.RPC(nameof(RPC_SetObjective), RpcTarget.All, obj);
+            photonView.RPC(nameof(RPC_SetObjective), RpcTarget.AllBuffered, obj);
         }
         else
         {

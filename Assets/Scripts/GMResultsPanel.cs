@@ -37,7 +37,7 @@ public class GMResultsPanel : MonoBehaviourPunCallbacks
     private void RefreshResults(Transform targetContainer)
     {
         var allPlayers = PhotonNetwork.PlayerList
-            .Where(p => !p.IsMasterClient)
+            .Where(p => !GameAuthority.IsGm(p))
             .ToArray();
 
         // Sorted list used to map actor → playerActionCards index.

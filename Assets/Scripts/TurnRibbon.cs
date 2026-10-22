@@ -9,6 +9,7 @@ using UnityEngine.UI;
 // Main game: the white pill at the top of the board that says whose turn it is and who plays next.
 //   Placing:  [avatar] NOW · Ana is placing        | NEXT (3) Bruno   [End turn >]
 //   Vote:     [avatar] VOTE · Ana's instrument ●●○ | NEXT (3) Bruno   [End vote · next turn >]
+//             (several instruments under vote: a dot fills once that player voted on all of them)
 //   Actions:  [cards]  ACTION CARDS ROUND · ...                       [End actions round >]
 //   Collab:   [person] COLLABORATION ROUND · ...  ●●●○○ 3 tokens left  [I'm done]  (player)
 //             [person] COLLABORATION ROUND · 4 of 7 players done  ●●●●○○○  [End collaboration >] (GM)
@@ -82,14 +83,25 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
     private const string EndGameKey = "endGame";
 
     private bool voting;
-    private readonly Dictionary<int, bool> votes = new Dictionary<int, bool>();
     private readonly List<Image> dots = new List<Image>();
+    private static readonly Color Mixed = new Color32(0x8C, 0x6B, 0xE8, 0xFF); // voted on all, yes on some and no on others
+    private readonly List<VotingManager.VoteResult> results = new List<VotingManager.VoteResult>(); // closed together
+    private int resultFrame = -1;
+
+    // One stamp per piece: the built one, plus copies when several votes close at once.
+    private class StampParts
+    {
+        public RectTransform holder, stamp, tally;
+        public CanvasGroup group;
+        public Image border;
+        public TMP_Text label, tallyLabel;
+    }
+    private readonly List<StampParts> stamps = new List<StampParts>();
     private float nextRefresh;
     private bool subscribed;
     private VotingManager.VoteResult result;
     private float resultUntil;
     private Color eyebrowColor, textColor, voteTextColor;
-    private Coroutine stampRoutine;
 
     private void Start()
     {
@@ -121,17 +133,56 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         VotingManager.Instance.OnVoteResult.RemoveListener(OnVoteResult);
     }
 
-    private void OnVoteStarted() { voting = true; votes.Clear(); Refresh(); }
-    private void OnPlayerVoted(int actor, bool approved) { votes[actor] = approved; Refresh(); }
-    private void OnVoteEnded() { voting = false; votes.Clear(); Refresh(); }
+    private void OnVoteStarted() { voting = true; Refresh(); }
+    private void OnPlayerVoted(int actor, bool approved) => Refresh();
+    private void OnVoteEnded() { voting = false; Refresh(); }
 
     private void OnVoteResult(VotingManager.VoteResult r)
     {
+        // The GM closes every open vote at once: their results show together.
+        if (resultFrame != Time.frameCount) results.Clear();
+        resultFrame = Time.frameCount;
+        results.Add(r);
         result = r;
         resultUntil = Time.unscaledTime + resultSeconds;
         Refresh();
-        if (stampRoutine != null) StopCoroutine(stampRoutine);
-        stampRoutine = StartCoroutine(PlayStamp(r));
+        var parts = FreeStamp();
+        if (parts != null) StartCoroutine(PlayStamp(r, parts));
+    }
+
+    private StampParts FreeStamp()
+    {
+        if (!stampHolder) return null;
+        if (stamps.Count == 0) stamps.Add(new StampParts
+        {
+            holder = stampHolder, stamp = stamp, tally = tally, group = stampGroup,
+            border = stampBorder, label = stampLabel, tallyLabel = tallyLabel
+        });
+        foreach (var s in stamps)
+            if (s.holder && !s.holder.gameObject.activeSelf) return s;
+
+        var copy = (RectTransform)Instantiate(stampHolder.gameObject, stampHolder.parent).transform;
+        var parts = new StampParts
+        {
+            holder = copy,
+            stamp = Same(copy, stamp) as RectTransform,
+            tally = Same(copy, tally) as RectTransform,
+            group = Same(copy, stampGroup)?.GetComponent<CanvasGroup>(),
+            border = Same(copy, stampBorder)?.GetComponent<Image>(),
+            label = Same(copy, stampLabel)?.GetComponent<TMP_Text>(),
+            tallyLabel = Same(copy, tallyLabel)?.GetComponent<TMP_Text>()
+        };
+        stamps.Add(parts);
+        return parts;
+    }
+
+    // The object in the copy at the same place as `original` is under stampHolder.
+    private Transform Same(Transform copy, Component original)
+    {
+        if (!original) return null;
+        var path = new List<string>();
+        for (var t = original.transform; t && t != stampHolder; t = t.parent) path.Insert(0, t.name);
+        return path.Count == 0 ? copy : copy.Find(string.Join("/", path));
     }
 
     // Turn, phase and the player list change from many places; a cheap poll keeps this in step.
@@ -148,7 +199,7 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
     public void EndTurn()
     {
         if (!GameAuthority.IsGameMaster || GameState.Instance == null) return;
-        if (voting && VotingManager.Instance != null) VotingManager.Instance.EndTurn(); // closes the vote, then advances
+        if (VotingManager.Instance != null && VotingManager.Instance.IsVoting) VotingManager.Instance.EndTurn(); // closes the votes, then advances
         else GameState.Instance.GMAdvanceTurn();
     }
 
@@ -165,6 +216,8 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         if (state == null || ended) { pill.gameObject.SetActive(false); return; }
         pill.gameObject.SetActive(true);
 
+        var vm = VotingManager.Instance;
+        voting = vm != null && vm.IsVoting;
         var phase = state.GetCurrentGamePhase();
         bool collab = phase == GameState.GamePhase.Collaboration;
         bool actions = phase == GameState.GamePhase.ActionCardPlay || collab;
@@ -200,14 +253,18 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         }
         else if (voting)
         {
-            eyebrow = "VOTE";
-            bool gmPlaced = VotingManager.Instance != null && VotingManager.Instance.PlacedByGm;
-            text = gmPlaced ? "GM made a special action" : turn == me ? "On your instrument" : turn > 0 ? $"On {GameLog.GetPlayerName(turn)}’s instrument" : "On the new instrument";
+            int n = vm.Ballots.Count;
+            eyebrow = n > 1 ? $"VOTE · {n} INSTRUMENTS" : "VOTE";
+            string what = n > 1 ? "instruments" : "instrument";
+            text = vm.PlacedByGm ? "GM made a special action"
+                 : turn == me ? $"On your {what}"
+                 : turn > 0 ? $"On {GameLog.GetPlayerName(turn)}’s {what}"
+                 : $"On the new {what}";
         }
         else if (turn == me)
         {
             eyebrow = "YOUR TURN";
-            text = "Place one instrument";
+            text = VotingManager.Instance ? VotingManager.Instance.PlaceHint() : "Place one instrument";
         }
         else
         {
@@ -235,7 +292,8 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
 
         // GM
         if (endTurnButton) endTurnButton.SetActive(gm && !actions);
-        if (endTurnLabel) endTurnLabel.text = voting ? "End vote · next turn" : "End turn";
+        if (endTurnLabel)
+            endTurnLabel.text = !voting ? "End turn" : vm.Ballots.Count > 1 ? "End votes · next turn" : "End vote · next turn";
         if (endActionsButton) endActionsButton.SetActive(gm && actions);
         if (!actions && endActionsGlow) endActionsGlow.SetActive(false);
     }
@@ -249,7 +307,7 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         var sorted = PhotonNetwork.PlayerList.OrderBy(p => p.ActorNumber).ToArray();
         for (int i = 0; i < sorted.Length; i++)
         {
-            if (sorted[i].IsMasterClient || sorted[i].IsInactive) continue;
+            if (GameAuthority.IsGm(sorted[i]) || sorted[i].IsInactive) continue;
             total++;
             if (HasPlayedCards(i)) played++;
         }
@@ -266,6 +324,7 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
     private void ShowResult()
     {
         pill.gameObject.SetActive(true);
+        if (results.Count > 1) { ShowResults(); return; }
         SetResultLook(true, Accent(result.approved));
         if (resultTick) resultTick.SetActive(result.approved);
         if (resultCross) resultCross.SetActive(!result.approved);
@@ -287,6 +346,24 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         }
         if (voteText) voteText.text = $"{result.yes} yes \u00b7 {result.no} no";
 
+        if (nextGroup) nextGroup.SetActive(false);
+        if (endTurnButton) endTurnButton.SetActive(false);
+        if (endActionsButton) endActionsButton.SetActive(false);
+    }
+
+    // Several votes closed together: "2 approved · 1 rejected".
+    private void ShowResults()
+    {
+        int approved = results.Count(r => r.approved), rejected = results.Count - approved;
+        bool good = approved >= rejected;
+        SetResultLook(true, Accent(good));
+        if (resultTick) resultTick.SetActive(good);
+        if (resultCross) resultCross.SetActive(!good);
+        if (nowEyebrow) nowEyebrow.text = "VOTES CLOSED";
+        if (nowText) nowText.text = $"{approved} approved \u00b7 {rejected} rejected";
+        if (voteGroup) voteGroup.SetActive(true);
+        ShowDots(results.Count, i => results[i].approved ? Yes : No);
+        if (voteText) voteText.text = string.Join(", ", results.Select(r => r.instrumentName));
         if (nextGroup) nextGroup.SetActive(false);
         if (endTurnButton) endTurnButton.SetActive(false);
         if (endActionsButton) endActionsButton.SetActive(false);
@@ -316,19 +393,19 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
 
     // The stamp drops onto the piece (big and faint, then small and tilted), stays, then fades.
     // An approved piece gives a little hop; a rejected one wobbles before VotingManager sends it back.
-    private System.Collections.IEnumerator PlayStamp(VotingManager.VoteResult r)
+    private System.Collections.IEnumerator PlayStamp(VotingManager.VoteResult r, StampParts p)
     {
-        if (!stampHolder || !r.piece) yield break;
+        if (p == null || !p.holder || !r.piece) yield break;
         var accent = Accent(r.approved);
-        stampHolder.gameObject.SetActive(true);
-        stampHolder.position = r.piece.TransformPoint(r.piece.rect.center);
-        if (stampBorder) stampBorder.color = accent;
-        if (stampLabel) { stampLabel.text = r.approved ? "APPROVED" : "REJECTED"; stampLabel.color = accent; }
-        if (tallyLabel) tallyLabel.text = $"{r.yes} yes \u00b7 {r.no} no";
-        if (tally)
+        p.holder.gameObject.SetActive(true);
+        p.holder.position = r.piece.TransformPoint(r.piece.rect.center);
+        if (p.border) p.border.color = accent;
+        if (p.label) { p.label.text = r.approved ? "APPROVED" : "REJECTED"; p.label.color = accent; }
+        if (p.tallyLabel) p.tallyLabel.text = $"{r.yes} yes \u00b7 {r.no} no";
+        if (p.tally)
         {
-            float pieceH = r.piece.rect.height * r.piece.lossyScale.y / Mathf.Max(0.0001f, stampHolder.lossyScale.y);
-            tally.anchoredPosition = new Vector2(0f, -pieceH / 2f - 8f);
+            float pieceH = r.piece.rect.height * r.piece.lossyScale.y / Mathf.Max(0.0001f, p.holder.lossyScale.y);
+            p.tally.anchoredPosition = new Vector2(0f, -pieceH / 2f - 8f);
         }
 
         var pieceRotation = r.piece.localRotation;
@@ -336,16 +413,16 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         const float land = 0.35f, hold = 2.4f, fade = 0.4f;
         for (float t = 0f; t < land + hold + fade; t += Time.unscaledDeltaTime)
         {
-            if (!stampHolder) yield break;
+            if (!p.holder) yield break;
             float k = Mathf.Clamp01(t / land);
             float scale = k < 0.6f ? Mathf.Lerp(2.2f, 0.9f, k / 0.6f) : Mathf.Lerp(0.9f, 1f, (k - 0.6f) / 0.4f);
-            if (stamp)
+            if (p.stamp)
             {
-                stamp.localScale = Vector3.one * scale;
-                stamp.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(18f, 8f, k));
+                p.stamp.localScale = Vector3.one * scale;
+                p.stamp.localRotation = Quaternion.Euler(0, 0, Mathf.Lerp(18f, 8f, k));
             }
             float alpha = t < land ? Mathf.Clamp01(k / 0.6f) : 1f - Mathf.Clamp01((t - land - hold) / fade);
-            if (stampGroup) stampGroup.alpha = alpha;
+            if (p.group) p.group.alpha = alpha;
 
             if (r.piece)
             {
@@ -363,27 +440,28 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
             yield return null;
         }
         if (r.piece) { r.piece.localScale = pieceScale; r.piece.localRotation = pieceRotation; }
-        stampHolder.gameObject.SetActive(false);
-        stampRoutine = null;
-    }
+        p.holder.gameObject.SetActive(false);
+        }
 
+    // One dot per voter (players, but not whoever placed every piece under vote), filled once they voted
+    // on every open piece: green all yes, red all no, purple a mix.
     private void FillVotes()
     {
-        int total = Mathf.Max(0, PhotonNetwork.PlayerList.Length - 2);
-        while (dots.Count < total && voteDotTemplate && voteDots)
-        {
-            var go = Instantiate(voteDotTemplate, voteDots);
-            go.SetActive(true);
-            dots.Add(go.GetComponent<Image>());
-        }
-        var cast = votes.Values.ToList();
-        for (int i = 0; i < dots.Count; i++)
-        {
-            if (!dots[i]) continue;
-            dots[i].gameObject.SetActive(i < total);
-            dots[i].color = i < cast.Count ? (cast[i] ? Yes : No) : Empty;
-        }
-        if (voteText) voteText.text = $"{Mathf.Min(cast.Count, total)} of {total} voted";
+        var vm = VotingManager.Instance;
+        if (vm == null) return;
+        var placers = new HashSet<int>(vm.Ballots.Select(b => b.placer));
+        var voters = PhotonNetwork.PlayerList
+            .Where(p => !GameAuthority.IsGm(p) && !(placers.Count == 1 && placers.Contains(p.ActorNumber)))
+            .OrderBy(p => p.ActorNumber).ToList();
+        var summaries = voters.Select(p => vm.SummaryOf(p.ActorNumber))
+            .OrderBy(s => s == VotingManager.Summary.NotYet ? 1 : 0).ToList();
+        int cast = summaries.Count(s => s != VotingManager.Summary.NotYet);
+        ShowDots(voters.Count, i =>
+            summaries[i] == VotingManager.Summary.Yes ? Yes
+            : summaries[i] == VotingManager.Summary.No ? No
+            : summaries[i] == VotingManager.Summary.Mixed ? Mixed
+            : Empty);
+        if (voteText) voteText.text = vm.Ballots.Count > 1 ? $"{cast} of {voters.Count} voted on all" : $"{cast} of {voters.Count} voted";
     }
 
     // 1-based position among the players (the GM is 0), the same number the capsules show.
@@ -396,7 +474,7 @@ public class TurnRibbon : MonoBehaviourPunCallbacks
         if (nextGroup) nextGroup.SetActive(false);
         if (nowEyebrow) nowEyebrow.text = "COLLABORATION ROUND";
 
-        var players = PhotonNetwork.PlayerList.Where(p => !p.IsMasterClient).OrderBy(p => p.ActorNumber).ToList();
+        var players = PhotonNetwork.PlayerList.Where(p => !GameAuthority.IsGm(p)).OrderBy(p => p.ActorNumber).ToList();
         if (voteGroup) voteGroup.SetActive(true);
         if (gm)
         {

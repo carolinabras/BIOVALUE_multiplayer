@@ -352,13 +352,23 @@ public class GameState : MonoBehaviourPunCallbacks
     public UnityEvent<int> onActionCardDescriptionChanged = new UnityEvent<int>();
     public UnityEvent<int> onPlayerActionCardsSet = new UnityEvent<int>();
 
+    // Descriptions and links are also kept in the room, so a player who rejoins gets them
+    // (ActionCardSyncService.RestoreFromRoomProperties).
+    private static void Persist(string prefix, int playerId, int cardId, object value)
+    {
+        if (!PhotonNetwork.InRoom) return;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { $"{prefix}{playerId}_{cardId}", value } });
+    }
+
     public void SetActionCardDescription(int playerId, int cardId, string description)
     {
+        Persist(ActionCardSyncService.DescriptionPrefix, playerId, cardId, description ?? "");
         photonView.RPC(nameof(RPC_SetActionCardDescription), RpcTarget.All, playerId, cardId, description);
     }
 
     public void SetActionCardDescriptionHow(int playerId, int cardId, string descriptionHow)
     {
+        Persist(ActionCardSyncService.DescriptionHowPrefix, playerId, cardId, descriptionHow ?? "");
         photonView.RPC(nameof(RPC_SetActionCardDescriptionHow), RpcTarget.All, playerId, cardId, descriptionHow);
     }
 
@@ -385,6 +395,7 @@ public class GameState : MonoBehaviourPunCallbacks
     // Instruments (by number) a played action card is linked to.
     public void SetActionCardLinks(int playerId, int cardId, int[] instrumentIds)
     {
+        Persist(ActionCardSyncService.LinksPrefix, playerId, cardId, instrumentIds ?? new int[0]);
         photonView.RPC(nameof(RPC_SetActionCardLinks), RpcTarget.All, playerId, cardId, instrumentIds ?? new int[0]);
     }
 

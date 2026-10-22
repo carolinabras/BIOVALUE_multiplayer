@@ -606,6 +606,26 @@ public static class MainHudBuilder
         }
         var endInstruments = WideButton(body, "EndInstruments", "End instruments round", Purple, Color.white);
         CopyOnClick(oldEndInstruments, endInstruments);
+
+        // Instruments per turn (players): 1 by default, more if the game needs it.
+        var perTurn = NewRect("PerTurn", body);
+        Fixed(perTurn, -1, 64);
+        Round(perTurn, LilacLine, 16);
+        var perTurnRow = Row(perTurn, 10, new RectOffset(16, 10, 0, 0));
+        perTurnRow.childControlHeight = true;
+        perTurnRow.childAlignment = TextAnchor.MiddleLeft;
+        var perTurnTexts = NewRect("Texts", perTurn);
+        Column(perTurnTexts, -4, new RectOffset(0, 0, 0, 0)).childAlignment = TextAnchor.MiddleLeft;
+        var perTurnTextsSize = perTurnTexts.gameObject.AddComponent<LayoutElement>();
+        perTurnTextsSize.flexibleWidth = 1;
+        perTurnTextsSize.minWidth = 0;
+        Label(perTurnTexts, "Title", bold, 18, Ink, "Instruments per turn");
+        Label(perTurnTexts, "Hint", regular, 14, Grey, "Each one gets its own vote");
+        var perTurnMinus = StepButton(perTurn, "Minus", "−");
+        var perTurnValue = Label(perTurn, "Value", bold, 20, Ink, "1");
+        perTurnValue.alignment = TextAlignmentOptions.Center;
+        Fixed(perTurnValue.rectTransform, 84, 40);
+        var perTurnPlus = StepButton(perTurn, "Plus", "+");
         var endActions = WideButton(body, "EndActions", "End actions round", Purple, Color.white);
         WireStartCollaboration(endActions, gameState);
         endActions.gameObject.SetActive(false);
@@ -673,6 +693,10 @@ public static class MainHudBuilder
         hud.stepTicks = stepTicks;
         hud.stepLabels = stepLabels;
         hud.endInstrumentsButton = endInstruments.gameObject;
+        hud.perTurnGroup = perTurn.gameObject;
+        hud.perTurnValue = perTurnValue;
+        hud.perTurnMinus = perTurnMinus;
+        hud.perTurnPlus = perTurnPlus;
         hud.endActionsButton = endActions.gameObject;
         hud.endCollabButton = endCollab.gameObject;
         hud.showActionsButton = showActions.gameObject;
@@ -868,6 +892,8 @@ public static class MainHudBuilder
     // ── Results card ─────────────────────────────────────────────────────────
 
     private const float ResultsW = 1640f;
+    private const float ResultsHeadH = 196f, ResultsTabsH = 46f;
+    private static readonly Color TabIdleFill = new Color32(0x5F, 0x4D, 0x8F, 0xFF);
     // Columns of a row, from its left edge (the column titles use the same ones).
     private const float ColRank = 18, ColAvatar = 76, ColName = 140, ColGame = 500, ColOwn = 600, ColBar = 690;
     private const float ColBarRight = 300, ColScoreRight = 64;
@@ -890,7 +916,7 @@ public static class MainHudBuilder
         var header = NewRect("Header", card);
         header.anchorMin = new Vector2(0, 1); header.anchorMax = new Vector2(1, 1);
         header.pivot = new Vector2(0.5f, 1);
-        header.sizeDelta = new Vector2(0, 150);
+        header.sizeDelta = new Vector2(0, ResultsHeadH);
         header.anchoredPosition = Vector2.zero;
         Round(header, EndPurple, 36);
         var square = NewRect("SquareBottom", header);
@@ -902,6 +928,39 @@ public static class MainHudBuilder
         squareImg.raycastTarget = false;
         var headRow = NewRect("Row", header);
         Stretch(headRow);
+        headRow.offsetMin = new Vector2(0, ResultsTabsH);
+
+        // Tabs on the header's bottom edge: the active one is white, joined to the card.
+        var tabButtons = new Button[2];
+        var tabFills = new Image[2];
+        var tabLabels = new TMP_Text[2];
+        string[] tabNames = { "Scores", "Final board" };
+        float tabX = 32;
+        for (int i = 0; i < 2; i++)
+        {
+            float w = i == 0 ? 150 : 190;
+            var tabRT = NewRect("Tab" + (i + 1), header);
+            tabRT.anchorMin = tabRT.anchorMax = tabRT.pivot = Vector2.zero;
+            tabRT.sizeDelta = new Vector2(w, ResultsTabsH);
+            tabRT.anchoredPosition = new Vector2(tabX, 0);
+            tabX += w + 6;
+            var fill = Round(tabRT, i == 0 ? Color.white : TabIdleFill, 14);
+            fill.raycastTarget = true;
+            var squareTab = NewRect("SquareBottom", tabRT);
+            squareTab.anchorMin = Vector2.zero; squareTab.anchorMax = new Vector2(1, 0);
+            squareTab.pivot = new Vector2(0.5f, 0);
+            squareTab.sizeDelta = new Vector2(0, 14);
+            var squareTabImg = squareTab.gameObject.AddComponent<Image>();
+            squareTabImg.raycastTarget = false;
+            squareTabImg.color = fill.color;
+            var button = tabRT.gameObject.AddComponent<Button>();
+            button.targetGraphic = fill;
+            button.transition = Selectable.Transition.None;
+            var label = Txt(Stretch(NewRect("Label", tabRT)), bold, 19, i == 0 ? Ink : Color.white, TextAlignmentOptions.Center);
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.text = tabNames[i];
+            tabButtons[i] = button; tabFills[i] = fill; tabLabels[i] = label;
+        }
         Row(headRow, 18, new RectOffset(36, 28, 20, 20)).childForceExpandHeight = true;
 
         var titles = NewRect("Titles", headRow);
@@ -929,7 +988,7 @@ public static class MainHudBuilder
         cols.pivot = new Vector2(0.5f, 1);
         cols.offsetMin = new Vector2(24, 0); cols.offsetMax = new Vector2(-40, 0);
         cols.sizeDelta = new Vector2(cols.sizeDelta.x, 40);
-        cols.anchoredPosition = new Vector2(-8, -158);
+        cols.anchoredPosition = new Vector2(-8, -ResultsHeadH - 8);
         ColumnTitle(cols, "#", ColRank, 44, TextAlignmentOptions.Center);
         ColumnTitle(cols, "PLAYER", ColAvatar, 300, TextAlignmentOptions.MidlineLeft);
         ColumnTitle(cols, "GAME OBJ.", ColGame - 20, 100, TextAlignmentOptions.Center);
@@ -944,7 +1003,7 @@ public static class MainHudBuilder
         var scroll = NewRect("Scroll", card);
         Stretch(scroll);
         scroll.offsetMin = new Vector2(24, 104);
-        scroll.offsetMax = new Vector2(-24, -200);
+        scroll.offsetMax = new Vector2(-24, -ResultsHeadH - 50);
         var viewport = Stretch(NewRect("Viewport", scroll));
         viewport.gameObject.AddComponent<RectMask2D>();
         viewport.gameObject.AddComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -1002,6 +1061,13 @@ public static class MainHudBuilder
         content.gameObject.SetActive(false);
 
         BuildResultsWaiting(holder, view, endGame);
+        var boardPage = BuildResultsBoard(card);
+        view.tabButtons = tabButtons;
+        view.tabFills = tabFills;
+        view.tabLabels = tabLabels;
+        view.scoresParts = new[] { cols.gameObject, scroll.gameObject, legend.gameObject };
+        view.boardPage = boardPage.gameObject;
+        view.boardView = boardPage.GetComponent<ResultsBoardView>();
 
         view.content = content.gameObject;
         view.eyebrow = eyebrow;
@@ -1022,6 +1088,294 @@ public static class MainHudBuilder
         view.leaveButton = leave.gameObject;
         EditorUtility.SetDirty(view);
         return view;
+    }
+
+    // Results card, "Final board" tab (ResultsBoardView): filter + unlinked actions | the board | details.
+    private static RectTransform BuildResultsBoard(RectTransform card)
+    {
+        const float leftW = 310f, rightW = 430f;
+        var page = Stretch(NewRect("BoardPage", card));
+        page.offsetMin = new Vector2(0, 96);
+        page.offsetMax = new Vector2(0, -ResultsHeadH);
+        var view = page.gameObject.AddComponent<ResultsBoardView>();
+
+        // ── Left: filter, actions linked to no instrument ──
+        var left = NewRect("Left", page);
+        left.anchorMin = Vector2.zero; left.anchorMax = new Vector2(0, 1);
+        left.pivot = new Vector2(0, 0.5f);
+        left.sizeDelta = new Vector2(leftW, 0);
+        left.anchoredPosition = Vector2.zero;
+        var leftCol = Column(left, 10, new RectOffset(26, 16, 18, 16));
+        leftCol.childForceExpandWidth = true;
+        Section(left, "SHOW");
+        var filters = NewRect("Filters", left);
+        var flow = filters.gameObject.AddComponent<FlowLayoutGroup>();
+        flow.spacingX = flow.spacingY = 6;
+        var filter = NewRect("FilterTemplate", filters);
+        Fixed(filter, -1, 32);
+        var filterImg = Round(filter, Color.white, 16);
+        filterImg.raycastTarget = true;
+        filter.gameObject.AddComponent<Button>().targetGraphic = filterImg;
+        var filterLine = filter.gameObject.AddComponent<Outline>();
+        filterLine.effectColor = LilacLine;
+        filterLine.effectDistance = new Vector2(2, -2);
+        var filterRow = Row(filter, 6, new RectOffset(5, 12, 0, 0));
+        filterRow.childControlHeight = false;
+        filterRow.childAlignment = TextAnchor.MiddleLeft;
+        var filterDot = NewRect("Dot", filter);
+        Fixed(filterDot, 22, 22);
+        Round(filterDot, PlayerCapsuleHook.PlayerColors[0], 11);
+        var filterNumber = Txt(Stretch(NewRect("Number", filterDot)), bold, 11, Color.white, TextAlignmentOptions.Center);
+        filterNumber.textWrappingMode = TextWrappingModes.NoWrap;
+        filterNumber.text = "1";
+        var filterLabel = Label(filter, "Label", bold, 15, Ink, "Everyone");
+        filterLabel.rectTransform.sizeDelta = new Vector2(80, 28);
+
+        var gap = NewRect("Gap", left);
+        Fixed(gap, -1, 6);
+        Section(left, "NOT LINKED TO AN INSTRUMENT");
+        var unlinkedScroll = NewRect("Unlinked", left);
+        unlinkedScroll.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1;
+        var unlinkedViewport = Stretch(NewRect("Viewport", unlinkedScroll));
+        unlinkedViewport.gameObject.AddComponent<RectMask2D>();
+        unlinkedViewport.gameObject.AddComponent<Image>().color = Color.clear;
+        var unlinked = NewRect("List", unlinkedViewport);
+        unlinked.anchorMin = new Vector2(0, 1); unlinked.anchorMax = new Vector2(1, 1);
+        unlinked.pivot = new Vector2(0.5f, 1);
+        unlinked.sizeDelta = Vector2.zero;
+        Column(unlinked, 8, new RectOffset(2, 8, 2, 6)).childForceExpandWidth = true;
+        unlinked.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var unlinkedSR = unlinkedScroll.gameObject.AddComponent<ScrollRect>();
+        unlinkedSR.viewport = unlinkedViewport;
+        unlinkedSR.content = unlinked;
+        unlinkedSR.horizontal = false;
+        unlinkedSR.movementType = ScrollRect.MovementType.Clamped;
+        unlinkedSR.scrollSensitivity = 40;
+        var unlinkedItem = NewRect("UnlinkedTemplate", unlinked);
+        var unlinkedImg = Round(unlinkedItem, Cream, 14);
+        unlinkedImg.raycastTarget = true;
+        unlinkedItem.gameObject.AddComponent<Button>().targetGraphic = unlinkedImg;
+        var unlinkedLine = unlinkedItem.gameObject.AddComponent<Outline>();
+        unlinkedLine.effectColor = Amber;
+        unlinkedLine.effectDistance = new Vector2(2.5f, -2.5f);
+        Column(unlinkedItem, 4, new RectOffset(12, 12, 10, 10)).childForceExpandWidth = true;
+        CardTop(unlinkedItem, false);
+        Txt(NewRect("Title", unlinkedItem), bold, 16, Ink, TextAlignmentOptions.TopLeft).text = "Green roofs on our new buildings";
+        var noUnlinked = Txt(NewRect("NoUnlinked", unlinked), regular, 15, EndMuted, TextAlignmentOptions.TopLeft);
+        noUnlinked.text = "Every action uses an instrument.";
+
+        // ── Centre: the board ──
+        var centre = Stretch(NewRect("Board", page));
+        centre.offsetMin = new Vector2(leftW, 0);
+        centre.offsetMax = new Vector2(-rightW, 0);
+        var centreImg = centre.gameObject.AddComponent<Image>();
+        centreImg.sprite = MainMenuBuilder.Gradient();
+        centreImg.color = Color.white;
+        centreImg.raycastTarget = false;
+        centre.gameObject.AddComponent<RectMask2D>();
+        var pieces = Stretch(NewRect("Pieces", centre));
+        var legendRT = NewRect("Legend", centre);
+        legendRT.anchorMin = legendRT.anchorMax = legendRT.pivot = Vector2.zero;
+        legendRT.anchoredPosition = new Vector2(16, 14);
+        legendRT.sizeDelta = new Vector2(560, 32);
+        Round(legendRT, new Color(1, 1, 1, 0.14f), 16);
+        var legendRow = Row(legendRT, 8, new RectOffset(12, 14, 0, 0));
+        legendRow.childControlHeight = false;
+        legendRow.childAlignment = TextAnchor.MiddleLeft;
+        LegendHex(legendRT, Amber);
+        Label(legendRT, "Action", regular, 14, Color.white, "action card").rectTransform.sizeDelta = new Vector2(80, 24);
+        LegendHex(legendRT, new Color32(0xFE, 0x46, 0xA5, 0xFF));
+        Label(legendRT, "Open", regular, 14, Color.white, "open action").rectTransform.sizeDelta = new Vector2(80, 24);
+        Label(legendRT, "Hint", regular, 14, new Color(1, 1, 1, 0.85f), "· Click a piece or a card to see what’s attached").rectTransform.sizeDelta = new Vector2(300, 24);
+
+        // ── Right: details ──
+        var right = NewRect("Details", page);
+        right.anchorMin = new Vector2(1, 0); right.anchorMax = Vector2.one;
+        right.pivot = new Vector2(1, 0.5f);
+        right.sizeDelta = new Vector2(rightW, 0);
+        right.anchoredPosition = Vector2.zero;
+        var viewport = Stretch(NewRect("Viewport", right));
+        viewport.gameObject.AddComponent<RectMask2D>();
+        viewport.gameObject.AddComponent<Image>().color = Color.clear;
+        var content = NewRect("Content", viewport);
+        content.anchorMin = new Vector2(0, 1); content.anchorMax = new Vector2(1, 1);
+        content.pivot = new Vector2(0.5f, 1);
+        content.sizeDelta = Vector2.zero;
+        Column(content, 0, new RectOffset(0, 0, 0, 0)).childForceExpandWidth = true;
+        content.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var sr = right.gameObject.AddComponent<ScrollRect>();
+        sr.viewport = viewport;
+        sr.content = content;
+        sr.horizontal = false;
+        sr.movementType = ScrollRect.MovementType.Clamped;
+        sr.scrollSensitivity = 40;
+
+        var inst = NewRect("Instrument", content);
+        Column(inst, 0, new RectOffset(0, 0, 0, 0)).childForceExpandWidth = true;
+        var head = NewRect("Head", inst);
+        var headImg = head.gameObject.AddComponent<Image>();
+        headImg.color = Purple;
+        headImg.raycastTarget = false;
+        Column(head, 0, new RectOffset(20, 18, 16, 16)).childForceExpandWidth = true;
+        var instEyebrow = Label(head, "Eyebrow", bold, 13, new Color(1, 1, 1, 0.9f), "INSTRUMENT 4");
+        instEyebrow.characterSpacing = 8;
+        var instName = Txt(NewRect("Name", head), bold, 24, Color.white, TextAlignmentOptions.TopLeft);
+        instName.lineSpacing = -10;
+        instName.text = "Land Use Zoning";
+        var instCat = Txt(NewRect("Category", head), regular, 15, new Color(1, 1, 1, 0.92f), TextAlignmentOptions.TopLeft);
+        instCat.text = "Planning & Project Design";
+        var ownerWrap = NewRect("OwnerWrap", inst);
+        Column(ownerWrap, 0, new RectOffset(18, 18, 14, 0)).childForceExpandWidth = true;
+        var owner = NewRect("Owner", ownerWrap);
+        Round(owner, Lilac, 14);
+        var ownerRow = Row(owner, 10, new RectOffset(10, 10, 8, 8));
+        ownerRow.childControlHeight = true;
+        ownerRow.childAlignment = TextAnchor.MiddleLeft;
+        var ownerAvatar = NewRect("Avatar", owner);
+        Fixed(ownerAvatar, 30, 30);
+        var ownerAvatarImg = Round(ownerAvatar, PlayerCapsuleHook.PlayerColors[0], 15);
+        var ownerNumber = Txt(Stretch(NewRect("Number", ownerAvatar)), bold, 14, Color.white, TextAlignmentOptions.Center);
+        ownerNumber.text = "1";
+        var ownerText = Label(owner, "Text", regular, 15, Ink, "<b>Placed by Ana</b>");
+        ownerText.richText = true;
+        ownerText.overflowMode = TextOverflowModes.Ellipsis;
+        var ownerTextSize = ownerText.gameObject.AddComponent<LayoutElement>();
+        ownerTextSize.flexibleWidth = 1;
+        ownerTextSize.minWidth = 0;
+        var vote = NewRect("Vote", owner);
+        Fixed(vote, 124, 26);
+        Round(vote, new Color32(0xDD, 0xF3, 0xE0, 0xFF), 13);
+        var voteText = Txt(Stretch(NewRect("Label", vote)), bold, 13, new Color32(0x1E, 0x7A, 0x2C, 0xFF), TextAlignmentOptions.Center);
+        voteText.textWrappingMode = TextWrappingModes.NoWrap;
+        voteText.text = "Approved 3–0";
+
+        var body = NewRect("Body", content);
+        Column(body, 10, new RectOffset(18, 18, 14, 20)).childForceExpandWidth = true;
+        var cardsTitle = Label(body, "CardsTitle", bold, 13, EndMuted, "2 ACTIONS USE IT");
+        cardsTitle.characterSpacing = 8;
+        var cardsList = NewRect("Cards", body);
+        Column(cardsList, 10, new RectOffset(0, 0, 0, 0)).childForceExpandWidth = true;
+        var cardItem = NewRect("CardTemplate", cardsList);
+        Round(cardItem, Cream, 14);
+        var cardLine = cardItem.gameObject.AddComponent<Outline>();
+        cardLine.effectColor = Amber;
+        cardLine.effectDistance = new Vector2(2.5f, -2.5f);
+        Column(cardItem, 4, new RectOffset(14, 14, 12, 12)).childForceExpandWidth = true;
+        CardTop(cardItem, true);
+        Txt(NewRect("Title", cardItem), bold, 17, Ink, TextAlignmentOptions.TopLeft).text = "Creating partnerships to enhance biodiversity";
+        Txt(NewRect("Description", cardItem), regular, 14, EndBody, TextAlignmentOptions.TopLeft).text = "What the action does.";
+        var with = NewRect("With", cardItem);
+        Fixed(with, -1, 26);
+        var withRow = Row(with, 6, new RectOffset(0, 0, 0, 0));
+        withRow.childControlHeight = false;
+        withRow.childAlignment = TextAnchor.MiddleLeft;
+        var withLabel = Label(with, "Label", bold, 13, EndMuted, "WITH");
+        withLabel.characterSpacing = 6;
+        withLabel.rectTransform.sizeDelta = new Vector2(44, 22);
+        var avatars = NewRect("Avatars", with);
+        Row(avatars, -5, new RectOffset(0, 0, 0, 0)).childControlHeight = false;
+        var withText = Label(with, "Text", regular, 13, EndMuted, "no one");
+        withText.overflowMode = TextOverflowModes.Ellipsis;
+        withText.rectTransform.sizeDelta = new Vector2(200, 22);
+        var withTextSize = withText.gameObject.AddComponent<LayoutElement>();
+        withTextSize.flexibleWidth = 1;
+        withTextSize.minWidth = 0;
+        var avatar = NewRect("AvatarTemplate", body);
+        Fixed(avatar, 20, 20);
+        Round(avatar, PlayerCapsuleHook.PlayerColors[1], 10);
+        var avatarRing = avatar.gameObject.AddComponent<Outline>();
+        avatarRing.effectColor = Cream;
+        avatarRing.effectDistance = new Vector2(1.5f, -1.5f);
+        var noCards = Txt(NewRect("NoCards", body), regular, 15, EndMuted, TextAlignmentOptions.TopLeft);
+        noCards.text = "No action card uses this instrument.";
+        var empty = Txt(NewRect("Empty", body), regular, 16, EndMuted, TextAlignmentOptions.TopLeft);
+        empty.text = "Click a piece on the board, or an action on the left, to see what’s attached.";
+
+        // Lines between the columns
+        foreach (var x in new[] { leftW, -rightW })
+        {
+            var line = NewRect("Line", page);
+            line.anchorMin = new Vector2(x > 0 ? 0 : 1, 0); line.anchorMax = new Vector2(x > 0 ? 0 : 1, 1);
+            line.pivot = new Vector2(0.5f, 0.5f);
+            line.sizeDelta = new Vector2(2, 0);
+            line.anchoredPosition = new Vector2(x, 0);
+            line.gameObject.AddComponent<Image>().color = EndIdle;
+        }
+
+        filter.gameObject.SetActive(false);
+        unlinkedItem.gameObject.SetActive(false);
+        cardItem.gameObject.SetActive(false);
+        avatar.gameObject.SetActive(false);
+        page.gameObject.SetActive(false);
+
+        view.boardArea = pieces;
+        view.hexSprite = hex;
+        view.font = bold;
+        view.filters = filters;
+        view.filterTemplate = filter.gameObject;
+        view.unlinkedList = unlinked;
+        view.unlinkedTemplate = unlinkedItem.gameObject;
+        view.noUnlinked = noUnlinked.gameObject;
+        view.detailsScroll = sr;
+        view.emptyDetails = empty.gameObject;
+        view.instGroup = inst.gameObject;
+        view.instHead = headImg;
+        view.instEyebrow = instEyebrow;
+        view.instName = instName;
+        view.instCat = instCat;
+        view.ownerAvatar = ownerAvatarImg;
+        view.ownerNumber = ownerNumber;
+        view.ownerText = ownerText;
+        view.vote = vote.gameObject;
+        view.voteText = voteText;
+        view.cardsTitle = cardsTitle;
+        view.cardsList = cardsList;
+        view.cardTemplate = cardItem.gameObject;
+        view.avatarTemplate = avatar.gameObject;
+        view.noCards = noCards.gameObject;
+        EditorUtility.SetDirty(view);
+        return page;
+    }
+
+    // Card number hexagon, the player's dot, (their name) and the kind.
+    private static void CardTop(RectTransform card, bool withOwner)
+    {
+        var top = NewRect("Top", card);
+        Fixed(top, -1, 34);
+        var row = Row(top, 8, new RectOffset(0, 0, 0, 0));
+        row.childControlHeight = false;
+        row.childAlignment = TextAnchor.MiddleLeft;
+        var hexRT = NewRect("Hex", top);
+        Fixed(hexRT, 30, 34);
+        PlayerCapsuleBuilder.Icon(hexRT, hex, Amber).preserveAspect = false;
+        var number = Txt(Stretch(NewRect("Number", hexRT)), bold, 12, Color.white, TextAlignmentOptions.Center);
+        number.textWrappingMode = TextWrappingModes.NoWrap;
+        number.text = "03";
+        var who = NewRect("Who", top);
+        Fixed(who, 24, 24);
+        Round(who, PlayerCapsuleHook.PlayerColors[0], 12);
+        var whoNumber = Txt(Stretch(NewRect("Number", who)), bold, 11, Color.white, TextAlignmentOptions.Center);
+        whoNumber.textWrappingMode = TextWrappingModes.NoWrap;
+        whoNumber.text = "1";
+        if (withOwner)
+        {
+            var owner = Label(top, "Owner", bold, 14, EndBody, "Ana");
+            owner.overflowMode = TextOverflowModes.Ellipsis;
+            owner.rectTransform.sizeDelta = new Vector2(120, 24);
+        }
+        var spacer = NewRect("Spacer", top);
+        spacer.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var kind = Label(top, "Kind", bold, 12, Amber, "ACTION");
+        kind.characterSpacing = 6;
+        kind.rectTransform.sizeDelta = new Vector2(110, 24);
+        kind.alignment = TextAlignmentOptions.MidlineRight;
+    }
+
+    private static void LegendHex(RectTransform parent, Color color)
+    {
+        var rt = NewRect("Hex", parent);
+        Fixed(rt, 16, 18);
+        PlayerCapsuleBuilder.Icon(rt, hex, color).preserveAspect = false;
     }
 
     // GM only, after "End collaboration": who has rated the game yet, then "See results".
@@ -2424,6 +2778,24 @@ public static class MainHudBuilder
         line.gameObject.AddComponent<Image>().color = LilacLine;
         row.gameObject.SetActive(false);
         return row.gameObject;
+    }
+
+    // Round white − / + button for a stepper.
+    private static Button StepButton(RectTransform parent, string name, string glyph)
+    {
+        var rt = NewRect(name, parent);
+        Fixed(rt, 40, 40);
+        var img = Round(rt, Color.white, 20);
+        img.raycastTarget = true;
+        var button = rt.gameObject.AddComponent<Button>();
+        button.targetGraphic = img;
+        var colors = button.colors;
+        colors.disabledColor = new Color(1, 1, 1, 0.45f);
+        button.colors = colors;
+        var label = Txt(Stretch(NewRect("Label", rt)), bold, 24, Purple, TextAlignmentOptions.Center);
+        label.textWrappingMode = TextWrappingModes.NoWrap;
+        label.text = glyph;
+        return button;
     }
 
     private static Button WideButton(RectTransform parent, string name, string text, Color fill, Color ink)

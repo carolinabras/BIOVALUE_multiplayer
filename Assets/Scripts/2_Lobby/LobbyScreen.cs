@@ -331,7 +331,7 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
         {
             IsOpen = true,
             IsVisible = false,
-            PlayerTtl = 60000,    // a dropped player can come back for 60 s
+            PlayerTtl = RejoinGuard.SeatMinutes * 60000, // a dropped player keeps their seat (RejoinGuard)
             EmptyRoomTtl = 60000,
         };
         PhotonNetwork.CreateRoom(room, options);
@@ -775,6 +775,7 @@ public class LobbyScreen : MonoBehaviourPunCallbacks
             { BiovalueStatics.MaxActionCardsKey, _limit },
             { BiovalueStatics.StartTokensKey, _tokens },
             { BiovalueStatics.ScoreFormulaKey, ScoreFormula.Encode(_formula) },
+            { GameAuthority.GmActorKey, PhotonNetwork.LocalPlayer.ActorNumber }, // stays the GM while reconnecting
         });
         PhotonNetwork.CurrentRoom.IsOpen = false; // nobody joins a game that has started
         PhotonNetwork.LoadLevel(NextScene);

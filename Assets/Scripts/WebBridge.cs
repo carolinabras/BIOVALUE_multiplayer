@@ -11,6 +11,7 @@ public static class WebBridge
     [DllImport("__Internal")] private static extern void BioValue_CopyText(string text);
     [DllImport("__Internal")] private static extern void BioValue_DownloadText(string fileName, string text);
     [DllImport("__Internal")] private static extern void BioValue_Quit();
+    [DllImport("__Internal")] private static extern string BioValue_TabId();
     public const bool IsWeb = true;
 #else
     public const bool IsWeb = false;
@@ -35,6 +36,16 @@ public static class WebBridge
         string path = Path.Combine(Application.persistentDataPath, fileName);
         File.WriteAllText(path, text ?? "", Encoding.UTF8);
         return path;
+#endif
+    }
+
+    // Web: an id kept by this browser tab (survives a reload). Elsewhere: null (a new id each launch).
+    public static string TabId()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        return BioValue_TabId();
+#else
+        return null;
 #endif
     }
 

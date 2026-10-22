@@ -12,6 +12,11 @@ public class ActionCardSyncService
     public readonly Dictionary<string, string> Descriptions = new Dictionary<string, string>();
     public readonly Dictionary<string, string> DescriptionsHow = new Dictionary<string, string>();
 
+    // Room property prefixes (+ "{playerId}_{cardId}"), written by GameState as they change.
+    public const string DescriptionPrefix = "acd_";
+    public const string DescriptionHowPrefix = "ach_";
+    public const string LinksPrefix = "acl_";
+
     public void RestoreFromRoomProperties()
     {
         if (!PhotonNetwork.InRoom) return;
@@ -23,6 +28,18 @@ public class ActionCardSyncService
             string key = BiovalueStatics.ActionCardsKeyPrefix + i;
             if (props.TryGetValue(key, out var cards) && cards is int[] arr)
                 PlayerActionCards[i] = arr.ToList();
+        }
+
+        // Their descriptions and links.
+        foreach (var entry in props)
+        {
+            if (!(entry.Key is string key)) continue;
+            if (key.StartsWith(DescriptionPrefix) && entry.Value is string d)
+                Descriptions[key.Substring(DescriptionPrefix.Length)] = d;
+            else if (key.StartsWith(DescriptionHowPrefix) && entry.Value is string h)
+                DescriptionsHow[key.Substring(DescriptionHowPrefix.Length)] = h;
+            else if (key.StartsWith(LinksPrefix) && entry.Value is int[] ids)
+                Links[key.Substring(LinksPrefix.Length)] = ids;
         }
     }
 

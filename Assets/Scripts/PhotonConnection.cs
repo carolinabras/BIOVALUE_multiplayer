@@ -26,6 +26,10 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
 
     private IEnumerator ConnectWhenReady()
     {
+        // Rejoining (main menu): the connection has to use the id that holds the seat, so start afresh.
+        if (RejoinGuard.PendingRejoin != null && PhotonNetwork.IsConnected)
+            PhotonNetwork.Disconnect();
+
         // Wait for any in-progress disconnect to finish fully.
         while (PhotonNetwork.NetworkClientState == ClientState.Disconnecting)
             yield return null;
@@ -55,6 +59,16 @@ public class PhotonConnection : MonoBehaviourPunCallbacks
     {
         Debug.Log("[Photon] Connected to Master.");
         if (Loader) Loader.SetStep(1);
+        // "Rejoin" on the main menu: straight back into the game (the room loads its scene).
+        if (RejoinGuard.PendingRejoin != null && PhotonNetwork.RejoinRoom(RejoinGuard.PendingRejoin)) return;
+        PhotonNetwork.JoinLobby();
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        if (RejoinGuard.PendingRejoin == null) return;
+        Debug.LogWarning($"[Photon] Couldn't rejoin the game ({returnCode}): {message}. Opening the lobby.");
+        RejoinGuard.RejoinFailed();
         PhotonNetwork.JoinLobby();
     }
 

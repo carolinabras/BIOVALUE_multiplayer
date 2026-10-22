@@ -29,6 +29,9 @@ public class GameMasterHud : MonoBehaviourPunCallbacks
     public GameObject[] stepTicks;      // drawn tick on finished steps (Baloo has no tick glyph)
     public TMP_Text[] stepLabels;
     public GameObject endInstrumentsButton;
+    public GameObject perTurnGroup;         // "Instruments per turn  [−] 1 [+]", instruments round only
+    public TMP_Text perTurnValue;
+    public Button perTurnMinus, perTurnPlus;
     public GameObject endActionsButton;     // starts the collaboration round
     public GameObject endCollabButton;      // wired like the old "End Actions Round" (results)
     public GameObject showActionsButton;    // "See everyone's actions · GM only", action cards round only
@@ -62,8 +65,31 @@ public class GameMasterHud : MonoBehaviourPunCallbacks
     private float confirmUntil;
     private float nextRefresh;
 
+    // Instruments each player can put to the vote per turn: 1 … MaxPerTurnStep, then no limit (0).
+    private const int MaxPerTurnStep = 5;
+
+    private static int StepPerTurn(int value, int delta)
+    {
+        // 1, 2, … 5, no limit
+        int i = value <= 0 ? MaxPerTurnStep + 1 : value;
+        i = Mathf.Clamp(i + delta, 1, MaxPerTurnStep + 1);
+        return i > MaxPerTurnStep ? 0 : i;
+    }
+
+    private void RefreshPerTurn(bool show)
+    {
+        if (perTurnGroup) perTurnGroup.SetActive(show);
+        if (!show) return;
+        int value = VotingManager.MaxPerTurn;
+        if (perTurnValue) perTurnValue.text = value <= 0 ? "No limit" : value.ToString();
+        if (perTurnMinus) perTurnMinus.interactable = value != 1;
+        if (perTurnPlus) perTurnPlus.interactable = value > 0;
+    }
+
     private void Start()
     {
+        if (perTurnMinus) perTurnMinus.onClick.AddListener(() => VotingManager.SetMaxPerTurn(StepPerTurn(VotingManager.MaxPerTurn, -1)));
+        if (perTurnPlus) perTurnPlus.onClick.AddListener(() => VotingManager.SetMaxPerTurn(StepPerTurn(VotingManager.MaxPerTurn, 1)));
         if (rowTemplate) rowTemplate.SetActive(false);
         if (!actions) actions = FindFirstObjectByType<GameMasterActions>(FindObjectsInactive.Include);
         SetOpen(false, false);
@@ -166,6 +192,7 @@ public class GameMasterHud : MonoBehaviourPunCallbacks
             }
         }
         if (endInstrumentsButton) endInstrumentsButton.SetActive(step == 0);
+        RefreshPerTurn(step == 0);
         if (endActionsButton) endActionsButton.SetActive(step == 1);
         if (endCollabButton) endCollabButton.SetActive(step == 2);
         if (showActionsButton) showActionsButton.SetActive(step == 1);

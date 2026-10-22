@@ -14,6 +14,11 @@ public class MainMenuManager : MonoBehaviour
     public GameObject startSpinner;
     public CanvasGroup quitGroup;    // dims once Start game is pressed
     public TMP_Text versionLabel;
+    // "Your game … is still on [Rejoin]": shown while this device can take its seat back (RejoinGuard).
+    public GameObject rejoinBanner;
+    public TMP_Text rejoinText;
+    public Button rejoinButton;
+    public TMP_Text rejoinLabel;
 
     private static readonly Color Connecting = new Color32(0xC9, 0x3A, 0x84, 0xFF);
     private bool _starting;
@@ -21,6 +26,24 @@ public class MainMenuManager : MonoBehaviour
     private void Start()
     {
         if (versionLabel) versionLabel.text = VersionLabel.Text;
+        bool canRejoin = RejoinGuard.TryGetLastGame(out string room);
+        if (rejoinBanner) rejoinBanner.SetActive(canRejoin);
+        if (canRejoin && rejoinText) rejoinText.text = $"Your game <b>{room}</b> is still on";
+    }
+
+    // Back into the game this device was playing: the loading screen rejoins it instead of opening the lobby.
+    public void RejoinGame()
+    {
+        if (_starting) return;
+        if (!RejoinGuard.PrepareRejoin())
+        {
+            if (rejoinBanner) rejoinBanner.SetActive(false); // the seat has gone meanwhile
+            return;
+        }
+        if (rejoinButton) rejoinButton.interactable = false;
+        if (rejoinLabel) rejoinLabel.text = "Rejoining…";
+        StartGame();
+        if (startLabel) startLabel.text = "Start game";
     }
 
     public void StartGame()

@@ -46,5 +46,20 @@ mergeInto(LibraryManager.library, {
     host.appendChild(page);
     if (canvas) canvas.style.visibility = 'hidden';
     try { if (typeof Module.pauseMainLoop === 'function') Module.pauseMainLoop(); } catch (e) {}
+  },
+
+  // An id that stays with this browser tab (it survives a reload, but each tab gets its own),
+  // so a player who reloads can take their seat back in the game they were playing.
+  BioValue_TabId: function () {
+    var id = '';
+    try { id = sessionStorage.getItem('biovalue_user') || ''; } catch (e) {}
+    if (!id) {
+      id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      try { sessionStorage.setItem('biovalue_user', id); } catch (e) {}
+    }
+    var size = lengthBytesUTF8(id) + 1;
+    var buffer = _malloc(size);
+    stringToUTF8(id, buffer, size);
+    return buffer;
   }
 });

@@ -146,7 +146,7 @@ public class InstrumentDetailsPanel : MonoBehaviour
     private static bool CanPlace(InstrumentHook hook)
     {
         var drag = hook ? hook.GetComponent<DragPiece>() : null;
-        return drag && drag.enabled && drag.canDrag && drag.gridParent;
+        return drag && drag.enabled && drag.CanPlaceNow && drag.gridParent;
     }
 
     public void PlaceOnBoard()

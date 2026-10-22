@@ -11,6 +11,7 @@ public class ObjectiveSpawner : MonoBehaviourPunCallbacks
     public PhotonView photonView;
 
     [HideInInspector] public List<ObjectiveHook> objectiveHooks = new List<ObjectiveHook>();
+    private const string SpawnedKey = "spawned_objective";
 
     private void Start()
     {
@@ -21,6 +22,7 @@ public class ObjectiveSpawner : MonoBehaviourPunCallbacks
     {
         if (!photonView) return;
         if (!photonView.IsMine) return;
+        if (RejoinGuard.AlreadyDone(SpawnedKey)) return; // spawned before the GM rejoined
         
         if (!objectivePrefab)
         {
@@ -55,6 +57,7 @@ public class ObjectiveSpawner : MonoBehaviourPunCallbacks
                 true
             );
 
+        RejoinGuard.MarkDone(SpawnedKey);
         Debug.Log($"[ObjectiveSpawner] Spawning objective: '{objective}'");
     }
 

@@ -36,7 +36,7 @@ public class BiovaluePlayer
     public string Name;
     public string Objective;
 
-    public bool IsGameMaster => Player?.IsMasterClient ?? false;
+    public bool IsGameMaster => GameAuthority.IsGm(Player);
 
     public int ActorNumber => Player?.ActorNumber ?? -1;
 

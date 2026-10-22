@@ -240,7 +240,7 @@ public class InstrumentHook : MonoBehaviourPun
     {
         if (photonView)
         {
-            photonView.RPC(nameof(RPC_SetInstrument), RpcTarget.All, instr.id, instr.name, instr.description,
+            photonView.RPC(nameof(RPC_SetInstrument), RpcTarget.AllBuffered, instr.id, instr.name, instr.description,
                 instr.typeOne, instr.typeTwo);
         }
         else

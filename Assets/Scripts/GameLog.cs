@@ -140,7 +140,7 @@ public class GameLog : MonoBehaviour, IOnEventCallback
         foreach (var p in PhotonNetwork.PlayerList)
         {
             if (p.ActorNumber != actorNumber) continue;
-            if (p.IsMasterClient) return "GM"; // the GM has no name of their own
+            if (GameAuthority.IsGm(p)) return "GM"; // the GM has no name of their own
             if (p.CustomProperties.TryGetValue(BiovalueStatics.PlayerNameKey, out var n) && n is string s && s.Length > 0)
                 return s;
             return $"Player {actorNumber}";

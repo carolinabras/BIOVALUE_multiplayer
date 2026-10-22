@@ -118,6 +118,44 @@ public static class MainMenuBuilder
 
         var versionLabel = Version(root);
 
+        // Rejoin (only while this device can go back to a game it dropped out of): a translucent pill at
+        // the top, "● Your game ROOM is still on" and a blue "Rejoin" button.
+        float bannerH = 56 * K;
+        var banner = Top(NewRect("RejoinBanner", root), 40 * K, 820, bannerH);
+        Round(banner, new Color(1, 1, 1, .14f), bannerH / 2);
+        var dot = NewRect("Dot", banner);
+        dot.anchorMin = dot.anchorMax = dot.pivot = new Vector2(0, 0.5f);
+        dot.anchoredPosition = new Vector2(26 * K, 0);
+        dot.sizeDelta = new Vector2(12 * K, 12 * K);
+        Round(dot, new Color32(0x3D, 0xDC, 0x84, 0xFF), 6 * K);
+        float rejoinW = 150 * K, rejoinH = 40 * K;
+        var rejoinText = Txt(NewRect("Text", banner), medium, 19 * K, Color.white, TextAlignmentOptions.MidlineLeft);
+        var rejoinTextRt = (RectTransform)rejoinText.transform;
+        rejoinTextRt.anchorMin = Vector2.zero;
+        rejoinTextRt.anchorMax = Vector2.one;
+        rejoinTextRt.offsetMin = new Vector2(48 * K, 0);
+        rejoinTextRt.offsetMax = new Vector2(-(rejoinW + 20 * K), 0);
+        rejoinText.textWrappingMode = TextWrappingModes.NoWrap;
+        rejoinText.overflowMode = TextOverflowModes.Ellipsis;
+        rejoinText.text = "Your game <b>ROOM</b> is still on";
+        var rejoin = NewRect("RejoinButton", banner);
+        rejoin.anchorMin = rejoin.anchorMax = rejoin.pivot = new Vector2(1, 0.5f);
+        rejoin.anchoredPosition = new Vector2(-8 * K, 0);
+        rejoin.sizeDelta = new Vector2(rejoinW, rejoinH);
+        var rejoinFill = Round(rejoin, Blue, rejoinH / 2);
+        rejoinFill.raycastTarget = true;
+        var rejoinButton = rejoin.gameObject.AddComponent<Button>();
+        rejoinButton.targetGraphic = rejoinFill;
+        Tints(rejoinButton);
+        var rejoinLabel = Txt(Stretch(NewRect("Label", rejoin)), bold, 18 * K, Color.white, TextAlignmentOptions.Center);
+        rejoinLabel.text = "Rejoin";
+        UnityEventTools.AddPersistentListener(rejoinButton.onClick, manager.RejoinGame);
+        banner.gameObject.SetActive(false);
+
+        manager.rejoinBanner = banner.gameObject;
+        manager.rejoinText = rejoinText;
+        manager.rejoinButton = rejoinButton;
+        manager.rejoinLabel = rejoinLabel;
         manager.startButton = startButton;
         manager.startFill = startFill;
         manager.startLabel = startLabel;
